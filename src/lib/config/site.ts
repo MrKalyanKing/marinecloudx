@@ -12,6 +12,14 @@
 
 import { brand } from "@/lib/config/brand";
 
+function resolveSiteUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  if (envUrl.startsWith("http://") || envUrl.startsWith("https://")) {
+    return envUrl.replace(/\/+$/, "");
+  }
+  return `https://${envUrl}`.replace(/\/+$/, "");
+}
+
 export const siteConfig = {
   name: "MarineCloudeX",
   descriptor: "Technologies",
@@ -20,7 +28,7 @@ export const siteConfig = {
   tagline: brand.positioning,
   description:
     "MarineCloudeX designs and builds software, digital products and intelligent systems.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: resolveSiteUrl(),
   locale: "en",
 } as const;
 

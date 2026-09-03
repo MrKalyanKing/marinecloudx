@@ -16,7 +16,8 @@ import "server-only";
 
 import { CONTENT_TAG, REVALIDATE_SECONDS } from "@/features/content/services/cache";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = (rawApiUrl.startsWith("http://") || rawApiUrl.startsWith("https://") ? rawApiUrl : `https://${rawApiUrl}`).replace(/\/+$/, "");
 
 interface Envelope<T> {
   success: boolean;
