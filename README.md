@@ -9,7 +9,11 @@ cp .env.example .env
 npm install
 npm run dev        # http://localhost:3000
 ```
-
+<!-- ```bash
+cp .env.example .env
+npm install
+npm run dev        # http://localhost:3000
+``` -->
 Self-contained: own `package.json`, lockfile, tsconfig, lint and Next config.
 The shared wire contract is a committed copy at `src/contracts/` — regenerate it
 from the repo root with `npm run sync:contracts`.
