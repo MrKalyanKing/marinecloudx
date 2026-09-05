@@ -212,12 +212,7 @@ function buttonClass(variant: ButtonVariant, tone: Tone): string {
   }
 
   if (variant === "secondary") {
-    return cx(
-      base,
-      isDark(tone)
-        ? "text-light ring-1 ring-inset ring-hairline-dark hover:bg-black/5"
-        : "text-ink ring-1 ring-inset ring-hairline-light hover:bg-ink/5",
-    );
+    return cx(base, isDark(tone) ? "chip-glass-dark text-light" : "btn-light-ghost text-ink");
   }
 
   return cx(base, "px-0", isDark(tone) ? "text-brand-soft" : "text-brand");
@@ -458,8 +453,8 @@ export function ContentCard({
             <li
               key={tag}
               className={cx(
-                "border px-2 py-0.5 text-[0.7rem] tracking-wide",
-                hairline(tone),
+                "rounded-full px-2.5 py-0.5 text-[0.7rem] tracking-wide",
+                isDark(tone) ? "chip-glass-dark" : "chip-glass",
                 mutedText(tone),
               )}
             >
@@ -514,7 +509,13 @@ export function PublicEmptyState({
   tone?: Tone;
 }) {
   return (
-    <div className={cx("border border-dashed px-6 py-16 text-center", hairline(tone))}>
+    <div
+      className={cx(
+        "rounded-2xl border border-dashed px-6 py-16 text-center",
+        hairline(tone),
+        !isDark(tone) && "bg-white/40 backdrop-blur-sm",
+      )}
+    >
       <p className={cx("text-h3 font-medium", isDark(tone) ? "text-light" : "text-ink")}>{title}</p>
       {description ? (
         <p className={cx("mx-auto mt-3 max-w-md text-sm", mutedText(tone))}>{description}</p>

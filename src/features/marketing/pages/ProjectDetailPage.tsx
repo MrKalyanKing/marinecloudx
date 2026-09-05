@@ -48,7 +48,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <Container className="py-8">
         <Breadcrumbs trail={[{ label: "Projects", href: "/projects" }, { label: project.title }]} />
 
-        <div className="flex flex-wrap gap-3 text-xs text-slate-500">
+        <div className="flex flex-wrap gap-3 text-xs text-ink-muted">
           {project.category ? (
             // Links back into the filtered listing rather than repeating the
             // category name as inert text.
@@ -65,7 +65,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </div>
 
         {project.coverMedia?.url ? (
-          <div className="mt-6 aspect-[16/9] overflow-hidden border border-hairline-light bg-ice">
+          <div className="media-frame mt-6 aspect-[16/9] bg-ice">
             <PublicImage
               url={project.coverMedia.url}
               altText={project.coverMedia.altText}
@@ -76,7 +76,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         ) : null}
 
         {project.fullDescription ? (
-          <div className="mt-4 max-w-3xl whitespace-pre-wrap text-slate-700">
+          <div className="mt-4 max-w-3xl whitespace-pre-wrap text-ink-muted">
             {project.fullDescription}
           </div>
         ) : null}
@@ -107,13 +107,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <section className="mt-8 grid gap-6 sm:grid-cols-3">
             {project.services.length > 0 ? (
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">Services</h2>
+                <h2 className="text-sm font-semibold text-ink">Services</h2>
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {project.services.map((service) => (
                     <li key={service.slug}>
                       <Link
                         href={`/services/${service.slug}`}
-                        className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-ink/30"
+                        className="chip-glass px-3 py-1 text-sm text-ink-muted hover:text-brand"
                       >
                         {service.name}
                       </Link>
@@ -126,13 +126,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             {/* Industry names come from the relation, never re-typed here. */}
             {project.industries.length > 0 ? (
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">Industries</h2>
+                <h2 className="text-sm font-semibold text-ink">Industries</h2>
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {project.industries.map((industry) => (
                     <li key={industry.slug}>
                       <Link
                         href={`/industries/${industry.slug}`}
-                        className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-ink/30"
+                        className="chip-glass px-3 py-1 text-sm text-ink-muted hover:text-brand"
                       >
                         {industry.name}
                       </Link>
@@ -144,10 +144,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
             {project.technologies.length > 0 ? (
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">Technologies</h2>
+                <h2 className="text-sm font-semibold text-ink">Technologies</h2>
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {project.technologies.map((technology) => (
-                    <li key={technology.slug} className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                    <li key={technology.slug} className="chip-glass px-3 py-1 text-sm text-ink-muted">
                       {technology.name}
                     </li>
                   ))}
@@ -159,12 +159,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
         {project.testimonials.length > 0 ? (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">What the client said</h2>
+            <h2 className="text-lg font-semibold text-ink">What the client said</h2>
             <div className="mt-3 flex flex-col gap-3">
               {project.testimonials.map((testimonial, index) => (
-                <blockquote key={index} className="rounded-lg border border-slate-200 p-4">
-                  <p className="text-sm text-slate-700">{testimonial.content}</p>
-                  <footer className="mt-2 text-xs text-slate-500">
+                <blockquote key={index} className="quote-card p-4">
+                  <p className="text-sm text-ink-muted">{testimonial.content}</p>
+                  <footer className="mt-2 text-xs text-ink-muted">
                     {testimonial.authorName}
                     {testimonial.authorRole ? `, ${testimonial.authorRole}` : ""}
                     {testimonial.companyName ? ` · ${testimonial.companyName}` : ""}

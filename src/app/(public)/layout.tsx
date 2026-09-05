@@ -1,3 +1,4 @@
+import { ScrollAmbient } from "@/features/marketing/components/scroll-ambient";
 import { SiteFooter } from "@/features/marketing/components/site-footer";
 import { SiteHeader } from "@/features/marketing/components/site-header";
 
@@ -21,10 +22,12 @@ export const dynamic = "force-dynamic";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative isolate flex min-h-screen flex-col bg-navy text-ink">
+      <ScrollAmbient />
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
         <div className="ambient-wash" />
         <div className="ambient-glow" />
         <div className="absolute inset-0 grid-lines" />
+        <div className="scroll-lines" />
         <div className="ambient-noise opacity-10" />
       </div>
 

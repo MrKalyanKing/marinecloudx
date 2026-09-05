@@ -12,6 +12,9 @@ import type { homeCapabilities } from "@/lib/config/brand";
 
 type Capability = (typeof homeCapabilities)[number];
 
+/** One accent per capability — ties this stage to the system diagram's palette. */
+const ACCENTS = ["#6d5cff", "#ff4d9a", "#43a7ff", "#ff8a4c", "#12c4b0", "#a78bfa"];
+
 export function CapabilitiesStage({
   items,
 }: {
@@ -19,6 +22,7 @@ export function CapabilitiesStage({
 }) {
   const [active, setActive] = useState(0);
   const current = items[active] ?? items[0];
+  const accent = ACCENTS[active % ACCENTS.length];
 
   return (
     <section id="capabilities" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
@@ -37,6 +41,7 @@ export function CapabilitiesStage({
               <ul className="flex flex-col gap-1">
                 {items.map((item, index) => {
                   const isActive = index === active;
+                  const itemAccent = ACCENTS[index % ACCENTS.length];
                   return (
                     <li key={item.slug}>
                       <button
@@ -44,25 +49,43 @@ export function CapabilitiesStage({
                         onClick={() => setActive(index)}
                         onMouseEnter={() => setActive(index)}
                         className={cx(
-                          "group flex w-full items-baseline gap-4 rounded-xl px-3 py-3.5 text-left transition-colors duration-300",
-                          isActive ? "bg-black/[0.04]" : "hover:bg-black/[0.025]",
+                          "group flex w-full items-start gap-4 rounded-xl border-y border-r px-3.5 py-3.5 text-left transition-all duration-300",
+                          isActive
+                            ? "border-y-black/[0.03] border-r-black/[0.03] shadow-[0_10px_24px_-16px_rgb(0_0_0_/_0.25)]"
+                            : "border-transparent hover:border-black/8 hover:bg-black/[0.025]",
                         )}
+                        style={{
+                          borderLeft: `3px solid ${isActive ? itemAccent : "transparent"}`,
+                          background: isActive
+                            ? `linear-gradient(90deg, ${itemAccent}1f, ${itemAccent}08 60%, transparent)`
+                            : undefined,
+                        }}
                       >
                         <span
-                          className={cx(
-                            "tech-label shrink-0",
-                            isActive ? "text-brand" : "text-ink-muted/50",
-                          )}
+                          className={cx("tech-label shrink-0 pt-0.5", !isActive && "text-ink-muted/50")}
+                          style={{ color: isActive ? itemAccent : undefined }}
                         >
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <span
-                          className={cx(
-                            "text-[17px] tracking-[-0.02em] transition-colors",
-                            isActive ? "text-ink" : "text-ink-muted",
-                          )}
-                        >
-                          {item.name}
+                        <span className="flex flex-col gap-1">
+                          <span
+                            className={cx(
+                              "text-[17px] tracking-[-0.02em] transition-colors",
+                              isActive ? "font-semibold text-ink" : "text-ink-muted",
+                            )}
+                          >
+                            {item.name}
+                          </span>
+                          <span
+                            className={cx(
+                              "text-[13px] leading-snug text-ink-muted/75 transition-all duration-300",
+                              isActive
+                                ? "max-h-20 opacity-100"
+                                : "max-h-0 overflow-hidden opacity-0 group-hover:max-h-20 group-hover:opacity-100",
+                            )}
+                          >
+                            {item.shortDescription}
+                          </span>
                         </span>
                       </button>
                     </li>
@@ -71,16 +94,23 @@ export function CapabilitiesStage({
               </ul>
               <Link
                 href="/services"
-                className="group mt-6 inline-flex items-center gap-2 px-3 text-sm text-brand"
+                className="chip-glass group mt-6 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand"
               >
                 All services
                 <Arrow />
               </Link>
             </div>
 
-            <div className="flex min-h-[260px] flex-col justify-between p-6 sm:p-8 lg:min-h-[340px] lg:p-10">
+            <div
+              className="relative flex min-h-[260px] flex-col justify-between overflow-hidden p-6 sm:p-8 lg:min-h-[340px] lg:p-10"
+              style={{
+                background: `radial-gradient(120% 100% at 100% 0%, ${accent}14, transparent 60%)`,
+              }}
+            >
               <div>
-                <p className="tech-label text-brand/80">Focus</p>
+                <p className="tech-label" style={{ color: accent }}>
+                  Focus
+                </p>
                 <h3 className="mt-4 text-[clamp(1.35rem,2.4vw,1.85rem)] font-medium tracking-[-0.025em] text-ink">
                   {current.name}
                 </h3>
@@ -89,11 +119,16 @@ export function CapabilitiesStage({
                 </p>
               </div>
 
-              <ul className="mt-10 flex flex-wrap gap-2">
+              <ul className="relative mt-10 flex flex-wrap gap-2">
                 {current.technologies.map((tech) => (
                   <li
                     key={tech}
-                    className="rounded-full border border-black/10 bg-black/[0.02] px-3.5 py-1.5 text-[12px] tracking-wide text-ink-muted"
+                    className="chip-glass px-3.5 py-1.5 text-[12px] font-medium tracking-wide"
+                    style={{
+                      color: accent,
+                      background: `${accent}14`,
+                      borderColor: `${accent}40`,
+                    }}
                   >
                     {tech}
                   </li>

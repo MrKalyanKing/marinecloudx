@@ -110,16 +110,18 @@ export function SystemDiagram() {
                   y1="50"
                   x2={x}
                   y2={y}
-                  stroke={on ? color : hexToRgba(color, 0.45)}
-                  strokeWidth={on ? 0.65 : 0.35}
+                  stroke={on ? color : hexToRgba(color, 0.4)}
+                  strokeWidth={on ? 1.15 : 0.35}
                   className="transition-[stroke,stroke-width] duration-500"
                   style={{
-                    filter: on ? `drop-shadow(0 0 1.2px ${hexToRgba(color, 0.7)})` : undefined,
+                    filter: on
+                      ? `drop-shadow(0 0 3px ${hexToRgba(color, 0.9)}) drop-shadow(0 0 8px ${hexToRgba(color, 0.5)})`
+                      : undefined,
                   }}
                 />
                 {on ? (
-                  <circle cx={x} cy={y} r="1.1" fill={color} opacity="0.9">
-                    <animate attributeName="r" values="1.1;1.6;1.1" dur="1.8s" repeatCount="indefinite" />
+                  <circle cx={x} cy={y} r="1.8" fill={color} opacity="0.95">
+                    <animate attributeName="r" values="1.8;2.6;1.8" dur="1.8s" repeatCount="indefinite" />
                   </circle>
                 ) : null}
               </g>
@@ -131,11 +133,13 @@ export function SystemDiagram() {
           className="absolute top-1/2 left-1/2 flex aspect-square w-[33%] -translate-x-1/2 -translate-y-1/2 items-center justify-center text-center"
           style={{
             borderRadius: "50%",
-            border: "1px solid rgb(0 0 0 / 0.07)",
+            border: "1px solid rgb(255 255 255 / 0.7)",
             boxShadow:
-              "0 1px 2px rgb(0 0 0 / 0.03), 0 10px 24px -14px rgb(0 0 0 / 0.1), 0 24px 48px -28px rgb(0 0 0 / 0.12)",
+              "inset 0 1px 0 rgb(255 255 255 / 0.8), 0 1px 2px rgb(0 0 0 / 0.03), 0 10px 24px -14px rgb(0 0 0 / 0.12), 0 24px 48px -28px rgb(0 0 0 / 0.16)",
             background:
-              "radial-gradient(circle at 34% 28%, #ffffff 0%, #f0f0f4 55%, #e6e6ee 100%)",
+              "radial-gradient(circle at 34% 28%, rgb(255 255 255 / 0.85) 0%, rgb(240 240 250 / 0.6) 55%, rgb(220 210 250 / 0.4) 100%)",
+            backdropFilter: "blur(18px) saturate(1.3)",
+            WebkitBackdropFilter: "blur(18px) saturate(1.3)",
           }}
         >
           <span className="font-mono text-[clamp(8.5px,1.1vw,11.5px)] leading-[1.5] tracking-[0.14em] text-ink uppercase">
@@ -157,14 +161,21 @@ export function SystemDiagram() {
               onFocus={() => setActive(i)}
               onClick={() => setActive(i)}
               className={cx(
-                "absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-3.5 py-2 font-mono text-[clamp(9.5px,1.05vw,11.5px)] tracking-[0.12em] uppercase transition-all duration-500",
-                on ? "text-ink shadow-[0_10px_28px_-12px_rgb(0_0_0_/_0.25)]" : "mcx-card text-ink",
+                "absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-4 py-2.5 font-mono text-[clamp(9.5px,1.05vw,11.5px)] tracking-[0.12em] uppercase transition-all duration-500",
+                on ? "scale-110 font-semibold text-ink" : "mcx-card text-ink-muted hover:text-ink",
               )}
               style={{
                 left: `${x}%`,
                 top: `${y}%`,
-                background: on ? hexToRgba(color, 0.18) : undefined,
-                border: on ? `1px solid ${hexToRgba(color, 0.55)}` : undefined,
+                background: on
+                  ? `linear-gradient(135deg, ${hexToRgba(color, 0.3)}, ${hexToRgba(color, 0.12)})`
+                  : undefined,
+                border: on ? `1.5px solid ${hexToRgba(color, 0.7)}` : undefined,
+                boxShadow: on
+                  ? `0 0 0 4px ${hexToRgba(color, 0.12)}, 0 12px 28px -10px ${hexToRgba(color, 0.55)}`
+                  : undefined,
+                backdropFilter: on ? "blur(10px) saturate(1.3)" : undefined,
+                WebkitBackdropFilter: on ? "blur(10px) saturate(1.3)" : undefined,
               }}
             >
               {n.name}
@@ -174,15 +185,23 @@ export function SystemDiagram() {
       </div>
 
       <div className="max-w-[420px]">
-        <div className="tech-label" style={{ color: WEB_COLORS[active] }}>
+        <div
+          className="tech-label inline-flex items-center gap-2 rounded-full px-3 py-1"
+          style={{
+            color: WEB_COLORS[active],
+            background: hexToRgba(WEB_COLORS[active], 0.1),
+            border: `1px solid ${hexToRgba(WEB_COLORS[active], 0.3)}`,
+          }}
+        >
           {node.name}
         </div>
         <h3 className="mt-3.5 text-h3 font-medium text-ink">{node.title}</h3>
-        <div className="mt-5 grid gap-px border-t border-black/8">
+        <div className="mt-5 flex flex-col gap-2">
           {node.items.map((item) => (
             <div
               key={item}
-              className="flex items-center gap-3 border-b border-black/8 py-3.5 text-[15px] text-ink-muted"
+              className="list-row-glass flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-ink"
+              style={{ borderLeft: `3px solid ${WEB_COLORS[active]}` }}
             >
               <span
                 aria-hidden="true"

@@ -184,7 +184,7 @@ export default async function AboutPage() {
                   <li key={industry.slug}>
                     <Link
                       href={`/industries/${industry.slug}`}
-                      className="inline-flex rounded-full border border-hairline-light px-4 py-2 text-sm text-ink transition-colors hover:border-brand hover:text-brand"
+                      className="chip-glass px-4 py-2 text-sm text-ink hover:text-brand"
                     >
                       {industry.name}
                     </Link>

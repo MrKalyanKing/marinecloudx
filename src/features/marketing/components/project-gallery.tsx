@@ -74,14 +74,14 @@ export function ProjectGallery({
 
   return (
     <section className="mt-8">
-      <h2 className="text-lg font-semibold text-slate-900">{heading}</h2>
+      <h2 className="text-lg font-semibold text-ink">{heading}</h2>
 
       {renderable.length > 0 ? (
         <ul className="mt-3 grid gap-4 sm:grid-cols-2">
           {renderable.map((item) => (
             <li key={item.id}>
               <figure>
-                <div className="aspect-[16/10] overflow-hidden border border-hairline-light bg-ice">
+                <div className="media-frame aspect-[16/10] bg-ice">
                   <PublicImage
                     url={item.media.url as string}
                     altText={item.media.altText ?? item.caption}
@@ -90,7 +90,7 @@ export function ProjectGallery({
                   />
                 </div>
                 {item.caption ? (
-                  <figcaption className="mt-2 text-sm text-slate-600">{item.caption}</figcaption>
+                  <figcaption className="mt-2 text-sm text-ink-muted">{item.caption}</figcaption>
                 ) : null}
               </figure>
             </li>
@@ -101,11 +101,11 @@ export function ProjectGallery({
       {unrenderable.length > 0 ? (
         <ul className="mt-3 grid gap-3 sm:grid-cols-2">
           {unrenderable.map((item) => (
-            <li key={item.id} className="border border-dashed border-hairline-light p-3">
-              <p className="text-sm text-slate-700">
+            <li key={item.id} className="rounded-2xl border border-dashed border-hairline-light p-3">
+              <p className="text-sm text-ink-muted">
                 {item.caption ?? item.media.altText ?? "Media"}
               </p>
-              <p className="mt-1 text-xs text-slate-500">{roleLabel(item.role)}</p>
+              <p className="mt-1 text-xs text-ink-muted/70">{roleLabel(item.role)}</p>
             </li>
           ))}
         </ul>

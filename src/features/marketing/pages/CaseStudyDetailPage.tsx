@@ -66,14 +66,14 @@ function FactRow({
             <Link
               key={item.slug}
               href={href(item.slug)}
-              className="border border-hairline-light px-3 py-1 text-sm text-ink transition-colors hover:border-brand/50 hover:text-brand"
+              className="chip-glass px-3 py-1 text-sm text-ink hover:text-brand"
             >
               {item.name}
             </Link>
           ) : (
             <span
               key={item.slug}
-              className="border border-hairline-light px-3 py-1 text-sm text-ink-muted"
+              className="chip-glass px-3 py-1 text-sm text-ink-muted"
             >
               {item.name}
             </span>
@@ -110,7 +110,7 @@ export default async function CaseStudyDetailPage({ params }: PageProps) {
         />
 
         {project.coverMedia?.url ? (
-          <div className="mb-8 aspect-[16/9] overflow-hidden border border-hairline-light bg-ice">
+          <div className="media-frame mb-8 aspect-[16/9] bg-ice">
             <PublicImage
               url={project.coverMedia.url}
               altText={project.coverMedia.altText}

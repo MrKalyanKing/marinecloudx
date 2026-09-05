@@ -48,7 +48,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
 
         {industry.services.length > 0 ? (
           <section className="mt-4">
-            <h2 className="text-lg font-semibold text-slate-900">Relevant services</h2>
+            <h2 className="text-lg font-semibold text-ink">Relevant services</h2>
             <ul className="mt-2 flex flex-col gap-1">
               {industry.services.map((service) => (
                 <li key={service.slug}>
@@ -63,7 +63,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
 
         {industry.projects.length > 0 ? (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">Work in this sector</h2>
+            <h2 className="text-lg font-semibold text-ink">Work in this sector</h2>
             <ul className="mt-2 flex flex-col gap-1">
               {industry.projects.map((project) => (
                 <li key={project.slug}>
@@ -77,7 +77,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
         ) : null}
 
         {industry.services.length === 0 && industry.projects.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">
+          <p className="mt-4 text-sm text-ink-muted">
             No published services or projects are linked to this industry yet.
           </p>
         ) : null}

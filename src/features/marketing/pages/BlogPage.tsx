@@ -49,10 +49,10 @@ function FilterPill({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cx(
-        "tech-label inline-flex border px-3 py-1.5 transition-colors",
+        "tech-label inline-flex rounded-full px-3 py-1.5 transition-colors",
         active
-          ? "border-brand bg-brand/5 text-brand"
-          : "border-hairline-light text-ink-muted hover:border-brand/50 hover:text-brand",
+          ? "border border-brand bg-brand/10 text-brand"
+          : "chip-glass text-ink-muted hover:text-brand",
       )}
     >
       {children}
@@ -120,7 +120,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
               type="search"
               defaultValue={search ?? ""}
               placeholder="Title or summary"
-              className="mt-2 w-full border border-hairline-light bg-paper px-3 py-2 text-sm text-ink focus:border-brand focus:outline-2 focus:outline-offset-2 focus:outline-brand"
+              className="field-glass mt-2 px-3 py-2 text-sm text-ink"
             />
           </div>
 
@@ -130,7 +130,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
           <button
             type="submit"
-            className="border border-hairline-light px-4 py-2 text-sm text-ink transition-colors hover:border-brand hover:text-brand focus:outline-2 focus:outline-offset-2 focus:outline-brand"
+            className="chip-glass px-4 py-2.5 text-sm text-ink hover:text-brand"
           >
             Search
           </button>

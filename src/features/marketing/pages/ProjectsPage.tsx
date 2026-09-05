@@ -63,10 +63,10 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                   href="/projects"
                   aria-current={category ? undefined : "page"}
                   className={cx(
-                    "tech-label inline-flex border px-3 py-1.5 transition-colors",
+                    "tech-label inline-flex rounded-full px-3 py-1.5 transition-colors",
                     category
-                      ? "border-hairline-light text-ink-muted hover:border-brand/50 hover:text-brand"
-                      : "border-brand bg-brand/5 text-brand",
+                      ? "chip-glass text-ink-muted hover:text-brand"
+                      : "border border-brand bg-brand/10 text-brand",
                   )}
                 >
                   All
@@ -78,10 +78,10 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                     href={`/projects?category=${encodeURIComponent(entry.slug)}`}
                     aria-current={entry.slug === category ? "page" : undefined}
                     className={cx(
-                      "tech-label inline-flex border px-3 py-1.5 transition-colors",
+                      "tech-label inline-flex rounded-full px-3 py-1.5 transition-colors",
                       entry.slug === category
-                        ? "border-brand bg-brand/5 text-brand"
-                        : "border-hairline-light text-ink-muted hover:border-brand/50 hover:text-brand",
+                        ? "border border-brand bg-brand/10 text-brand"
+                        : "chip-glass text-ink-muted hover:text-brand",
                     )}
                   >
                     {entry.name} ({entry._count.projects})

@@ -113,7 +113,7 @@ export function ContactForm({ services }: { services: { id: string; name: string
       <div
         role="status"
         aria-live="polite"
-        className="max-w-xl border border-brand/30 bg-aqua p-8"
+        className="glass-strong max-w-xl p-8"
       >
         <p className="tech-label text-brand">Received</p>
         <p className="mt-4 text-h2 font-semibold text-ink">We&rsquo;ve got it.</p>
@@ -125,8 +125,7 @@ export function ContactForm({ services }: { services: { id: string; name: string
     );
   }
 
-  const field =
-    "w-full border border-hairline-light bg-paper px-4 py-3 text-ink placeholder:text-ink-muted/60 focus:border-brand focus:outline-2 focus:outline-brand";
+  const field = "field-glass px-4 py-3 text-ink placeholder:text-ink-muted/60";
 
   const label = "block text-sm font-medium text-ink";
 
@@ -135,7 +134,7 @@ export function ContactForm({ services }: { services: { id: string; name: string
       {formError ? (
         <p
           role="alert"
-          className="mb-6 border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800"
+          className="mb-6 rounded-2xl border border-red-300/60 bg-red-50/80 px-4 py-3 text-sm text-red-800 backdrop-blur-sm"
         >
           {formError}
         </p>

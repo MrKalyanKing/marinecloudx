@@ -32,10 +32,8 @@ export default async function TestimonialsPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {testimonials.map((testimonial) => (
-                <blockquote
-                  key={testimonial.id}
-                  className="rounded-lg border border-hairline-light p-4"
-                >
+                <blockquote key={testimonial.id} className="quote-card p-6">
+
                   <p className="text-ink-muted">{testimonial.content}</p>
                   <footer className="mt-3 text-sm text-ink-muted">
                     <span className="font-medium text-ink">{testimonial.authorName}</span>

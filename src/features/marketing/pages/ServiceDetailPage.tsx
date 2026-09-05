@@ -56,20 +56,20 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         <Breadcrumbs trail={[{ label: "Services", href: "/services" }, { label: service.name }]} />
 
         {service.fullDescription ? (
-          <div className="max-w-3xl whitespace-pre-wrap text-slate-700">
+          <div className="max-w-3xl whitespace-pre-wrap text-ink-muted">
             {service.fullDescription}
           </div>
         ) : null}
 
         {service.features.length > 0 ? (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">What&rsquo;s included</h2>
+            <h2 className="text-lg font-semibold text-ink">What&rsquo;s included</h2>
             <ul className="mt-3 grid gap-3 sm:grid-cols-2">
               {service.features.map((feature) => (
-                <li key={feature.id} className="rounded-lg border border-slate-200 p-3">
-                  <p className="text-sm font-medium text-slate-900">{feature.name}</p>
+                <li key={feature.id} className="glass-light rounded-2xl p-4">
+                  <p className="text-sm font-medium text-ink">{feature.name}</p>
                   {feature.description ? (
-                    <p className="mt-1 text-sm text-slate-600">{feature.description}</p>
+                    <p className="mt-1 text-sm text-ink-muted">{feature.description}</p>
                   ) : null}
                 </li>
               ))}
@@ -79,13 +79,13 @@ export default async function ServiceDetailPage({ params }: PageProps) {
 
         {service.industries.length > 0 ? (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">Industries</h2>
+            <h2 className="text-lg font-semibold text-ink">Industries</h2>
             <ul className="mt-2 flex flex-wrap gap-2">
               {service.industries.map((industry) => (
                 <li key={industry.slug}>
                   <Link
                     href={`/industries/${industry.slug}`}
-                    className="inline-flex rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-ink/30 hover:text-ink"
+                    className="chip-glass px-3 py-1 text-sm text-ink-muted hover:text-ink"
                   >
                     {industry.name}
                   </Link>
@@ -97,13 +97,10 @@ export default async function ServiceDetailPage({ params }: PageProps) {
 
         {service.technologies.length > 0 ? (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">Technologies</h2>
+            <h2 className="text-lg font-semibold text-ink">Technologies</h2>
             <ul className="mt-2 flex flex-wrap gap-2">
               {service.technologies.map((technology) => (
-                <li
-                  key={technology.slug}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700"
-                >
+                <li key={technology.slug} className="chip-glass px-3 py-1 text-sm text-ink-muted">
                   {technology.name}
                 </li>
               ))}
@@ -113,7 +110,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
 
         {service.projects.length > 0 ? (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">Related work</h2>
+            <h2 className="text-lg font-semibold text-ink">Related work</h2>
             <ul className="mt-2 flex flex-col gap-1">
               {service.projects.map((project) => (
                 <li key={project.slug}>

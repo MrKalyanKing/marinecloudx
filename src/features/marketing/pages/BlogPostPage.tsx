@@ -151,7 +151,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {post.coverMedia?.url ? (
           <figure className="mt-6">
-            <div className="aspect-16/9 overflow-hidden border border-hairline-light bg-ice">
+            <div className="media-frame aspect-16/9 bg-ice">
               <PublicImage
                 url={post.coverMedia.url}
                 /* Empty alt when the CMS has none: a decorative image is better
@@ -174,7 +174,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <li key={tag.slug}>
                   <Link
                     href={`/blog?tag=${encodeURIComponent(tag.slug)}`}
-                    className="border border-hairline-light px-3 py-1 text-sm text-ink-muted transition-colors hover:border-brand/50 hover:text-brand"
+                    className="chip-glass px-3 py-1 text-sm text-ink-muted hover:text-brand"
                   >
                     #{tag.name}
                   </Link>
