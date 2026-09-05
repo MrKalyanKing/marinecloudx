@@ -271,9 +271,8 @@ export function PageIntro({
   eyebrow?: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-navy pt-32 pb-16 text-light sm:pt-40 sm:pb-20">
-      <div aria-hidden="true" className="aurora" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid-lines" />
+    <section className="relative overflow-hidden pt-32 pb-16 text-light sm:pt-40 sm:pb-20">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-navy/80" />
       <Container className="relative">
         {eyebrow ? <TechLabel tone="dark">{eyebrow}</TechLabel> : null}
         <h1 className="mt-4 text-h1 font-semibold text-balance">{title}</h1>
@@ -282,6 +281,27 @@ export function PageIntro({
         ) : null}
       </Container>
     </section>
+  );
+}
+
+/**
+ * Light content surface for inner pages.
+ *
+ * The public shell is dark (Glass UI). Listing and detail pages still use
+ * ink-on-paper components — without this wrapper, labels and empty states
+ * render dark-on-dark and look "gone". Homepage does not use PageBody.
+ */
+export function PageBody({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cx("relative flex-1 bg-paper text-ink", className)}>
+      {children}
+    </div>
   );
 }
 

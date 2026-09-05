@@ -1,145 +1,87 @@
 /**
- * Homepage hero.
+ * Homepage hero — fills the full viewport (no empty bands).
  *
- * A server component. Only the entrance timeline (`HeroMotion`) and the device
- * scene's pointer parallax (`HeroScene`) are client-side — the heading, copy and
- * links are plain server-rendered HTML, so the page is meaningful before any
- * JavaScript arrives.
- *
- * Copy is approved brand content from src/lib/config/brand.ts.
+ * Stretch layout: copy + Marine Core share the height under the nav.
  */
 
 import Link from "next/link";
 
 import { HeroMotion } from "@/features/marketing/components/hero-motion";
-import { HeroScene } from "@/features/marketing/components/hero-scene";
+import { MarineCore } from "@/features/marketing/components/marine-core";
 import { Arrow, Container } from "@/features/marketing/components/layout";
-import { hero as heroContent, heroFeatures, stats } from "@/lib/config/brand";
-
-const FEATURE_ICON: Record<string, React.ReactNode> = {
-  compass: (
-    <>
-      <circle cx="12" cy="12" r="9" />
-      <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" strokeLinejoin="round" />
-    </>
-  ),
-  code: (
-    <>
-      <path d="m9 8-4 4 4 4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="m15 8 4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  ),
-  shield: (
-    <>
-      <path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z" strokeLinejoin="round" />
-      <path d="m9 12 2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  ),
-};
+import { hero as heroContent } from "@/lib/config/brand";
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-navy pt-28 pb-16 text-light sm:pt-36 sm:pb-20">
-      <div aria-hidden="true" className="aurora" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid-lines" />
-      {/* Hairline seam into the section below. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent"
-      />
-
-      <Container className="relative">
-        <HeroMotion>
-          <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
-            <div>
-              <div data-reveal>
-                <span className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-light-muted">
-                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-bright" />
-                  {heroContent.eyebrow}
-                </span>
-              </div>
-
-              {/* Line-by-line reveal: each line is its own element so the
-                  timeline staggers them without splitting text at runtime. */}
-              <h1 className="mt-7 text-display font-semibold text-balance">
-                {heroContent.headingLines.map((line, index) => (
-                  <span key={line} data-reveal className="block">
-                    {index === heroContent.headingLines.length - 1 ? (
-                      <span className="text-aurora">{line}</span>
-                    ) : (
-                      line
-                    )}
-                  </span>
-                ))}
-              </h1>
-
-              <p data-reveal className="mt-8 max-w-xl text-lead text-light-muted">
-                {heroContent.supporting}
-              </p>
-
-              <div data-reveal className="mt-10 flex flex-wrap items-center gap-3">
-                <Link
-                  href="/contact"
-                  className="btn-gradient group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium"
-                >
-                  Start a project
-                  <Arrow />
-                </Link>
-                <Link
-                  href="/projects"
-                  className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-light ring-1 ring-inset ring-hairline-dark transition-colors hover:bg-white/5"
-                >
-                  Explore our work
-                  <Arrow />
-                </Link>
-              </div>
-
-              <ul data-reveal className="mt-12 grid gap-6 sm:grid-cols-3">
-                {heroFeatures.map((feature) => (
-                  <li key={feature.title}>
-                    <span className="glass inline-flex h-10 w-10 items-center justify-center rounded-xl text-brand-bright">
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.75"
+    <section className="relative isolate flex h-[100svh] max-h-[100svh] flex-col overflow-hidden px-5 pt-16 pb-4 sm:px-8 sm:pt-[4.25rem] sm:pb-5">
+      <Container className="relative flex min-h-0 w-full max-w-[1320px] flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col">
+          <HeroMotion>
+            <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,auto)_minmax(0,1fr)] items-stretch gap-3 lg:grid-cols-2 lg:grid-rows-1 lg:gap-10 xl:gap-12">
+              <div className="flex max-w-[640px] flex-col justify-center gap-7 py-2 lg:h-full lg:justify-between lg:gap-10 lg:py-8 xl:max-w-[680px] xl:py-12">
+                <div className="space-y-6 sm:space-y-7">
+                  <div data-reveal>
+                    <span className="glass inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-[13px] font-medium text-light-muted sm:text-sm">
+                      <span
                         aria-hidden="true"
-                      >
-                        {FEATURE_ICON[feature.icon]}
-                      </svg>
+                        className="h-1.5 w-1.5 rounded-full bg-brand-bright shadow-[0_0_8px_rgb(39_220_197_/_0.7)]"
+                      />
+                      {heroContent.eyebrow}
                     </span>
-                    <h2 className="mt-3 text-sm font-semibold text-light">{feature.title}</h2>
-                    <p className="mt-1 text-sm leading-relaxed text-light-muted">
-                      {feature.description}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                  </div>
 
-            <div data-reveal className="flex justify-center lg:justify-end">
-              <HeroScene />
-            </div>
-          </div>
+                  <h1 className="text-[clamp(2.5rem,5.6vw,4.5rem)] leading-[1.02] font-semibold tracking-[-0.035em] text-balance">
+                    {heroContent.headingLines.map((line, index) => (
+                      <span key={line} data-reveal className="block">
+                        {index === heroContent.headingLines.length - 1 ? (
+                          <span className="text-aurora">{line}</span>
+                        ) : (
+                          line
+                        )}
+                      </span>
+                    ))}
+                  </h1>
 
-          {/* Stats bar — honest, non-metric figures (see brand.ts). */}
-          <div
-            data-reveal
-            className="glass-strong mt-16 grid grid-cols-2 gap-8 rounded-3xl px-8 py-8 sm:mt-20 lg:grid-cols-[1.2fr_repeat(4,1fr)] lg:items-center lg:gap-6"
-          >
-            <p className="text-sm font-medium text-light-muted lg:max-w-[10rem]">
-              What the engagement actually looks like
-            </p>
-            {stats.map((stat) => (
-              <div key={stat.label}>
-                <div className="text-3xl font-semibold text-aurora">{stat.value}</div>
-                <div className="mt-1 text-xs leading-snug text-light-muted">{stat.label}</div>
+                  <p data-reveal className="max-w-[520px] text-[clamp(1.0625rem,1.35vw,1.25rem)] leading-relaxed text-light-muted">
+                    {heroContent.supporting}
+                  </p>
+                </div>
+
+                <div data-reveal className="flex flex-wrap gap-3.5">
+                  <Link
+                    href="/contact"
+                    className="btn-gradient group inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-medium"
+                  >
+                    Start a project
+                    <span aria-hidden="true" className="opacity-70">
+                      <Arrow />
+                    </span>
+                  </Link>
+                  <Link
+                    href="/projects"
+                    className="btn-glass group inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px]"
+                  >
+                    Explore our work
+                    <span aria-hidden="true" className="opacity-55">
+                      <Arrow />
+                    </span>
+                  </Link>
+                </div>
               </div>
-            ))}
-          </div>
-        </HeroMotion>
+
+              <div
+                data-reveal
+                className="relative flex min-h-[220px] items-center justify-center lg:min-h-0 lg:h-full"
+              >
+                <div className="aspect-square w-full max-w-[min(100%,70vw)] lg:absolute lg:inset-y-2 lg:left-1/2 lg:w-auto lg:max-w-none lg:-translate-x-1/2 lg:aspect-square">
+                  <div className="h-full w-full">
+                    <MarineCore />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </HeroMotion>
+        </div>
       </Container>
     </section>
   );

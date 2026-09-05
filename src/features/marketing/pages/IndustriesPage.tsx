@@ -4,6 +4,7 @@ import {
   CardGrid,
   Container,
   ContentCard,
+  PageBody,
   PageIntro,
   PublicEmptyState,
 } from "@/features/marketing/components/layout";
@@ -22,26 +23,28 @@ export default async function IndustriesPage() {
     <>
       <PageIntro title="Industries" />
 
-      <Container className="py-8">
-        {industries.length === 0 ? (
-          <PublicEmptyState
-            title="No active industries yet"
-            description="Industries appear here once they are made active in the admin CMS."
-          />
-        ) : (
-          <CardGrid>
-            {industries.map((industry) => (
-              <ContentCard
-                headingLevel={2}
-                key={industry.slug}
-                title={industry.name}
-                href={`/industries/${industry.slug}`}
-                description={industry.description}
-              />
-            ))}
-          </CardGrid>
-        )}
-      </Container>
+      <PageBody>
+        <Container className="py-8">
+          {industries.length === 0 ? (
+            <PublicEmptyState
+              title="No active industries yet"
+              description="Industries appear here once they are made active in the admin CMS."
+            />
+          ) : (
+            <CardGrid>
+              {industries.map((industry) => (
+                <ContentCard
+                  headingLevel={2}
+                  key={industry.slug}
+                  title={industry.name}
+                  href={`/industries/${industry.slug}`}
+                  description={industry.description}
+                />
+              ))}
+            </CardGrid>
+          )}
+        </Container>
+      </PageBody>
     </>
   );
 }

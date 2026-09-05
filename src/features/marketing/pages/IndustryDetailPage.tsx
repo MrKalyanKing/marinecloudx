@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Breadcrumbs, Container, PageIntro } from "@/features/marketing/components/layout";
+import { Breadcrumbs, Container, PageBody, PageIntro } from "@/features/marketing/components/layout";
 import { getActiveIndustryBySlug } from "@/features/content/services/content";
 
 interface PageProps {
@@ -42,6 +42,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
     <>
       <PageIntro title={industry.name} description={industry.description ?? undefined} />
 
+      <PageBody>
       <Container className="py-8">
         <Breadcrumbs trail={[{ label: "Industries", href: "/industries" }, { label: industry.name }]} />
 
@@ -81,6 +82,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
           </p>
         ) : null}
       </Container>
+      </PageBody>
     </>
   );
 }

@@ -4,6 +4,7 @@ import {
   CardGrid,
   Container,
   ContentCard,
+  PageBody,
   PageIntro,
   PublicEmptyState,
 } from "@/features/marketing/components/layout";
@@ -23,28 +24,30 @@ export default async function CaseStudiesPage() {
     <>
       <PageIntro title="Case studies" />
 
-      <Container className="py-8">
-        {caseStudies.length === 0 ? (
-          <PublicEmptyState
-            title="No published case studies yet"
-            description="A case study appears here once both it and its project are published."
-          />
-        ) : (
-          <CardGrid>
-            {caseStudies.map((entry) => (
-              <ContentCard
-                headingLevel={2}
-                key={entry.project.slug}
-                title={entry.project.title}
-                href={`/case-studies/${entry.project.slug}`}
-                description={entry.project.shortDescription}
-                image={entry.project.coverMedia}
-                meta={entry.publishedAt ? formatDate(entry.publishedAt) : undefined}
-              />
-            ))}
-          </CardGrid>
-        )}
-      </Container>
+      <PageBody>
+        <Container className="py-8">
+          {caseStudies.length === 0 ? (
+            <PublicEmptyState
+              title="No published case studies yet"
+              description="A case study appears here once both it and its project are published."
+            />
+          ) : (
+            <CardGrid>
+              {caseStudies.map((entry) => (
+                <ContentCard
+                  headingLevel={2}
+                  key={entry.project.slug}
+                  title={entry.project.title}
+                  href={`/case-studies/${entry.project.slug}`}
+                  description={entry.project.shortDescription}
+                  image={entry.project.coverMedia}
+                  meta={entry.publishedAt ? formatDate(entry.publishedAt) : undefined}
+                />
+              ))}
+            </CardGrid>
+          )}
+        </Container>
+      </PageBody>
     </>
   );
 }

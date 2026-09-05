@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ActionLink, Breadcrumbs, Container, PageIntro } from "@/features/marketing/components/layout";
+import { ActionLink, Breadcrumbs, Container, PageBody, PageIntro } from "@/features/marketing/components/layout";
 import { ProjectGallery, PublicImage } from "@/features/marketing/components/project-gallery";
 import { finalCta } from "@/lib/config/brand";
 import { PublicationStatus } from "@/contracts";
@@ -44,6 +44,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     <>
       <PageIntro title={project.title} description={project.shortDescription ?? undefined} />
 
+      <PageBody>
       <Container className="py-8">
         <Breadcrumbs trail={[{ label: "Projects", href: "/projects" }, { label: project.title }]} />
 
@@ -185,6 +186,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </div>
         </section>
       </Container>
+      </PageBody>
     </>
   );
 }

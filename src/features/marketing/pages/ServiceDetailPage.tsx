@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Breadcrumbs, Container, PageIntro } from "@/features/marketing/components/layout";
+import { Breadcrumbs, Container, PageBody, PageIntro } from "@/features/marketing/components/layout";
 import { ServiceJsonLd } from "@/features/marketing/components/structured-data";
 import { getPublishedServiceBySlug } from "@/features/content/services/content";
 
@@ -51,6 +51,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
       />
       <PageIntro title={service.name} description={service.shortDescription ?? undefined} />
 
+      <PageBody>
       <Container className="py-8">
         <Breadcrumbs trail={[{ label: "Services", href: "/services" }, { label: service.name }]} />
 
@@ -125,6 +126,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           </section>
         ) : null}
       </Container>
+      </PageBody>
     </>
   );
 }

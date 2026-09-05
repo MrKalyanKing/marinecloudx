@@ -16,23 +16,24 @@ import { SiteHeader } from "@/features/marketing/components/site-header";
 export const dynamic = "force-dynamic";
 
 /**
- * Public site shell.
+ * Public site shell — Glass UI dark environment.
  *
- * A route group, so `/admin` keeps its own chrome and never inherits the public
- * header or footer.
- *
- * The background and text colours are set explicitly rather than inherited: the
- * scaffold stylesheet flips with `prefers-color-scheme`, and a half-dark public
- * site would be an accident rather than a design decision. A real dark mode
- * belongs to the UI step.
+ * Fixed ambient layers sit behind all public pages so the homepage and inner
+ * routes share one marine backdrop. Header overlays content; pages own top
+ * spacing.
  */
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-paper text-ink">
-      {/* The header is fixed and overlays the hero, so pages own their own top
-          spacing rather than the layout adding a gap the hero does not want. */}
+    <div className="relative isolate flex min-h-screen flex-col bg-navy text-light">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+        <div className="ambient-wash" />
+        <div className="ambient-glow" />
+        <div className="absolute inset-0 grid-lines" />
+        <div className="ambient-noise" />
+      </div>
+
       <SiteHeader />
-      <main className="flex-1">{children}</main>
+      <main className="relative z-[1] flex-1">{children}</main>
       <SiteFooter />
     </div>
   );

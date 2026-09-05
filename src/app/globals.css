@@ -1,29 +1,24 @@
 @import "tailwindcss";
 
 /*
- * MarineCloudeX design tokens — "Aurora" palette.
+ * MarineCloudeX design tokens — Glass UI / Marine Core.
  *
- * A deliberately small palette built from four dark surfaces, three teals, three
- * light surfaces and four text colours. Everything on the site is built from
- * these — adding a fourth green or a second accent is how a design language
- * starts to drift, so new colours should be justified rather than assumed.
- *
- * Declared in Tailwind v4's `@theme`, so each token also generates its
- * utilities (`bg-navy`, `text-brand-bright`, `border-hairline`, …).
+ * Deep marine dark surfaces, teal accent, glass refraction. Token names are
+ * stable so existing utilities (`bg-navy`, `text-brand`, …) keep working.
  */
 @theme {
-  /* Dark environment — deep teal-green, not blue */
-  --color-midnight: #04120f;
-  --color-navy: #071b16;
-  --color-surface-dark: #0c2620;
-  --color-surface-dark-2: #123a30;
+  /* Dark environment — deep teal-green */
+  --color-midnight: #051311;
+  --color-navy: #061815;
+  --color-surface-dark: #0a211d;
+  --color-surface-dark-2: #0d2a25;
 
-  /* Brand — aurora teal / emerald / mint */
-  --color-brand: #14b8a6;
-  --color-brand-bright: #2ee6c5;
-  --color-brand-soft: #8ff3df;
+  /* Brand — marine teal */
+  --color-brand: #1fc4b0;
+  --color-brand-bright: #27dcc5;
+  --color-brand-soft: #9fe9dc;
 
-  /* Light environment — mint-tinted, never a flat grey */
+  /* Light environment — mint-tinted (inner pages that still use light bands) */
   --color-ice: #eefaf6;
   --color-aqua: #e0f5ee;
   --color-paper: #ffffff;
@@ -31,45 +26,43 @@
   /* Text */
   --color-ink: #07231d;
   --color-ink-muted: #52736b;
-  --color-light: #f1fbf8;
-  --color-light-muted: #a2c6bd;
+  --color-light: #f3f7f5;
+  --color-light-muted: #9fb6b0;
 
-  /* Hairlines. Separate tokens because border colour carries a lot of the
-     "technical" feel and needs to differ per environment. */
+  /* Hairlines */
   --color-hairline-dark: rgb(255 255 255 / 0.1);
   --color-hairline-light: rgb(7 35 29 / 0.1);
 
-  /* Aurora accent stops — reused by the ambient wash and gradient buttons. */
-  --color-aurora-1: #21e0b5;
-  --color-aurora-2: #17b8c8;
-  --color-aurora-3: #4f8bff;
-  --color-aurora-4: #7b6cff;
+  /* Aurora / refraction stops */
+  --color-aurora-1: #27dcc5;
+  --color-aurora-2: #42a5ff;
+  --color-aurora-3: #42a5ff;
+  --color-aurora-4: #7c6cff;
 
-  /* Fluid type scale. Headings stay tight; body stays readable. */
-  --text-display: clamp(2.75rem, 8.5vw, 6rem);
-  --text-display--line-height: 0.94;
-  --text-display--letter-spacing: -0.035em;
+  /* Fluid type scale — compact, engineered for one-screen heroes */
+  --text-display: clamp(2rem, 4.8vw, 3.75rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
 
-  --text-h1: clamp(2.25rem, 5.5vw, 4rem);
-  --text-h1--line-height: 1;
-  --text-h1--letter-spacing: -0.03em;
+  --text-h1: clamp(1.875rem, 4vw, 3rem);
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.028em;
 
-  --text-h2: clamp(1.875rem, 3.6vw, 3rem);
-  --text-h2--line-height: 1.05;
+  --text-h2: clamp(1.5rem, 3vw, 2.5rem);
+  --text-h2--line-height: 1.12;
   --text-h2--letter-spacing: -0.025em;
 
-  --text-h3: clamp(1.25rem, 2vw, 1.625rem);
-  --text-h3--line-height: 1.2;
+  --text-h3: clamp(1.125rem, 1.7vw, 1.375rem);
+  --text-h3--line-height: 1.25;
   --text-h3--letter-spacing: -0.015em;
 
-  --text-lead: clamp(1.0625rem, 1.4vw, 1.25rem);
+  --text-lead: clamp(0.9375rem, 1.15vw, 1.0625rem);
   --text-lead--line-height: 1.6;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-  /* Motion */
-  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -80,23 +73,22 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-navy);
+  color: var(--color-light);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Visible focus everywhere, in a colour that works on both environments. */
+::selection {
+  background: rgb(39 220 197 / 0.28);
+}
+
 :focus-visible {
   outline: 2px solid var(--color-brand-bright);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
-/*
- * Technical label: the small monospace caps used for section numbers and
- * category tags. Defined once so it stays consistent and is easy to retire.
- */
 .tech-label {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
@@ -105,16 +97,14 @@ body {
   font-weight: 500;
 }
 
-/*
- * Engineering grid. A near-invisible ruled background used behind dark
- * sections — it reads as precision rather than decoration, which is why the
- * alpha is this low.
- */
 .grid-lines {
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
-  background-size: 72px 72px;
+    linear-gradient(to right, rgb(255 255 255 / 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.5) 1px, transparent 1px);
+  background-size: 88px 88px;
+  opacity: 0.05;
+  -webkit-mask-image: radial-gradient(100% 70% at 50% 20%, #000 20%, transparent 85%);
+  mask-image: radial-gradient(100% 70% at 50% 20%, #000 20%, transparent 85%);
 }
 
 .grid-lines-light {
@@ -125,12 +115,59 @@ body {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Aurora ambience                                                             */
-/*                                                                            */
-/* A slow, blurred colour field used behind dark sections. Two conic-ish blobs */
-/* drift on a long loop; the blur is what makes it read as light rather than   */
-/* shapes. Decorative only — always aria-hidden by the element that mounts it.  */
+/* Ambient environment                                                         */
 /* -------------------------------------------------------------------------- */
+.ambient-wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 85% at 78% -10%, #0d2a25 0%, #071a17 45%, #051311 100%);
+}
+
+.ambient-glow {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    radial-gradient(38% 32% at 72% 22%, rgb(39 220 197 / 0.16), transparent 70%),
+    radial-gradient(34% 30% at 22% 74%, rgb(66 165 255 / 0.1), transparent 70%);
+  animation: mcx-drift 46s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ambient-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.5'/></svg>");
+}
+
+@keyframes mcx-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, 1.5%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+}
+
+@keyframes mcx-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
 .aurora {
   position: absolute;
   inset: -30% -10% -10%;
@@ -146,7 +183,7 @@ body {
   height: 60vw;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.5;
+  opacity: 0.45;
   mix-blend-mode: screen;
 }
 .aurora::before {
@@ -161,36 +198,66 @@ body {
   background: radial-gradient(circle at 60% 40%, var(--color-aurora-3), transparent 60%);
   animation: aurora-drift-b 26s var(--ease-out-soft) infinite alternate;
 }
-.aurora[data-variant="wide"]::before { background: radial-gradient(circle at 30% 30%, var(--color-aurora-2), transparent 60%); }
-.aurora[data-variant="wide"]::after { background: radial-gradient(circle at 60% 40%, var(--color-aurora-4), transparent 60%); }
+.aurora[data-variant="wide"]::before {
+  background: radial-gradient(circle at 30% 30%, var(--color-aurora-2), transparent 60%);
+}
+.aurora[data-variant="wide"]::after {
+  background: radial-gradient(circle at 60% 40%, var(--color-aurora-4), transparent 60%);
+}
 
 @keyframes aurora-drift-a {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(8vw, 6vh, 0) scale(1.15);
+  }
 }
 @keyframes aurora-drift-b {
-  from { transform: translate3d(0, 0, 0) scale(1.1); }
-  to { transform: translate3d(-6vw, 4vh, 0) scale(0.9); }
+  from {
+    transform: translate3d(0, 0, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(-6vw, 4vh, 0) scale(0.9);
+  }
 }
 
 /* -------------------------------------------------------------------------- */
 /* Glass surfaces                                                              */
 /* -------------------------------------------------------------------------- */
 .glass {
-  background: rgb(255 255 255 / 0.06);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid rgb(255 255 255 / 0.12);
-}
-.glass-strong {
-  background: rgb(255 255 255 / 0.1);
-  -webkit-backdrop-filter: blur(22px) saturate(1.6);
-  backdrop-filter: blur(22px) saturate(1.6);
-  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(255 255 255 / 0.055);
+  background-image: linear-gradient(
+    140deg,
+    rgb(66 165 255 / 0.1),
+    rgb(255 255 255 / 0) 38%,
+    rgb(124 108 255 / 0.09)
+  );
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgb(255 255 255 / 0.1);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    0 24px 60px -24px rgb(2 12 10 / 0.7);
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 -1px 0 rgb(255 255 255 / 0.04);
 }
+
+.glass-strong {
+  background: rgb(255 255 255 / 0.055);
+  background-image: linear-gradient(
+    140deg,
+    rgb(66 165 255 / 0.1),
+    rgb(255 255 255 / 0) 38%,
+    rgb(124 108 255 / 0.09)
+  );
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 -1px 0 rgb(255 255 255 / 0.04),
+    0 24px 60px -28px rgb(0 0 0 / 0.75);
+}
+
 .glass-light {
   background: rgb(255 255 255 / 0.72);
   -webkit-backdrop-filter: blur(16px) saturate(1.3);
@@ -199,13 +266,82 @@ body {
   box-shadow: 0 18px 44px -22px rgb(7 35 29 / 0.18);
 }
 
-/* Gradient CTA — the one loud element. */
+.glass-pill {
+  background: rgb(12 40 36 / 0.72);
+  background-image: linear-gradient(
+    140deg,
+    rgb(39 220 197 / 0.14),
+    rgb(255 255 255 / 0.06) 42%,
+    rgb(66 165 255 / 0.1)
+  );
+  -webkit-backdrop-filter: blur(28px) saturate(1.65);
+  backdrop-filter: blur(28px) saturate(1.65);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -1px 0 rgb(255 255 255 / 0.04),
+    0 0 0 1px rgb(39 220 197 / 0.12),
+    0 18px 48px -16px rgb(0 0 0 / 0.85),
+    0 0 40px -12px rgb(39 220 197 / 0.28);
+}
+
+.btn-solid {
+  background: var(--color-light);
+  color: #061815;
+  box-shadow: 0 10px 30px -12px rgb(243 247 245 / 0.35);
+  transition:
+    transform 0.5s var(--ease-out-soft),
+    box-shadow 0.5s ease;
+}
+.btn-solid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -14px rgb(243 247 245 / 0.45);
+}
+
+.btn-glass {
+  background: rgb(255 255 255 / 0.055);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16);
+  color: var(--color-light);
+  transition:
+    transform 0.5s var(--ease-out-soft),
+    border-color 0.4s ease;
+}
+.btn-glass:hover {
+  transform: translateY(-2px);
+  border-color: rgb(39 220 197 / 0.4);
+}
+
+.btn-teal {
+  background: rgb(39 220 197 / 0.1);
+  border: 1px solid rgb(39 220 197 / 0.35);
+  color: var(--color-light);
+  transition:
+    transform 0.5s var(--ease-out-soft),
+    background 0.4s ease;
+}
+.btn-teal:hover {
+  background: rgb(39 220 197 / 0.2);
+  transform: translateY(-1px);
+}
+
+/* Gradient CTA — kept for inner pages that still use it. */
 .btn-gradient {
-  background-image: linear-gradient(120deg, var(--color-aurora-1), var(--color-aurora-3) 55%, var(--color-aurora-4));
+  background-image: linear-gradient(
+    120deg,
+    var(--color-aurora-1),
+    var(--color-aurora-3) 55%,
+    var(--color-aurora-4)
+  );
   color: #04120f;
   box-shadow: 0 10px 30px -12px rgb(33 224 181 / 0.6);
   background-size: 160% 160%;
-  transition: background-position 0.5s var(--ease-out-soft), transform 0.18s var(--ease-out-soft), box-shadow 0.3s ease;
+  transition:
+    background-position 0.5s var(--ease-out-soft),
+    transform 0.18s var(--ease-out-soft),
+    box-shadow 0.3s ease;
 }
 .btn-gradient:hover {
   background-position: 100% 50%;
@@ -213,9 +349,13 @@ body {
   box-shadow: 0 16px 40px -14px rgb(79 139 255 / 0.55);
 }
 
-/* Text set in the aurora gradient — used for the accent line in headings. */
 .text-aurora {
-  background-image: linear-gradient(110deg, var(--color-aurora-1), var(--color-aurora-3) 55%, var(--color-aurora-4));
+  background-image: linear-gradient(
+    110deg,
+    var(--color-aurora-1),
+    var(--color-aurora-3) 55%,
+    var(--color-aurora-4)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -225,17 +365,14 @@ body {
 /* Motion utilities                                                            */
 /* -------------------------------------------------------------------------- */
 
-/* Hero entrance: elements start hidden and GSAP reveals them. Scoped to
-   [data-animate] so nothing else is ever invisible if JavaScript fails. */
 [data-animate="hero"] [data-reveal] {
   opacity: 0;
 }
 
-/* Scroll-in reveal for sections below the fold. The component adds `.armed`
-   on mount and `.in` when the block enters the viewport — so with no JS the
-   content is simply visible and never hidden (see scroll-reveal.tsx). */
 .reveal-up {
-  transition: opacity 0.7s var(--ease-out-soft), transform 0.7s var(--ease-out-soft);
+  transition:
+    opacity 0.7s var(--ease-out-soft),
+    transform 0.7s var(--ease-out-soft);
 }
 .reveal-up.armed {
   opacity: 0;
@@ -246,17 +383,25 @@ body {
   transform: none;
 }
 
-/* Idle float for the 3D scene layers. */
 @keyframes float-y {
-  from { transform: translateY(-6px); }
-  to { transform: translateY(10px); }
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(10px);
+  }
 }
 
-/*
- * Reduced motion is honoured globally, not per-component: transitions and
- * animations collapse, and hero elements are shown immediately rather than
- * waiting on a timeline that will never play.
- */
+@media (max-width: 860px) {
+  .glass,
+  .glass-strong,
+  .glass-pill,
+  .btn-glass {
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    backdrop-filter: blur(12px) saturate(1.2);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

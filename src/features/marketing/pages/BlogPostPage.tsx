@@ -8,6 +8,7 @@ import {
   CardGrid,
   Container,
   ContentCard,
+  PageBody,
   PageIntro,
 } from "@/features/marketing/components/layout";
 import { PublicImage } from "@/features/marketing/components/project-gallery";
@@ -128,6 +129,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
+      <PageBody>
       <Container className="py-8">
         <Breadcrumbs trail={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
 
@@ -220,6 +222,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </section>
       </Container>
+      </PageBody>
     </>
   );
 }

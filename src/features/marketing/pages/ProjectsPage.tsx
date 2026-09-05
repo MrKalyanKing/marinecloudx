@@ -5,6 +5,7 @@ import {
   CardGrid,
   Container,
   ContentCard,
+  PageBody,
   PageIntro,
   PublicEmptyState,
   PublicPagination,
@@ -46,6 +47,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
     <>
       <PageIntro title="Projects" />
 
+      <PageBody>
       <Container className="py-8">
         {/* Filtering is a plain set of links, so it works without JavaScript
             and every filtered view has its own shareable URL. */}
@@ -124,6 +126,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
           </>
         )}
       </Container>
+      </PageBody>
     </>
   );
 }

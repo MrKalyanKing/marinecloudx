@@ -79,7 +79,7 @@ export function HeroMotion({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div ref={scope} data-animate="hero">
+    <div ref={scope} data-animate="hero" className="flex min-h-0 flex-1 flex-col">
       {children}
     </div>
   );

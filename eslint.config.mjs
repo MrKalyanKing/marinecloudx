@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Synced copy of the shared contract — edit packages/contracts instead.
     "src/contracts/**",
+    // Design reference assets — not application source.
+    "Website redesign_ Glass UI, Marine Core/**",
   ]),
 ]);
 

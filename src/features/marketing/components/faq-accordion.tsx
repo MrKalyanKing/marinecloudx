@@ -24,9 +24,16 @@ interface FaqItem {
   answer: string;
 }
 
-export function FaqAccordion({ items }: { items: FaqItem[] }) {
+export function FaqAccordion({
+  items,
+  tone = "paper",
+}: {
+  items: FaqItem[];
+  tone?: "paper" | "dark";
+}) {
   const [open, setOpen] = useState<Set<string>>(new Set());
   const baseId = useId();
+  const dark = tone === "dark";
 
   function toggle(id: string) {
     setOpen((current) => {
@@ -43,7 +50,12 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
   }
 
   return (
-    <div className="divide-y divide-hairline-light border-y border-hairline-light">
+    <div
+      className={cx(
+        "divide-y border-y",
+        dark ? "divide-white/10 border-white/10" : "divide-hairline-light border-hairline-light",
+      )}
+    >
       {items.map((item, index) => {
         const isOpen = open.has(item.id);
         const buttonId = `${baseId}-button-${item.id}`;
@@ -60,23 +72,34 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 onClick={() => toggle(item.id)}
                 className="group flex w-full items-start gap-5 py-6 text-left"
               >
-                <span className="tech-label mt-1.5 shrink-0 text-brand">
+                <span
+                  className={cx(
+                    "tech-label mt-1.5 shrink-0",
+                    dark ? "text-brand-bright" : "text-brand",
+                  )}
+                >
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
-                <span className="flex-1 text-h3 font-medium text-ink transition-colors group-hover:text-brand">
+                <span
+                  className={cx(
+                    "flex-1 text-h3 font-medium transition-colors",
+                    dark
+                      ? "text-light group-hover:text-brand-bright"
+                      : "text-ink group-hover:text-brand",
+                  )}
+                >
                   {item.question}
                 </span>
 
                 <span
                   aria-hidden="true"
                   className={cx(
-                    "mt-1 shrink-0 text-ink-muted transition-transform duration-200",
+                    "mt-1 shrink-0 transition-transform duration-200",
+                    dark ? "text-light-muted" : "text-ink-muted",
                     isOpen && "rotate-45",
                   )}
                 >
-                  {/* Purely decorative: the button's own text names the
-                      question and aria-expanded conveys the state. */}
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
                     <path d="M9 3v12M3 9h12" stroke="currentColor" strokeWidth="1.5" />
                   </svg>
@@ -91,7 +114,14 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
               hidden={!isOpen}
               className="pb-7 pl-[3.25rem]"
             >
-              <p className="max-w-2xl whitespace-pre-wrap text-ink-muted">{item.answer}</p>
+              <p
+                className={cx(
+                  "max-w-2xl whitespace-pre-wrap",
+                  dark ? "text-light-muted" : "text-ink-muted",
+                )}
+              >
+                {item.answer}
+              </p>
             </div>
           </div>
         );

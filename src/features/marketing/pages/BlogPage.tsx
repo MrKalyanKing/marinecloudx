@@ -5,6 +5,7 @@ import {
   CardGrid,
   Container,
   ContentCard,
+  PageBody,
   PageIntro,
   PublicEmptyState,
   PublicPagination,
@@ -102,6 +103,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
     <>
       <PageIntro eyebrow="Insights" title="Blog" />
 
+      <PageBody>
       <Container className="py-8">
         <form method="get" className="mb-6 flex flex-wrap items-end gap-3">
           <div className="min-w-56 flex-1">
@@ -232,6 +234,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           </>
         )}
       </Container>
+      </PageBody>
     </>
   );
 }

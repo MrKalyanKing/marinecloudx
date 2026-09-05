@@ -24,9 +24,9 @@ export const brand = {
 
 export const hero = {
   eyebrow: "Problem first. Technology second.",
-  headingLines: ["Think different.", "Build better."],
+  headingLines: ["Complex problems.", "Intelligent systems."],
   supporting:
-    "We start with the problem, not the technology. Tell us what you are trying to build, improve or automate — we will work out what should actually be built.",
+    "We design and build intelligent software, cloud platforms and connected systems around real business problems.",
 } as const;
 
 /**
@@ -193,6 +193,233 @@ export const trustPillars = [
     description: "The relationship can continue after launch — maintenance, improvement, and what comes next.",
   },
 ] as const;
+
+/**
+ * Technology groups shown on the homepage — chosen for the problem, not the résumé.
+ * Static narrative; not a CMS model.
+ */
+export const techGroups = [
+  { key: "AI", items: ["OpenAI", "Anthropic", "LangChain", "Vector DBs"] },
+  { key: "Cloud", items: ["AWS", "Docker", "Kubernetes", "Terraform"] },
+  { key: "Backend", items: ["Node.js", "Python", "Go", "PostgreSQL"] },
+  { key: "Frontend", items: ["React", "Next.js", "TypeScript"] },
+  { key: "Mobile", items: ["React Native", "Flutter", "Swift"] },
+  { key: "Data", items: ["Kafka", "Redis", "TimescaleDB"] },
+  { key: "IoT", items: ["MQTT", "Edge runtimes", "Modbus"] },
+  { key: "Security", items: ["OAuth 2.0", "Zero-trust", "Audit logging"] },
+] as const;
+
+/**
+ * Interactive system diagram nodes on the homepage.
+ */
+export const systemNodes = [
+  {
+    name: "AI",
+    title: "Models that make decisions",
+    items: ["Models", "Agents", "Voice", "RAG", "Automation"],
+  },
+  {
+    name: "Cloud",
+    title: "Infrastructure that scales quietly",
+    items: ["AWS", "APIs", "Infrastructure", "Scaling"],
+  },
+  {
+    name: "Data",
+    title: "One source of truth",
+    items: ["Pipelines", "Warehousing", "Vector search", "Analytics"],
+  },
+  {
+    name: "Devices",
+    title: "The physical edge",
+    items: ["Devices", "Telemetry", "Edge compute", "Real-time data"],
+  },
+  {
+    name: "Apps",
+    title: "Where people meet the system",
+    items: ["Web", "Mobile", "ERP", "CRM"],
+  },
+  {
+    name: "Automation",
+    title: "Work that runs itself",
+    items: ["Workflows", "Integrations", "Event triggers", "Reporting"],
+  },
+] as const;
+
+/**
+ * Static homepage content from the Glass UI design reference.
+ * Homepage does not fetch CMS/DB data — it renders this content only.
+ */
+export const homeCapabilities = [
+  {
+    name: "AI & Intelligent Systems",
+    slug: "ai-intelligent-systems",
+    shortDescription: "Systems that reason over your data and act on it.",
+    technologies: ["AI Agents", "Voice AI", "RAG", "LLM Integration", "Automation"],
+  },
+  {
+    name: "Cloud & Software Platforms",
+    slug: "cloud-software-platforms",
+    shortDescription: "Infrastructure that holds up under real load.",
+    technologies: ["AWS", "APIs", "SaaS", "Backend", "DevOps"],
+  },
+  {
+    name: "Connected & IoT Systems",
+    slug: "connected-iot-systems",
+    shortDescription: "Hardware, telemetry and the cloud in one loop.",
+    technologies: ["IoT", "Real-time Systems", "Telemetry", "Monitoring", "Edge"],
+  },
+  {
+    name: "Digital Products",
+    slug: "digital-products",
+    shortDescription: "Interfaces people actually want to use.",
+    technologies: ["Web", "Mobile", "ERP", "CRM"],
+  },
+] as const;
+
+export const homeProjects = [
+  {
+    name: "AI Meeting Copilot",
+    line: "Real-time voice-based AI assistant with intelligent model responses.",
+    tags: ["AI", "Voice", "Real-time", "Cloud"],
+    slot: "Placeholder — product screenshot",
+    beats: [
+      {
+        k: "Capability",
+        v: "Live voice capture, transcription and intelligent response in one loop.",
+      },
+      {
+        k: "Stack",
+        v: "Streaming audio, multi-model reasoning, cloud backend.",
+      },
+    ],
+  },
+  {
+    name: "Multi-Model AI Platform",
+    line: "Switch between AI providers and models through a unified interface.",
+    tags: ["AI", "Platform", "APIs"],
+    slot: "Placeholder — platform screenshot",
+    beats: [
+      {
+        k: "Capability",
+        v: "One interface across providers, with model selection per task.",
+      },
+      {
+        k: "Stack",
+        v: "Provider abstraction layer, unified API, streaming responses.",
+      },
+    ],
+  },
+  {
+    name: "Highway Speed Monitoring",
+    line: "IoT-based vehicle monitoring and speed detection system.",
+    tags: ["IoT", "Telemetry", "Edge", "Real-time"],
+    slot: "Placeholder — monitoring dashboard",
+    beats: [
+      {
+        k: "Capability",
+        v: "Roadside devices detecting and reporting vehicle speed continuously.",
+      },
+      {
+        k: "Stack",
+        v: "Edge sensing, telemetry pipeline, real-time monitoring.",
+      },
+    ],
+  },
+  {
+    name: "Cloud Backend Platform",
+    line: "Scalable APIs, cloud deployment, monitoring, and production infrastructure.",
+    tags: ["Cloud", "DevOps", "APIs", "AWS"],
+    slot: "Placeholder — architecture diagram",
+    beats: [
+      {
+        k: "Capability",
+        v: "Production infrastructure with deployment and monitoring built in.",
+      },
+      {
+        k: "Stack",
+        v: "Scalable APIs, cloud deployment pipelines, observability.",
+      },
+    ],
+  },
+] as const;
+
+export const homeProcess = [
+  { title: "Understand", description: "The problem, the constraints and who lives with the result." },
+  { title: "Architect", description: "Decide the shape of the system before writing it." },
+  { title: "Build", description: "Small, reviewed increments with tests that mean something." },
+  { title: "Deploy", description: "Automated, observable, reversible." },
+  { title: "Improve", description: "Measure in production and act on what it tells you." },
+] as const;
+
+/** Static FAQs for the homepage — no CMS dependency. */
+export const homeFaqs = [
+  {
+    id: "faq-1",
+    question: "Do I need to know the technology before we start?",
+    answer:
+      "No. Tell us the problem you are trying to solve. We will recommend the technology that fits — and explain why in plain language.",
+  },
+  {
+    id: "faq-2",
+    question: "How does a project usually start?",
+    answer:
+      "We begin by understanding the current process, the people involved, and what success looks like. Only then do we shape the solution.",
+  },
+  {
+    id: "faq-3",
+    question: "Can you work with systems we already have?",
+    answer:
+      "Yes. Most work builds on what you already run — websites, CRMs, spreadsheets, or internal tools. We integrate and improve rather than replace everything by default.",
+  },
+  {
+    id: "faq-4",
+    question: "What happens after launch?",
+    answer:
+      "We can stay on for maintenance, improvements, and the next phase. The relationship does not have to end when the first version ships.",
+  },
+  {
+    id: "faq-5",
+    question: "How do you price the work?",
+    answer:
+      "Pricing follows the scope of the problem and the system that solves it. We clarify that before build starts, so you know what you are committing to.",
+  },
+] as const;
+
+export const homeEvidence = [
+  {
+    label: "Open source",
+    title: "Read the code",
+    description: "Public repositories reviewers can inspect directly.",
+  },
+  {
+    label: "Architecture",
+    title: "Decision records",
+    description: "System diagrams and the trade-offs behind them.",
+  },
+  {
+    label: "Certification",
+    title: "Verified credentials",
+    description: "Only certifications the team actually holds.",
+  },
+  {
+    label: "Outcomes",
+    title: "Measured results",
+    description: "Real numbers from delivered projects, when available.",
+  },
+] as const;
+
+export const homeInsights = [
+  { title: "How AI voice systems actually work", label: "AI / Voice" },
+  { title: "How RAG changes enterprise search", label: "AI / Data" },
+  { title: "Designing multi-model AI systems", label: "Architecture" },
+  { title: "How IoT data reaches the cloud", label: "IoT / Cloud" },
+  { title: "Building production-ready AI applications", label: "Engineering" },
+] as const;
+
+export const homePhilosophy = {
+  heading: "Technology is only useful when it solves something.",
+  body: "We start with the problem, understand the environment, and then choose the technology that actually makes sense.",
+} as const;
 
 export const finalCta = {
   heading: "Have a problem worth solving?",
