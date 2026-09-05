@@ -1,9 +1,7 @@
 "use client";
 
 /**
- * Public navigation — floating glass pill.
- *
- * Client component for scroll state, mobile menu, and focus management.
+ * Public navigation — same links and labels; light chrome on white canvas.
  */
 
 import Link from "next/link";
@@ -54,29 +52,29 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5 text-light"
+          className="flex shrink-0 items-center gap-2.5 text-ink"
           aria-label={`${siteConfig.name} ${siteConfig.descriptor} — home`}
         >
           <span
             aria-hidden="true"
-            className="block h-3 w-3 rounded-full shadow-[0_0_14px_rgb(39_220_197_/_0.7)]"
+            className="block h-3 w-3 rounded-full shadow-[0_0_12px_rgb(109_92_255_/_0.45)]"
             style={{
               background:
-                "radial-gradient(circle at 32% 28%, #ffffff, var(--color-brand-bright) 46%, #0c6d61 100%)",
+                "linear-gradient(135deg, #ff5ca8, #6d5cff 50%, #43a7ff)",
             }}
           />
           <span className="text-[15.5px] font-semibold tracking-[-0.01em]">MarineCloudX</span>
         </Link>
 
-        <div className="ml-auto hidden items-center justify-end gap-5 text-[14px] text-light/80 lg:flex xl:gap-7">
+        <div className="ml-auto hidden items-center justify-end gap-5 text-[14px] text-ink-muted lg:flex xl:gap-7">
           {publicNavigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
               className={cx(
-                "whitespace-nowrap transition-colors duration-200 hover:text-light",
-                isActive(item.href) && "text-light",
+                "whitespace-nowrap transition-colors duration-200 hover:text-ink",
+                isActive(item.href) && "text-ink",
               )}
             >
               {item.label}
@@ -85,8 +83,8 @@ export function SiteHeader() {
         </div>
 
         <Link
-          href="/contact"
-          className="btn-gradient ml-auto hidden items-center gap-2 rounded-full px-4.5 py-2.5 text-[13.5px] font-medium whitespace-nowrap sm:inline-flex lg:ml-0"
+          href="/start-a-project"
+          className="btn-solid ml-auto hidden items-center gap-2 rounded-full px-4.5 py-2.5 text-[13.5px] font-medium whitespace-nowrap sm:inline-flex lg:ml-0"
         >
           Start a project
           <span aria-hidden="true" className="opacity-60">
@@ -100,7 +98,7 @@ export function SiteHeader() {
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls="mobile-navigation"
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-light ring-1 ring-inset ring-hairline-dark lg:hidden"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink ring-1 ring-inset ring-hairline-light lg:hidden"
         >
           <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="none">
@@ -125,11 +123,11 @@ export function SiteHeader() {
         <div className="px-5 py-6">
           <ul className="flex flex-col">
             {publicNavigation.map((item, index) => (
-              <li key={item.href} className="border-b border-hairline-dark last:border-b-0">
+              <li key={item.href} className="border-b border-hairline-light last:border-b-0">
                 <Link
                   href={item.href}
                   aria-current={isActive(item.href) ? "page" : undefined}
-                  className="flex items-baseline gap-4 py-4 text-h3 font-medium text-light"
+                  className="flex items-baseline gap-4 py-4 text-h3 font-medium text-ink"
                   onClick={() => setOpen(false)}
                 >
                   <span className="tech-label text-brand-soft">
@@ -142,7 +140,7 @@ export function SiteHeader() {
           </ul>
 
           <Link
-            href="/contact"
+            href="/start-a-project"
             className="btn-solid mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium"
             onClick={() => setOpen(false)}
           >

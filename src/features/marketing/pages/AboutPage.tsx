@@ -10,6 +10,7 @@ import {
   SectionHeader,
   TechLabel,
 } from "@/features/marketing/components/layout";
+import { CtaGlobe } from "@/features/marketing/components/cta-globe";
 import { about, brand, coreValues, process, whyPoints } from "@/lib/config/brand";
 import { siteConfig } from "@/lib/config/site";
 import { getActiveIndustries, getPublishedServices } from "@/features/content/services/content";
@@ -198,6 +199,7 @@ export default async function AboutPage() {
       <Section tone="dark" size="tall" grid aurora>
         <Container>
           <div className="mx-auto max-w-2xl text-center">
+            <CtaGlobe />
             <h2 className="text-h1 font-semibold text-balance text-light">
               Have a problem worth solving?
             </h2>

@@ -52,7 +52,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
             <ul className="mt-2 flex flex-col gap-1">
               {industry.services.map((service) => (
                 <li key={service.slug}>
-                  <Link href={`/services/${service.slug}`} className="text-sm text-teal-700 hover:underline">
+                  <Link href={`/services/${service.slug}`} className="text-sm text-ink hover:text-ink hover:underline">
                     {service.name}
                   </Link>
                 </li>
@@ -67,7 +67,7 @@ export default async function IndustryDetailPage({ params }: PageProps) {
             <ul className="mt-2 flex flex-col gap-1">
               {industry.projects.map((project) => (
                 <li key={project.slug}>
-                  <Link href={`/projects/${project.slug}`} className="text-sm text-teal-700 hover:underline">
+                  <Link href={`/projects/${project.slug}`} className="text-sm text-ink hover:text-ink hover:underline">
                     {project.title}
                   </Link>
                 </li>

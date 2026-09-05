@@ -12,23 +12,23 @@ import { footerNavigation, siteConfig } from "@/lib/config/site";
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-[1] border-t border-hairline-dark">
+    <footer className="relative z-[1] border-t border-hairline-light">
       <Container className="max-w-[1320px] py-10 sm:py-12">
-        <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] tracking-[0.14em] text-light-muted/60 uppercase">
+        <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] tracking-[0.14em] text-ink-muted/70 uppercase">
           <span>MarineCloudX Technologies</span>
           <span>Engineering what comes next</span>
         </div>
 
-        <div className="mt-10 grid gap-8 border-t border-hairline-dark pt-8 sm:grid-cols-3">
+        <div className="mt-10 grid gap-8 border-t border-hairline-light pt-8 sm:grid-cols-3">
           {footerNavigation.map((group) => (
             <nav key={group.heading} aria-label={group.heading}>
-              <p className="tech-label text-brand-soft/80">{group.heading}</p>
+              <p className="tech-label text-brand">{group.heading}</p>
               <ul className="mt-4 flex flex-col gap-2.5">
                 {group.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-light-muted transition-colors hover:text-light"
+                      className="text-sm text-ink-muted transition-colors hover:text-ink"
                     >
                       {link.label}
                     </Link>
@@ -39,7 +39,7 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <p className="tech-label mt-10 text-light-muted/50">
+        <p className="tech-label mt-10 text-ink-muted/50">
           © {new Date().getFullYear()} {siteConfig.legalName}
         </p>
       </Container>

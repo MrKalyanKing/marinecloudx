@@ -24,6 +24,7 @@ export const brand = {
 
 export const hero = {
   eyebrow: "Problem first. Technology second.",
+  heading: "Complex problems. Intelligent systems.",
   headingLines: ["Complex problems.", "Intelligent systems."],
   supporting:
     "We design and build intelligent software, cloud platforms and connected systems around real business problems.",

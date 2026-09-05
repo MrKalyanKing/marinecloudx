@@ -85,7 +85,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 <li key={industry.slug}>
                   <Link
                     href={`/industries/${industry.slug}`}
-                    className="inline-flex rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-teal-300 hover:text-teal-700"
+                    className="inline-flex rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-ink/30 hover:text-ink"
                   >
                     {industry.name}
                   </Link>
@@ -117,7 +117,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
             <ul className="mt-2 flex flex-col gap-1">
               {service.projects.map((project) => (
                 <li key={project.slug}>
-                  <Link href={`/projects/${project.slug}`} className="text-sm text-teal-700 hover:underline">
+                  <Link href={`/projects/${project.slug}`} className="text-sm text-ink hover:text-ink hover:underline">
                     {project.title}
                   </Link>
                 </li>

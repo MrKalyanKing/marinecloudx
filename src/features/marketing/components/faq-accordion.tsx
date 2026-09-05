@@ -53,7 +53,7 @@ export function FaqAccordion({
     <div
       className={cx(
         "divide-y border-y",
-        dark ? "divide-white/10 border-white/10" : "divide-hairline-light border-hairline-light",
+        dark ? "divide-white/10 border-black/10" : "divide-hairline-light border-hairline-light",
       )}
     >
       {items.map((item, index) => {
@@ -85,7 +85,7 @@ export function FaqAccordion({
                   className={cx(
                     "flex-1 text-h3 font-medium transition-colors",
                     dark
-                      ? "text-light group-hover:text-brand-bright"
+                      ? "text-ink group-hover:text-brand-bright"
                       : "text-ink group-hover:text-brand",
                   )}
                 >

@@ -16,20 +16,16 @@ import { SiteHeader } from "@/features/marketing/components/site-header";
 export const dynamic = "force-dynamic";
 
 /**
- * Public site shell — Glass UI dark environment.
- *
- * Fixed ambient layers sit behind all public pages so the homepage and inner
- * routes share one marine backdrop. Header overlays content; pages own top
- * spacing.
+ * Public site shell — white canvas, black content, multi-color accents.
  */
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative isolate flex min-h-screen flex-col bg-navy text-light">
+    <div className="relative isolate flex min-h-screen flex-col bg-navy text-ink">
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
         <div className="ambient-wash" />
         <div className="ambient-glow" />
         <div className="absolute inset-0 grid-lines" />
-        <div className="ambient-noise" />
+        <div className="ambient-noise opacity-10" />
       </div>
 
       <SiteHeader />

@@ -82,7 +82,7 @@ export function CapabilitiesAccordion({
   }, [open]);
 
   return (
-    <div className="border-t border-white/9" role="list">
+    <div className="border-t border-black/9" role="list">
       {items.map((cap, i) => {
         const active = i === open;
         const chips = cap.technologies?.length ? [...cap.technologies] : [];
@@ -104,7 +104,7 @@ export function CapabilitiesAccordion({
               }
             }}
             className={cx(
-              "relative border-b border-white/9 py-[clamp(26px,3.4vw,44px)] outline-none transition-[background,opacity] duration-500",
+              "relative border-b border-black/9 py-[clamp(26px,3.4vw,44px)] outline-none transition-[background,opacity] duration-500",
               active ? "bg-white/[0.028]" : "opacity-[0.48] hover:opacity-75",
             )}
             style={{ transitionTimingFunction: EASE }}
@@ -164,7 +164,7 @@ export function CapabilitiesAccordion({
                     <span
                       key={chip}
                       data-chip
-                      className="inline-flex rounded-[4px] border border-white/12 bg-white/[0.06] px-3.5 py-1.5 font-mono text-[11.5px] tracking-[0.06em] text-light"
+                      className="inline-flex rounded-[4px] border border-black/12 bg-white/[0.06] px-3.5 py-1.5 font-mono text-[11.5px] tracking-[0.06em] text-light"
                     >
                       {chip}
                     </span>

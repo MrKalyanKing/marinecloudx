@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Start a project",
   description:
     "Tell MarineCloudeX what you are trying to build, improve, automate or solve. We understand the problem first.",
-  alternates: { canonical: "/contact" },
+  alternates: { canonical: "/start-a-project" },
 };
 
 export default async function ContactPage() {

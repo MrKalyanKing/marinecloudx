@@ -54,7 +54,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             // category name as inert text.
             <Link
               href={`/projects?category=${encodeURIComponent(project.category.slug)}`}
-              className="text-teal-700 hover:underline"
+              className="text-ink hover:text-ink hover:underline"
             >
               {project.category.name}
             </Link>
@@ -87,13 +87,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-teal-700 hover:underline"
+              className="text-sm text-ink hover:text-ink hover:underline"
             >
               Visit the live site
             </a>
           ) : null}
           {hasCaseStudy ? (
-            <Link href={`/case-studies/${project.slug}`} className="text-sm text-teal-700 hover:underline">
+            <Link href={`/case-studies/${project.slug}`} className="text-sm text-ink hover:text-ink hover:underline">
               Read the case study
             </Link>
           ) : null}
@@ -113,7 +113,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     <li key={service.slug}>
                       <Link
                         href={`/services/${service.slug}`}
-                        className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-teal-300"
+                        className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-ink/30"
                       >
                         {service.name}
                       </Link>
@@ -132,7 +132,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     <li key={industry.slug}>
                       <Link
                         href={`/industries/${industry.slug}`}
-                        className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-teal-300"
+                        className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:border-ink/30"
                       >
                         {industry.name}
                       </Link>

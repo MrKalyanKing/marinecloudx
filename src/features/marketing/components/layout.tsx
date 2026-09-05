@@ -215,7 +215,7 @@ function buttonClass(variant: ButtonVariant, tone: Tone): string {
     return cx(
       base,
       isDark(tone)
-        ? "text-light ring-1 ring-inset ring-hairline-dark hover:bg-white/5"
+        ? "text-light ring-1 ring-inset ring-hairline-dark hover:bg-black/5"
         : "text-ink ring-1 ring-inset ring-hairline-light hover:bg-ink/5",
     );
   }
@@ -260,7 +260,7 @@ export function ActionLink({
 /* Page furniture                                                              */
 /* -------------------------------------------------------------------------- */
 
-/** Dark masthead used by every inner page, so they share the hero's footing. */
+/** Page masthead — black type on white canvas. */
 export function PageIntro({
   title,
   description,
@@ -271,13 +271,14 @@ export function PageIntro({
   eyebrow?: string;
 }) {
   return (
-    <section className="relative overflow-hidden pt-32 pb-16 text-light sm:pt-40 sm:pb-20">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-navy/80" />
-      <Container className="relative">
-        {eyebrow ? <TechLabel tone="dark">{eyebrow}</TechLabel> : null}
-        <h1 className="mt-4 text-h1 font-semibold text-balance">{title}</h1>
+    <section className="relative overflow-hidden px-5 pt-32 pb-16 text-ink sm:px-8 sm:pt-40 sm:pb-20">
+      <Container className="relative max-w-[920px]">
+        {eyebrow ? <TechLabel tone="paper">{eyebrow}</TechLabel> : null}
+        <h1 className="mt-5 max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold tracking-[-0.035em] text-balance">
+          {title}
+        </h1>
         {description ? (
-          <p className="mt-5 max-w-2xl text-lead text-light-muted">{description}</p>
+          <p className="mt-5 max-w-[42ch] text-lead text-ink-muted">{description}</p>
         ) : null}
       </Container>
     </section>
@@ -285,11 +286,11 @@ export function PageIntro({
 }
 
 /**
- * Light content surface for inner pages.
+ * Light content surface for inner listing/detail pages.
  *
- * The public shell is dark (Glass UI). Listing and detail pages still use
- * ink-on-paper components — without this wrapper, labels and empty states
- * render dark-on-dark and look "gone". Homepage does not use PageBody.
+ * The public shell is the continuous dark studio. Listing and form pages still
+ * use ink-on-paper for long CMS content and forms — without this wrapper,
+ * labels and empty states render dark-on-dark.
  */
 export function PageBody({
   children,
@@ -400,11 +401,11 @@ export function ContentCard({
   return (
     <article
       className={cx(
-        "group relative flex flex-col overflow-hidden rounded-2xl p-6",
+        "group relative flex flex-col overflow-hidden rounded-[20px] p-6",
         "transition-[transform,box-shadow] duration-300 hover:-translate-y-1",
         isDark(tone)
-          ? "glass hover:shadow-[0_20px_50px_-24px_rgb(2_12_10/0.8)]"
-          : "glass-light hover:shadow-[0_24px_54px_-24px_rgb(7_35_29/0.28)]",
+          ? "mcx-card"
+          : "mcx-card",
       )}
     >
       {image?.url ? (

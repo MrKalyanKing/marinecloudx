@@ -45,7 +45,11 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <PageIntro title="Projects" />
+      <PageIntro
+        eyebrow="Selected work"
+        title="Systems in the field"
+        description="Published projects from the CMS — real work, not invented case studies."
+      />
 
       <PageBody>
       <Container className="py-8">

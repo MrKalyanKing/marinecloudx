@@ -101,7 +101,11 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <PageIntro eyebrow="Insights" title="Blog" />
+      <PageIntro
+        eyebrow="Insights"
+        title="Technical thinking"
+        description="Writing from the MarineCloudeX team — editorial, not a blog grid first."
+      />
 
       <PageBody>
       <Container className="py-8">

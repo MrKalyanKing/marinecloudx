@@ -76,10 +76,10 @@ export function MarineCore() {
         const shell = new THREE.Mesh(
           new THREE.IcosahedronGeometry(1.22, mobile ? 1 : 2),
           new THREE.MeshPhysicalMaterial({
-            color: 0xbfe6df,
+            color: 0xe8e4ff,
             roughness: 0.05,
             metalness: 0,
-            opacity: 0.14,
+            opacity: 0.16,
             ior: 1.52,
             clearcoat: 1,
             clearcoatRoughness: 0.1,
@@ -95,7 +95,7 @@ export function MarineCore() {
         const lattice = new THREE.Mesh(
           new THREE.IcosahedronGeometry(0.66, 1),
           new THREE.MeshBasicMaterial({
-            color: 0x27dcc5,
+            color: 0x6d5cff,
             wireframe: true,
             transparent: true,
             opacity: 0.85,
@@ -107,9 +107,9 @@ export function MarineCore() {
         const nucleus = new THREE.Mesh(
           new THREE.SphereGeometry(0.24, 32, 24),
           new THREE.MeshBasicMaterial({
-            color: 0xd7fff7,
+            color: 0xff5ca8,
             transparent: true,
-            opacity: 0.75,
+            opacity: 0.7,
             depthWrite: false,
           }),
         );
@@ -118,7 +118,7 @@ export function MarineCore() {
         const ring = new THREE.Mesh(
           new THREE.TorusGeometry(0.95, 0.006, 8, 160),
           new THREE.MeshBasicMaterial({
-            color: 0x8cc9ff,
+            color: 0x43a7ff,
             transparent: true,
             opacity: 0.8,
             depthWrite: false,
@@ -130,7 +130,7 @@ export function MarineCore() {
         const ring2 = new THREE.Mesh(
           new THREE.TorusGeometry(0.82, 0.005, 8, 140),
           new THREE.MeshBasicMaterial({
-            color: 0xb0a8ff,
+            color: 0xff8a4c,
             transparent: true,
             opacity: 0.6,
             depthWrite: false,
@@ -139,14 +139,14 @@ export function MarineCore() {
         ring2.rotation.set(-0.6, 1.1, 0.3);
         group.add(ring2);
 
-        scene.add(new THREE.AmbientLight(0xbfe6df, 0.7));
+        scene.add(new THREE.AmbientLight(0xffffff, 0.75));
         const key = new THREE.DirectionalLight(0xffffff, 2.1);
         key.position.set(3, 4.5, 3);
         scene.add(key);
-        const rim = new THREE.PointLight(0x42a5ff, 6, 12);
+        const rim = new THREE.PointLight(0x6d5cff, 5, 12);
         rim.position.set(-3.2, -1.2, 2);
         scene.add(rim);
-        const fill = new THREE.PointLight(0x27dcc5, 4, 12);
+        const fill = new THREE.PointLight(0xff5ca8, 4, 12);
         fill.position.set(2.4, -2, -2.4);
         scene.add(fill);
 
@@ -248,7 +248,7 @@ export function MarineCore() {
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-[14%] rounded-full border border-white/6 transition-opacity duration-[1.2s] ease-out"
+        className="pointer-events-none absolute inset-[14%] rounded-full border border-black/6 transition-opacity duration-[1.2s] ease-out"
         style={{
           opacity: state === "ready" ? 0.4 : 1,
           background:
@@ -265,7 +265,7 @@ export function MarineCore() {
       >
         <span
           aria-hidden="true"
-          className="h-1.5 w-1.5 rounded-full bg-brand-bright"
+          className="h-1.5 w-1.5 rounded-full bg-light"
           style={{ animation: "mcx-pulse 2.2s ease-in-out infinite" }}
         />
         {label}
@@ -282,9 +282,9 @@ function envTexture(THREE: typeof import("three")) {
   if (!g) return null;
 
   const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#0e3a34");
-  grad.addColorStop(0.42, "#0a201d");
-  grad.addColorStop(1, "#04100e");
+  grad.addColorStop(0, "#f0eeff");
+  grad.addColorStop(0.42, "#ffffff");
+  grad.addColorStop(1, "#ffe8f2");
   g.fillStyle = grad;
   g.fillRect(0, 0, 512, 256);
 
@@ -298,9 +298,9 @@ function envTexture(THREE: typeof import("three")) {
     g.fill();
   };
   soft(150, 60, 120, "rgba(255,255,255,.95)");
-  soft(360, 40, 90, "rgba(39,220,197,.7)");
-  soft(430, 170, 110, "rgba(66,165,255,.45)");
-  soft(60, 200, 100, "rgba(124,108,255,.32)");
+  soft(360, 40, 90, "rgba(109,92,255,.7)");
+  soft(430, 170, 110, "rgba(67,167,255,.5)");
+  soft(60, 200, 100, "rgba(255,92,168,.4)");
 
   const t = new THREE.CanvasTexture(c);
   t.mapping = THREE.EquirectangularReflectionMapping;
