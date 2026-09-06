@@ -1,5 +1,5 @@
 import React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { siteConfig } from "@/lib/config/site";
@@ -34,7 +34,24 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.legalName, url: siteConfig.url }],
+  creator: siteConfig.legalName,
+  publisher: siteConfig.legalName,
+  category: "technology",
+  keywords: [
+    "MarineCloudeX",
+    "software development",
+    "custom software",
+    "digital products",
+    "intelligent systems",
+    "AI systems",
+    "cloud platforms",
+    "IoT",
+    "web applications",
+    "system integration",
+  ],
   alternates: { canonical: "/" },
+  formatDetection: { email: false, address: false, telephone: false },
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
@@ -48,7 +65,24 @@ export const metadata: Metadata = {
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#061815",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

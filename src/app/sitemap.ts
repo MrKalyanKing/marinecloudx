@@ -17,17 +17,19 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { services, industries, projects, caseStudies, posts } = await getSitemapEntries();
 
+  const now = new Date();
+
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/services"), changeFrequency: "weekly", priority: 0.9 },
-    { url: absoluteUrl("/industries"), changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/projects"), changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluteUrl("/case-studies"), changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluteUrl("/testimonials"), changeFrequency: "monthly", priority: 0.5 },
-    { url: absoluteUrl("/faq"), changeFrequency: "monthly", priority: 0.5 },
-    { url: absoluteUrl("/blog"), changeFrequency: "daily", priority: 0.8 },
-    { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.6 },
+    { url: absoluteUrl("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/about"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/services"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: absoluteUrl("/industries"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/projects"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluteUrl("/case-studies"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluteUrl("/testimonials"), lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/faq"), lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/blog"), lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: absoluteUrl("/contact"), lastModified: now, changeFrequency: "yearly", priority: 0.6 },
   ];
 
   return [

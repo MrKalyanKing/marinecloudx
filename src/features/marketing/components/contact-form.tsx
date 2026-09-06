@@ -30,7 +30,14 @@ interface FieldErrors {
  * form, so a crafted request cannot claim the enquiry arrived through a paid
  * campaign or a referral partner.
  */
-export function ContactForm({ services }: { services: { id: string; name: string }[] }) {
+export function ContactForm({
+  services,
+  onDark = false,
+}: {
+  services: { id: string; name: string }[];
+  /** Render labels/helper text light, for a dark surface (e.g. the homepage). */
+  onDark?: boolean;
+}) {
   const [isPending, setIsPending] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -128,7 +135,8 @@ export function ContactForm({ services }: { services: { id: string; name: string
   const field =
     "w-full border border-hairline-light bg-paper px-4 py-3 text-ink placeholder:text-ink-muted/60 focus:border-brand focus:outline-2 focus:outline-brand";
 
-  const label = "block text-sm font-medium text-ink";
+  const label = `block text-sm font-medium ${onDark ? "text-light" : "text-ink"}`;
+  const helpText = onDark ? "text-light-muted" : "text-ink-muted";
 
   return (
     <form onSubmit={handleSubmit} noValidate className="max-w-2xl">
@@ -267,7 +275,7 @@ export function ContactForm({ services }: { services: { id: string; name: string
             aria-invalid={errors.requirement ? true : undefined}
             className={`mt-2 ${field}`}
           />
-          <p className="mt-2 text-sm text-ink-muted">
+          <p className={`mt-2 text-sm ${helpText}`}>
             You don&rsquo;t need to know the technology. Describe the situation and we&rsquo;ll work
             out what fits.
           </p>

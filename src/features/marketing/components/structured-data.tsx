@@ -57,6 +57,18 @@ const organization = {
   alternateName: siteConfig.name,
   url: siteConfig.url,
   description: siteConfig.description,
+  // A real, published asset (public/brand/logo.png). Google uses this for the
+  // knowledge panel; it is not an invented fact.
+  logo: {
+    "@type": "ImageObject",
+    "@id": absoluteUrl("/#logo"),
+    url: absoluteUrl("/brand/logo.png"),
+    contentUrl: absoluteUrl("/brand/logo.png"),
+    width: 1254,
+    height: 1254,
+    caption: siteConfig.legalName,
+  },
+  image: { "@id": absoluteUrl("/#logo") },
 } as const;
 
 /** Organization + WebSite. Belongs on the homepage only. */

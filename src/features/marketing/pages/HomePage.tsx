@@ -1,29 +1,48 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 
 import { CapabilitiesAccordion } from "@/features/marketing/components/capabilities-accordion";
+import { ContactForm } from "@/features/marketing/components/contact-form";
 import { FaqAccordion } from "@/features/marketing/components/faq-accordion";
 import { Hero } from "@/features/marketing/components/hero";
 import { ActionLink, Container } from "@/features/marketing/components/layout";
 import { ScrollReveal } from "@/features/marketing/components/scroll-reveal";
 import { OrganizationJsonLd } from "@/features/marketing/components/structured-data";
 import { SystemDiagram } from "@/features/marketing/components/system-diagram";
+import { getPublishedServices } from "@/features/content/services/content";
+import { siteConfig } from "@/lib/config/site";
 import {
   brand,
   finalCta,
+  hero,
   homeCapabilities,
   homeFaqs,
   homePhilosophy,
   homeProcess,
+  process,
   solutions,
   trustPillars,
   whyPoints,
 } from "@/lib/config/brand";
 
+// Only the fields that differ from the root layout. openGraph / twitter /
+// the file-convention OG image are inherited — redeclaring them here would
+// drop the shared image and the large summary card.
+export const metadata: Metadata = {
+  title: { absolute: `${siteConfig.name} — ${siteConfig.tagline}` },
+  description: hero.supporting,
+  alternates: { canonical: "/" },
+};
+
 /**
  * Homepage narrative order (problem-first):
- * Belief → Method → Problems → Capabilities → Architecture → Delivery → Trust → FAQ → CTA
+ * Belief → Method → Problems → Capabilities → Architecture → Delivery → Trust → FAQ → Contact
+ *
+ * The Contact form is embedded directly in this last section (rather than
+ * just linking to /contact) so a visitor can start a project without
+ * leaving the page — it sits immediately above the footer.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const services = await getPublishedServices();
   return (
     <>
       <OrganizationJsonLd />
@@ -269,42 +288,41 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* CTA */}
+      {/* Contact — embedded directly above the footer */}
       <section
         id="contact"
         className="relative px-5 py-[clamp(40px,8vh,100px)] pb-[clamp(90px,14vh,160px)] sm:px-8"
       >
-        <Container className="max-w-[900px]">
+        <Container className="max-w-[1320px]">
           <ScrollReveal>
-            <div className="flex flex-col items-center text-center">
-              <div className="relative mb-[clamp(30px,4vw,48px)] aspect-square w-[clamp(80px,12vw,120px)]">
-                <div
-                  className="absolute inset-0 rounded-full border border-white/10"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 34% 28%, rgb(255 255 255 / 0.20), rgb(255 255 255 / 0.03) 42%, rgb(6 24 21 / 0.5) 74%), radial-gradient(circle at 70% 74%, rgb(39 220 197 / 0.20), transparent 58%)",
-                    WebkitBackdropFilter: "blur(8px)",
-                    backdropFilter: "blur(8px)",
-                    boxShadow:
-                      "inset 0 1px 0 rgb(255 255 255 / 0.16), 0 0 60px -22px rgb(39 220 197 / 0.55)",
-                  }}
-                />
+            <div className="mb-[clamp(36px,5vw,56px)] max-w-[760px]">
+              <div className="tech-label text-brand-bright/85">09&nbsp;&nbsp;Contact</div>
+              <h2 className="mt-6 text-h2 font-normal text-balance">{finalCta.heading}</h2>
+              <p className="mt-5 text-lead text-light-muted">{finalCta.supporting}</p>
+            </div>
+
+            <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
+              <div className="glass-strong rounded-3xl p-6 sm:p-10">
+                <ContactForm onDark services={services.map((s) => ({ id: s.id, name: s.name }))} />
               </div>
-              <h2 className="text-h1 font-normal text-balance">
-                {finalCta.heading}
-              </h2>
-              <p className="mt-6 max-w-[480px] text-lead text-light-muted">
-                Tell us what you&apos;re trying to build, improve or automate.
-              </p>
-              <Link
-                href="/contact"
-                className="btn-solid mt-[clamp(30px,4vw,44px)] inline-flex items-center gap-2.5 rounded-full px-6 py-3.5 text-[15.5px] font-medium"
-              >
-                Start a project
-                <span aria-hidden="true" className="opacity-55">
-                  →
-                </span>
-              </Link>
+
+              <aside className="lg:pt-2">
+                <div className="tech-label text-brand-bright/85">What happens next</div>
+
+                <ol className="mt-6 border-t border-white/10">
+                  {process.slice(0, 3).map((stage, index) => (
+                    <li key={stage.title} className="border-b border-white/10 py-4">
+                      <span className="tech-label text-brand-bright">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className="mt-2 font-medium text-light">{stage.title}</p>
+                      <p className="mt-1 text-sm text-light-muted">{stage.description}</p>
+                    </li>
+                  ))}
+                </ol>
+
+                <p className="mt-8 text-sm text-light-muted">{finalCta.line}</p>
+              </aside>
             </div>
           </ScrollReveal>
         </Container>
