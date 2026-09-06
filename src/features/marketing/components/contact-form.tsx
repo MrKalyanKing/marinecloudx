@@ -118,7 +118,7 @@ export function ContactForm({ services }: { services: { id: string; name: string
         <p className="tech-label text-brand">Received</p>
         <p className="mt-4 text-h2 font-semibold text-ink">We&rsquo;ve got it.</p>
         <p className="mt-4 text-ink-muted">
-          Thanks for reaching out to MarineCloudeX. We&rsquo;ve received your requirement and will review
+          Thanks for reaching out to MarineCloudX. We&rsquo;ve received your requirement and will review
           it before getting back to you.
         </p>
       </div>

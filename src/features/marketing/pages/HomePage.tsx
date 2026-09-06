@@ -61,9 +61,13 @@ export default function HomePage() {
               </p>
             </div>
 
-            <ol data-reveal-stage className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+            {/* These six were plain text separated by hairline rules, which read
+                as an unstyled list next to the card grids above and below them.
+                They are the same card surface as the rest of the page now, so
+                the section has the same weight as its neighbours. */}
+            <ol data-reveal-stage className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {whyPoints.map((point, index) => (
-                <li key={point.title} className="border-t border-black/10 pt-5">
+                <li key={point.title} className="mcx-card flex flex-col p-6 sm:p-7">
                   <span className="tech-label text-brand">
                     /{String(index + 1).padStart(2, "0")}
                   </span>

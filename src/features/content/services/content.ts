@@ -43,6 +43,32 @@ export class ContentUnavailableError extends Error {
 }
 
 /**
+ * True while `next build` is prerendering, false when serving a real request.
+ *
+ * The distinction matters because the two situations want opposite behaviour
+ * from the same failure. At runtime an unreachable API must throw, so the page
+ * answers 500 instead of a misleading 404 — that is the whole point of
+ * `ContentUnavailableError`. At build time throwing would abort the deploy,
+ * which is a far worse outcome: a backend that blips for ten seconds should not
+ * be able to stop a release.
+ *
+ * So a build treats an unreachable API as "nothing published yet". The affected
+ * page prerenders empty and marked `noindex` by its own listing check, and the
+ * first revalidation after the API returns replaces it with the real thing.
+ */
+const IS_BUILD = process.env.NEXT_PHASE === "phase-production-build";
+
+/** What a build falls back to when the API cannot be reached. */
+function unavailableAtBuild<T>(path: string, cause: string): Envelope<T> {
+  console.warn(`[content] ${path} unavailable during build (${cause}); prerendering as empty`);
+  return {
+    success: false,
+    data: undefined as T,
+    error: { code: "NOT_FOUND", message: "unavailable during build" },
+  };
+}
+
+/**
  * Fetches one envelope.
  *
  * Returns the envelope for any answer the API actually produced, including a
@@ -58,16 +84,20 @@ async function api<T>(path: string): Promise<Envelope<T>> {
       next: { tags: [CONTENT_TAG], revalidate: REVALIDATE_SECONDS },
     });
   } catch (err) {
-    throw new ContentUnavailableError(path, err instanceof Error ? err.message : "network error");
+    const cause = err instanceof Error ? err.message : "network error";
+    if (IS_BUILD) return unavailableAtBuild<T>(path, cause);
+    throw new ContentUnavailableError(path, cause);
   }
 
   // 5xx is the API failing, not the API reporting that content is missing.
   if (res.status >= 500) {
+    if (IS_BUILD) return unavailableAtBuild<T>(path, `upstream ${res.status}`);
     throw new ContentUnavailableError(path, `upstream ${res.status}`);
   }
 
   const body = (await res.json().catch(() => null)) as Envelope<T> | null;
   if (!body || typeof body.success !== "boolean") {
+    if (IS_BUILD) return unavailableAtBuild<T>(path, `non-envelope response (${res.status})`);
     throw new ContentUnavailableError(path, `non-envelope response (${res.status})`);
   }
 

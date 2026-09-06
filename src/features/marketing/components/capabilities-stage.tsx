@@ -48,8 +48,15 @@ export function CapabilitiesStage({
                         type="button"
                         onClick={() => setActive(index)}
                         onMouseEnter={() => setActive(index)}
+                        /* `transition-all` used to be here. It animated every
+                           animatable property, including the ones that change
+                           layout, which is half of why hovering this list made
+                           the whole panel jump. Only colour, border, shadow and
+                           transform are transitioned now — none of them can
+                           move anything else on the page. */
                         className={cx(
-                          "group flex w-full items-start gap-4 rounded-xl border-y border-r px-3.5 py-3.5 text-left transition-all duration-300",
+                          "group flex w-full items-start gap-4 rounded-xl border-y border-r px-3.5 py-3.5 text-left",
+                          "transition-[background-color,border-color,box-shadow,color] duration-300 ease-out",
                           isActive
                             ? "border-y-black/[0.03] border-r-black/[0.03] shadow-[0_10px_24px_-16px_rgb(0_0_0_/_0.25)]"
                             : "border-transparent hover:border-black/8 hover:bg-black/[0.025]",
@@ -76,12 +83,21 @@ export function CapabilitiesStage({
                           >
                             {item.name}
                           </span>
+                          {/* Always rendered at full height.
+                              This used to animate max-height from 0 to 5rem on
+                              hover and on becoming active. Height is a layout
+                              property: growing this row pushed every row below
+                              it down and reflowed the entire panel, on every
+                              mouse move between items. That was the jerk.
+
+                              Reserving the space permanently means hovering
+                              changes only colour. Nothing moves, so there is
+                              nothing to reflow — and the descriptions are
+                              useful enough to be worth showing anyway. */}
                           <span
                             className={cx(
-                              "text-[13px] leading-snug text-ink-muted/75 transition-all duration-300",
-                              isActive
-                                ? "max-h-20 opacity-100"
-                                : "max-h-0 overflow-hidden opacity-0 group-hover:max-h-20 group-hover:opacity-100",
+                              "text-[13px] leading-snug transition-colors duration-300",
+                              isActive ? "text-ink-muted" : "text-ink-muted/70",
                             )}
                           >
                             {item.shortDescription}

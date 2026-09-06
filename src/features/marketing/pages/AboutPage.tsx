@@ -68,7 +68,7 @@ export default async function AboutPage() {
           <TechLabel tone="paper">Where we are going</TechLabel>
           <p className="mt-6 text-h2 font-semibold text-balance text-ink">{about.vision}</p>
           <p className="mt-6 text-ink-muted">
-            MarineCloudeX means smile — the experience a customer is left with matters as much as the
+            MarineCloudX means smile — the experience a customer is left with matters as much as the
             system we hand over.
           </p>
         </Container>

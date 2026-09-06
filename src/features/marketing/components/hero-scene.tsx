@@ -85,7 +85,7 @@ export function HeroScene() {
                 <span className="hs-dot" />
                 <span className="hs-dot" />
                 <span className="hs-dot" />
-                <span className="hs-ui-title">MarineCloudeX · Console</span>
+                <span className="hs-ui-title">MarineCloudX · Console</span>
               </div>
               <div className="hs-ui-body">
                 <div className="hs-metric">

@@ -1,46 +1,58 @@
 @import "tailwindcss";
 
 /*
- * MarineCloudeX design tokens — white canvas, black content, multi-color accents.
+ * MarineCloudX design system — liquid glass.
+ *
+ * The site is one material on one environment. A soft, saturated colour field
+ * drifts behind everything; every panel is a thickness of translucent glass
+ * that blurs and intensifies whatever sits behind it. Nothing is opaque white
+ * and nothing is flat black, because both of those break the illusion that the
+ * page has depth.
  *
  * Token names stay stable (`bg-navy`, `text-brand`, …) so existing utilities
- * keep working.
+ * keep working — `navy` is now a near-white canvas, which is odd to read but
+ * cheaper than renaming every class in the codebase.
  */
-:root {
-  --scroll-y: 0;
-}
-
 @theme {
-  /* Page canvas — white */
-  --color-midnight: #f5f5f5;
-  --color-navy: #ffffff;
-  --color-surface-dark: #f3f3f3;
-  --color-surface-dark-2: #ebebeb;
+  /* ------------------------------------------------------------------ */
+  /* Canvas                                                              */
+  /* Not pure white. A liquid-glass surface is only legible against       */
+  /* something with colour and depth behind it — on flat #fff the blur    */
+  /* has nothing to refract and every panel reads as milk. These are the  */
+  /* base tints the ambient colour field sits on.                         */
+  /* ------------------------------------------------------------------ */
+  --color-midnight: #eef0f8;
+  --color-navy: #f6f7fc;
+  --color-surface-dark: #eceef7;
+  --color-surface-dark-2: #e4e7f3;
 
-  /* Brand — multi-color accents */
-  --color-brand: #5b4dff;
+  /* Brand — a single violet spine with two supporting hues. Deeper and
+     less neon than the previous set so it reads premium rather than loud. */
+  --color-brand: #5b4ae8;
   --color-brand-bright: #6d5cff;
-  --color-brand-soft: #8b7cff;
+  --color-brand-soft: #9b8dff;
+  --color-brand-deep: #3b2fa8;
 
   /* Light bands / paper */
-  --color-ice: #fafafa;
-  --color-aqua: #f4f4f4;
-  --color-paper: #ffffff;
+  --color-ice: #f8f9fe;
+  --color-aqua: #f2f4fc;
+  --color-paper: #fbfcff;
 
-  /* Text — black on white (text-light utilities read as primary ink) */
-  --color-ink: #0a0a0a;
-  --color-ink-muted: #6b6b6b;
-  --color-light: #0a0a0a;
-  --color-light-muted: #6b6b6b;
-  --color-surface-studio: #f7f7f7;
-  --color-surface-panel: #f0f0f0;
+  /* Text — near-black with a violet cast, so type belongs to the palette
+     instead of sitting on top of it as pure #000. */
+  --color-ink: #12122a;
+  --color-ink-muted: #5c5c78;
+  --color-light: #12122a;
+  --color-light-muted: #5c5c78;
+  --color-surface-studio: #f6f7fd;
+  --color-surface-panel: #eef0fa;
 
   /* Hairlines */
-  --color-hairline-dark: rgb(0 0 0 / 0.1);
-  --color-hairline-light: rgb(0 0 0 / 0.1);
+  --color-hairline-dark: rgb(18 18 42 / 0.1);
+  --color-hairline-light: rgb(18 18 42 / 0.09);
 
   /* Multi-color aurora / ribbon — decorative use only (glows, dots, canvas).
-     These are tuned for luminance on a white canvas and are NOT legible as
+     These are tuned for luminance on a light canvas and are NOT legible as
      text: #ff5ca8 is 2.86:1 and #43a7ff is 2.54:1, both under the 3:1 floor
      for large text. Text uses the -ink variants below. */
   --color-aurora-1: #ff5ca8;
@@ -81,13 +93,69 @@
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ---------------------------------------------------------------------- */
+/* Liquid glass — the one place the material is defined                    */
+/*                                                                         */
+/* Every panel on the site is one of three thicknesses of the same         */
+/* material. Defining them as variables rather than per-component means a  */
+/* card, a nav pill and a drawer cannot drift apart, and the whole system  */
+/* retunes from here.                                                      */
+/*                                                                         */
+/* Three things make glass read as glass rather than as translucent white: */
+/*   1. saturation, not just blur — the colour behind must intensify;      */
+/*   2. a specular rim, brightest where light would land (top-left);       */
+/*   3. two shadows — a tight contact shadow and a wide ambient one.       */
+/* ---------------------------------------------------------------------- */
+:root {
+  --glass-blur-thin: 20px;
+  --glass-blur: 30px;
+  --glass-blur-thick: 44px;
+  --glass-saturate: 180%;
+
+  --glass-fill-thin: rgb(255 255 255 / 0.5);
+  --glass-fill: rgb(255 255 255 / 0.58);
+  --glass-fill-thick: rgb(255 255 255 / 0.68);
+
+  --glass-edge: rgb(255 255 255 / 0.7);
+
+  /* Shadow colour carries the canvas hue, so panels sit in the environment
+     instead of casting neutral grey onto a violet-tinted page. */
+  --glass-shadow-1: 0 1px 2px rgb(20 16 56 / 0.04);
+  --glass-shadow-2: 0 12px 28px -14px rgb(20 16 56 / 0.16);
+  --glass-shadow-3: 0 36px 72px -36px rgb(20 16 56 / 0.22);
+
+  --glass-specular:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.9), inset 0 -1px 0 0 rgb(255 255 255 / 0.25);
+
+  --radius-sm: 14px;
+  --radius: 22px;
+  --radius-lg: 30px;
+  --radius-xl: 38px;
+
+  /* One spring for everything that moves, so the whole site shares a feel. */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.22s;
+  --dur: 0.42s;
+  --dur-slow: 0.7s;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Three things on this page legitimately extend past the right edge: the
+     full-bleed hero ribbon (100vw inside a padded container), the off-canvas
+     mobile drawer parked at -100%, and the oversized ambient colour field.
+     None should be able to produce a horizontal scrollbar.
+
+     `clip` rather than `hidden` on purpose — `hidden` turns the root into a
+     scroll container, which silently breaks `position: sticky` on descendants
+     and scroll-anchoring. `clip` just clips. */
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  overflow-x: clip;
   font-family: var(--font-sans);
   background: var(--color-navy);
   color: var(--color-light);
@@ -187,12 +255,11 @@ main:focus-visible {
   background-size:
     480px 480px,
     620px 620px;
-  /* `transform` carries the scroll parallax (driven by ScrollAmbient) and
-     `translate` carries the continuous idle drift — two independent compositor
-     properties, so both animate without ever triggering a repaint. Earlier this
-     drifted via `background-position`, which repaints the whole masked layer on
-     every frame and was the main cause of scroll jank. */
-  transform: translate3d(0, calc(var(--scroll-y) * -0.06px), 0);
+  /* Drift only. The scroll-linked transform that used to live here read a
+     custom property written to :root on every scroll frame, which invalidated
+     style for the entire document each frame — see scroll-ambient.tsx. The
+     `translate` animation below is compositor-only and costs nothing per
+     frame. */
   animation: mcx-lines-drift 90s linear infinite;
   -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 88%);
   mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 88%);
@@ -221,20 +288,29 @@ main:focus-visible {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: #ffffff;
+  background:
+    radial-gradient(130% 90% at 50% -20%, #ffffff 0%, #fafbff 38%, #f2f4fd 72%, #eceffa 100%);
 }
 
+/* The colour field the glass refracts.
+   Previously this sat at 0.17-0.22 alpha on flat white, which is below the
+   threshold where a blurred panel picks up any colour at all — the reason
+   every surface read as plain milk. These are large, saturated and slow. */
 .ambient-glow {
   position: absolute;
-  inset: -20%;
+  inset: -25%;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 1;
   background:
-    radial-gradient(42% 36% at 72% 16%, rgb(109 92 255 / 0.22), transparent 72%),
-    radial-gradient(38% 32% at 20% 30%, rgb(255 92 168 / 0.18), transparent 72%),
-    radial-gradient(38% 32% at 24% 80%, rgb(255 92 168 / 0.17), transparent 72%),
-    radial-gradient(34% 30% at 80% 84%, rgb(67 167 255 / 0.19), transparent 72%),
-    radial-gradient(30% 26% at 50% 50%, rgb(150 90 255 / 0.12), transparent 74%);
+    radial-gradient(46% 38% at 76% 6%, rgb(124 92 255 / 0.38), transparent 68%),
+    radial-gradient(42% 36% at 10% 20%, rgb(255 92 168 / 0.3), transparent 68%),
+    radial-gradient(40% 34% at 24% 84%, rgb(80 190 255 / 0.28), transparent 68%),
+    radial-gradient(38% 32% at 90% 74%, rgb(255 148 92 / 0.2), transparent 70%),
+    radial-gradient(34% 30% at 52% 46%, rgb(150 90 255 / 0.16), transparent 74%);
+  /* No filter: blur() here on purpose. These are radial gradients, which are
+     already perfectly smooth; blurring them again changed nothing visually and
+     forced the browser to repaint a full-viewport layer on every frame of the
+     46-second drift. Removing it is invisible and free. */
   animation: mcx-drift 46s ease-in-out infinite;
   will-change: transform;
 }
@@ -243,8 +319,11 @@ main:focus-visible {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.22;
-  mix-blend-mode: overlay;
+  /* mix-blend-mode removed. A blend mode forces the layer beneath to be read
+     back and recomposited whenever anything above it moves, which on a fixed
+     full-viewport layer means during every scroll. Plain low opacity gives
+     essentially the same texture for none of that cost. */
+  opacity: 0.1;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.5'/></svg>");
 }
 
@@ -286,7 +365,6 @@ main:focus-visible {
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.45;
-  mix-blend-mode: screen;
 }
 .aurora::before {
   top: -20%;
@@ -327,95 +405,114 @@ main:focus-visible {
 /* -------------------------------------------------------------------------- */
 /* Glass surfaces — light theme                                                */
 /* -------------------------------------------------------------------------- */
-.glass {
-  background: rgb(255 255 255 / 0.78);
-  background-image: linear-gradient(
-    140deg,
-    rgb(109 92 255 / 0.06),
-    rgb(255 255 255 / 0) 42%,
-    rgb(255 92 168 / 0.05)
+/* The specular rim.
+   A 1px gradient border painted with the mask-composite trick, brightest at
+   the top-left where light lands and fading around the form. This is the
+   single detail that separates real glass from a translucent white box: a
+   flat border is the same brightness all the way round, which no physical
+   edge ever is. Applied via ::after so it never affects layout, and pinned
+   behind content with a negative z-index so it cannot swallow clicks. */
+.glass-rim {
+  position: relative;
+}
+.glass-rim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.95) 0%,
+    rgb(255 255 255 / 0.28) 32%,
+    rgb(255 255 255 / 0.08) 52%,
+    rgb(255 255 255 / 0.55) 100%
   );
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  backdrop-filter: blur(14px) saturate(1.2);
-  border: 1px solid rgb(0 0 0 / 0.08);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.85),
-    0 12px 32px -20px rgb(0 0 0 / 0.1);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glass {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-specular), var(--glass-shadow-1), var(--glass-shadow-2);
 }
 
 .glass-strong {
-  background: rgb(255 255 255 / 0.96);
-  background-image: linear-gradient(
-    140deg,
-    rgb(109 92 255 / 0.04),
-    rgb(255 255 255 / 0) 42%,
-    rgb(255 77 154 / 0.03)
-  );
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
-  border: 1px solid rgb(0 0 0 / 0.07);
-  border-radius: 20px;
+  background: var(--glass-fill-thick);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.95),
-    0 1px 2px rgb(0 0 0 / 0.03),
-    0 12px 28px -14px rgb(0 0 0 / 0.12),
-    0 28px 56px -28px rgb(0 0 0 / 0.14);
+    var(--glass-specular),
+    var(--glass-shadow-1),
+    var(--glass-shadow-2),
+    var(--glass-shadow-3);
 }
 
 .glass-light {
-  background: rgb(255 255 255 / 0.92);
-  -webkit-backdrop-filter: blur(16px) saturate(1.1);
-  backdrop-filter: blur(16px) saturate(1.1);
-  border: 1px solid rgb(0 0 0 / 0.08);
-  box-shadow: 0 18px 44px -22px rgb(0 0 0 / 0.12);
+  background: var(--glass-fill-thin);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thin)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur-thin)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-specular), var(--glass-shadow-2);
 }
 
-/* Mobile nav drawer — attached to the left edge, so only the trailing edge
-   gets glass treatment (blur, gradient tint, a shadow cast onto the page). */
+/* Mobile nav drawer — attached to the left edge, so the trailing edge carries
+   the rim and the shadow is cast sideways onto the page. */
 .glass-drawer {
-  background: rgb(255 255 255 / 0.3);
-  background-image: linear-gradient(
-    165deg,
-    rgb(109 92 255 / 0.16),
-    rgb(255 255 255 / 0.02) 45%,
-    rgb(255 92 168 / 0.12)
-  );
-  -webkit-backdrop-filter: blur(36px) saturate(1.7);
-  backdrop-filter: blur(36px) saturate(1.7);
-  border-right: 1px solid rgb(255 255 255 / 0.4);
-  border-bottom: 1px solid rgb(255 255 255 / 0.3);
+  background: rgb(255 255 255 / 0.62);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(200%);
+  backdrop-filter: blur(var(--glass-blur-thick)) saturate(200%);
+  border-right: 1px solid var(--glass-edge);
+  border-bottom: 1px solid var(--glass-edge);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.45),
-    18px 18px 56px -22px rgb(0 0 0 / 0.35);
+    inset 0 1px 0 rgb(255 255 255 / 0.8),
+    24px 24px 72px -28px rgb(20 16 56 / 0.4);
 }
 
+/* The floating nav bar. Thinner than a card so the page reads through it as
+   you scroll, which is the whole point of a floating bar. */
 .glass-pill {
-  background: rgb(255 255 255 / 0.88);
-  background-image: linear-gradient(
-    140deg,
-    rgb(109 92 255 / 0.07),
-    rgb(255 255 255 / 0.6) 42%,
-    rgb(255 92 168 / 0.05)
-  );
-  -webkit-backdrop-filter: blur(16px) saturate(1.25);
-  backdrop-filter: blur(16px) saturate(1.25);
-  border: 1px solid rgb(0 0 0 / 0.1);
+  background: rgb(255 255 255 / 0.6);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-edge);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.95),
-    0 14px 36px -16px rgb(0 0 0 / 0.14);
+    var(--glass-specular),
+    0 2px 8px -2px rgb(20 16 56 / 0.06),
+    0 16px 40px -20px rgb(20 16 56 / 0.24);
 }
 
+/* The primary action. Was flat #0a0a0a, which on a violet-tinted page was the
+   only pure black on screen and read as borrowed from another design. It is
+   the brand gradient now, so the header CTA and the hero CTA are visibly the
+   same button. */
 .btn-solid {
-  background: #0a0a0a;
+  background: linear-gradient(135deg, #5b4ae8 0%, #6d5cff 50%, #8b5cf6 100%);
   color: #ffffff;
-  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.32);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 10px 30px -12px rgb(91 74 232 / 0.55);
   transition:
-    transform 0.5s var(--ease-out-soft),
-    box-shadow 0.5s ease;
+    transform var(--dur) var(--ease-spring),
+    box-shadow var(--dur) ease;
 }
 .btn-solid:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 40px -14px rgb(0 0 0 / 0.4);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 18px 40px -14px rgb(91 74 232 / 0.7);
 }
 
 .btn-glass {
@@ -795,27 +892,117 @@ main:focus-visible {
 
 /* Fully opaque — no alpha, no backdrop-filter — so the ribbon behind it can
    never bleed through regardless of how large it is at any screen size. */
+/* The hero panel.
+   This was a near-black slab (#12172c to #090b14) sitting on a pale, colourful
+   page — the single most off-brand element on the site, and the one thing that
+   made the hero look like two designs stapled together. It is now the thickest
+   glass on the page, floating over the ribbon so the ribbon's colour comes
+   through it. That is the whole idea of the material: it needs something worth
+   refracting behind it, and the ribbon is exactly that. */
 .hero-stats-card {
   position: relative;
-  background: linear-gradient(160deg, #12172c 0%, #0a0e1a 55%, #090b14 100%);
-  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(255 255 255 / 0.6);
+  background-image: linear-gradient(
+    150deg,
+    rgb(124 92 255 / 0.1),
+    rgb(255 255 255 / 0) 44%,
+    rgb(255 92 168 / 0.08)
+  );
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(190%);
+  backdrop-filter: blur(var(--glass-blur-thick)) saturate(190%);
+  border: 1px solid rgb(255 255 255 / 0.65);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.06),
-    0 30px 60px -28px rgb(0 0 0 / 0.55),
-    0 12px 28px -16px rgb(0 0 0 / 0.45);
+    var(--glass-specular),
+    var(--glass-shadow-1),
+    0 18px 40px -18px rgb(20 16 56 / 0.2),
+    0 48px 96px -44px rgb(91 74 232 / 0.3);
+}
+
+.hero-stats-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.95) 0%,
+    rgb(255 255 255 / 0.3) 34%,
+    rgb(255 255 255 / 0.08) 55%,
+    rgb(255 255 255 / 0.6) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* Full-bleed hero ribbon — GPU-instanced plates rendered on a canvas (see
    hero-ribbon.tsx). The canvas never touches layout, so resizing it here is
    free of the jank a DOM-node-per-plate version caused on scroll. */
+/* Sizing note.
+   The old rule was clamp(320px, 58vh, 600px), and because 58vh of a short
+   phone viewport is small, the ribbon shrank to a thin band on exactly the
+   screens where it is the only piece of art on the page. It now scales the
+   other way: the floor rises on small screens and the vh term is larger, so
+   the ribbon reads as a full-width statement on a phone and as a wide
+   horizon on a desktop.
+
+   100vw with a negative margin is what makes it full-bleed inside a padded
+   container. That pairs with overflow-x: clip on <html> further down — 100vw
+   includes the scrollbar gutter, and without the clip this is the classic
+   source of a two-pixel horizontal scroll on Windows. */
 .hero-ribbon {
   position: relative;
   width: 100vw;
   max-width: 100vw;
-  height: clamp(320px, 58vh, 600px);
+  height: clamp(380px, 44vw, 600px);
   margin-left: calc(50% - 50vw);
   overflow: visible;
   touch-action: pan-y;
+  /* Fades into the page top and bottom instead of ending on two hard
+     horizontal edges. The top fade is what lets the ribbon sit behind the
+     headline and body copy without competing with them — without it the
+     plates run straight through the paragraph and the text becomes hard to
+     read at exactly the moment a visitor is deciding whether to stay. */
+  /* Gentle, not heavy.
+     The section's bottom padding already moves the ribbon clear of the copy,
+     so this only has to soften the two horizontal edges where the canvas would
+     otherwise stop dead against the page. An earlier version faded the top 46%,
+     which put most of the wave under the mask and made the artwork nearly
+     invisible — the opposite of the brief. */
+  --ribbon-fade: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(0 0 0 / 0.55) 9%,
+    #000 20%,
+    #000 86%,
+    rgb(0 0 0 / 0.4) 96%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--ribbon-fade);
+  mask-image: var(--ribbon-fade);
+}
+
+/* Bigger in proportion on a phone, not smaller.
+   A wave this wide has most of its interest at the left and right thirds, and
+   at 390px those fall outside the glass panel — so the ribbon needs real
+   height here or it reads as two thin slivers either side of the card. */
+@media (max-width: 860px) {
+  .hero-ribbon {
+    height: clamp(440px, 92vw, 620px);
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-ribbon {
+    height: clamp(420px, 108vw, 560px);
+  }
 }
 
 .hero-ribbon__canvas {
@@ -863,54 +1050,105 @@ main:focus-visible {
   background-size: 100% 100%;
 }
 
+/* Polished content cards */
+/* The card every surface on the site is built from.
+ *
+ * ## Why there is no backdrop-filter here
+ *
+ * There used to be, and it was the largest single cost during a scroll. A
+ * blurred backdrop has to be re-sampled and re-composited every frame that the
+ * element moves, and this class appears twenty-odd times on the homepage.
+ *
+ * The blur was also buying almost nothing. backdrop-filter only shows up when
+ * there is detail behind it to distort; these cards sit on a near-flat pale
+ * gradient, so the blurred and unblurred versions are visually near-identical.
+ * The tinted fill, the specular rim and the layered shadows are what make the
+ * card read as glass, and none of those cost anything per frame.
+ *
+ * Blur is kept only where something worth refracting genuinely passes behind:
+ * the floating nav pill, the hero panel over the ribbon, and the mobile drawer.
+ */
+.mcx-card {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.82) 0%,
+    rgb(252 251 255 / 0.72) 46%,
+    rgb(255 250 253 / 0.78) 100%
+  );
+  border: 1px solid rgb(255 255 255 / 0.75);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-specular), var(--glass-shadow-1), var(--glass-shadow-2);
+  /* Only transform and box-shadow animate. Neither triggers layout, so a grid
+     of these can hover without reflowing the page. */
+  transition:
+    transform var(--dur) var(--ease-spring),
+    box-shadow var(--dur) var(--ease-spring),
+    border-color var(--dur) ease;
+}
+
+/* Same specular rim as .glass-rim, inlined so every card gets it without the
+   markup having to ask. */
+.mcx-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.95) 0%,
+    rgb(255 255 255 / 0.25) 34%,
+    rgb(255 255 255 / 0.06) 54%,
+    rgb(255 255 255 / 0.5) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.mcx-card:hover {
+  transform: translateY(-4px);
+  border-color: rgb(124 92 255 / 0.4);
+  box-shadow:
+    var(--glass-specular),
+    var(--glass-shadow-1),
+    0 20px 40px -18px rgb(20 16 56 / 0.2),
+    0 48px 88px -44px rgb(91 74 232 / 0.32);
+}
+
+/* backdrop-filter is the most expensive property on the page and phones pay
+   for it per pixel per frame. Halving the radius below 860px keeps the
+   material recognisable while cutting the compositor cost roughly fourfold. */
+/* Phones pay for backdrop-filter per pixel per frame, so the few surfaces
+   that still use it get a smaller radius there. */
 @media (max-width: 860px) {
-  /* Kept large rather than shrunk to fit — the opaque .hero-stats-card above
-     means text never depends on the ribbon being small enough to stay clear
-     of it, so there's no reason to shrink this on narrower screens. */
-  .hero-ribbon {
-    height: clamp(260px, 48vh, 460px);
+  .glass,
+  .glass-strong,
+  .glass-pill,
+  .glass-light,
+  .hero-stats-card {
+    -webkit-backdrop-filter: blur(14px) saturate(165%);
+    backdrop-filter: blur(14px) saturate(165%);
   }
 }
 
-/* Polished content cards */
-.mcx-card {
-  background: rgb(255 255 255 / 0.66);
-  background-image: linear-gradient(
-    145deg,
-    rgb(109 92 255 / 0.08),
-    rgb(255 255 255 / 0) 45%,
-    rgb(255 92 168 / 0.06)
-  );
-  -webkit-backdrop-filter: blur(13px) saturate(1.3);
-  backdrop-filter: blur(13px) saturate(1.3);
-  border: 1px solid rgb(255 255 255 / 0.6);
-  border-radius: 20px;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.7),
-    0 1px 2px rgb(0 0 0 / 0.03),
-    0 10px 24px -14px rgb(0 0 0 / 0.1),
-    0 24px 48px -28px rgb(0 0 0 / 0.12);
-  transition:
-    transform 0.45s var(--ease-out-soft),
-    box-shadow 0.45s ease,
-    border-color 0.45s ease,
-    background 0.45s ease;
-}
-.mcx-card:hover {
-  transform: translateY(-3px);
-  border-color: rgb(109 92 255 / 0.35);
-  background: rgb(255 255 255 / 0.78);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.8),
-    0 2px 4px rgb(0 0 0 / 0.04),
-    0 16px 32px -14px rgb(0 0 0 / 0.14),
-    0 36px 64px -32px rgb(0 0 0 / 0.16);
-}
-
-@media (max-width: 860px) {
-  .mcx-card {
-    -webkit-backdrop-filter: blur(9px) saturate(1.2);
-    backdrop-filter: blur(9px) saturate(1.2);
+/* A device that cannot composite backdrop-filter would otherwise render every
+   panel as barely-tinted transparency with text over the page behind it. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-strong,
+  .glass-pill,
+  .glass-light,
+  .glass-drawer,
+  .hero-stats-card {
+    background: rgb(255 255 255 / 0.94);
   }
 }
 
@@ -953,17 +1191,22 @@ main:focus-visible {
   margin: 0 auto clamp(28px, 4vw, 40px);
 }
 
+/* The orb on the closing CTA.
+   It used to be a matte near-black sphere with a green rim — built for a dark
+   band, and on the brand gradient it read as a hole punched through the panel.
+   It is now the same material as everything else: a glass bubble that picks up
+   the gradient behind it, with one specular highlight where the light is. */
 .cta-globe__glow {
   position: absolute;
-  inset: -45%;
+  inset: -50%;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgb(46 180 140 / 0.28) 0%,
-    rgb(30 120 100 / 0.12) 42%,
+    rgb(255 255 255 / 0.3) 0%,
+    rgb(255 255 255 / 0.1) 40%,
     transparent 70%
   );
-  filter: blur(8px);
+  filter: blur(10px);
   pointer-events: none;
 }
 
@@ -973,26 +1216,30 @@ main:focus-visible {
   border-radius: 50%;
   overflow: hidden;
   background:
-    radial-gradient(circle at 32% 28%, rgb(90 95 98 / 0.55) 0%, transparent 42%),
-    radial-gradient(circle at 70% 78%, rgb(0 0 0 / 0.55) 0%, transparent 55%),
-    radial-gradient(circle at 50% 50%, #2a2e31 0%, #141618 58%, #0a0b0c 100%);
+    radial-gradient(circle at 32% 26%, rgb(255 255 255 / 0.55) 0%, transparent 46%),
+    radial-gradient(circle at 68% 80%, rgb(255 255 255 / 0.14) 0%, transparent 52%),
+    rgb(255 255 255 / 0.16);
+  -webkit-backdrop-filter: blur(6px) saturate(160%) brightness(1.08);
+  backdrop-filter: blur(6px) saturate(160%) brightness(1.08);
   box-shadow:
-    inset 0 1px 1px rgb(255 255 255 / 0.18),
-    inset 0 -14px 28px rgb(0 0 0 / 0.55),
-    0 0 0 1px rgb(255 255 255 / 0.06),
-    0 18px 40px -12px rgb(0 0 0 / 0.55);
+    inset 0 1px 1px rgb(255 255 255 / 0.6),
+    inset 0 -10px 24px rgb(80 40 160 / 0.28),
+    0 0 0 1px rgb(255 255 255 / 0.35),
+    0 18px 40px -12px rgb(40 20 90 / 0.45);
   animation: cta-globe-float 6.5s ease-in-out infinite;
 }
 
+/* The bright crescent near the top — the single cue that reads as "sphere"
+   rather than "circle". */
 .cta-globe__sheen {
   position: absolute;
-  inset: 8% 18% auto;
-  height: 38%;
+  inset: 7% 20% auto;
+  height: 34%;
   border-radius: 50%;
   background: linear-gradient(
     180deg,
-    rgb(255 255 255 / 0.28) 0%,
-    rgb(255 255 255 / 0.06) 45%,
+    rgb(255 255 255 / 0.85) 0%,
+    rgb(255 255 255 / 0.25) 45%,
     transparent 100%
   );
   filter: blur(1px);
@@ -1004,8 +1251,8 @@ main:focus-visible {
   inset: 0;
   border-radius: 50%;
   box-shadow:
-    inset 0 0 0 1px rgb(90 210 170 / 0.22),
-    inset -2px -3px 10px rgb(40 160 130 / 0.18);
+    inset 0 0 0 1px rgb(255 255 255 / 0.45),
+    inset -3px -4px 14px rgb(255 255 255 / 0.2);
   pointer-events: none;
 }
 
@@ -1019,17 +1266,25 @@ main:focus-visible {
   }
 }
 
+/* Closing CTA.
+   Was flat near-black with a green cast that appears nowhere else in the
+   palette. It is now the brand gradient itself — the one place on the page
+   that goes fully saturated, which is what makes it read as the destination
+   rather than just another panel. */
 .cta-band {
   position: relative;
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: var(--radius-lg);
   background:
-    radial-gradient(ellipse 55% 45% at 50% 18%, rgb(36 120 95 / 0.22), transparent 70%),
-    #0a0b0c;
+    radial-gradient(ellipse 70% 60% at 20% 10%, rgb(255 92 168 / 0.5), transparent 62%),
+    radial-gradient(ellipse 60% 55% at 85% 20%, rgb(80 190 255 / 0.4), transparent 62%),
+    radial-gradient(ellipse 80% 70% at 50% 110%, rgb(59 47 168 / 0.6), transparent 68%),
+    linear-gradient(150deg, #4a3ad0 0%, #6d5cff 45%, #8b5cf6 100%);
   color: #fff;
   box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.2),
-    0 24px 64px -28px rgb(0 0 0 / 0.35);
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 2px 8px -2px rgb(20 16 56 / 0.2),
+    0 40px 80px -32px rgb(91 74 232 / 0.55);
 }
 
 .cta-band::before {

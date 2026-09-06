@@ -45,7 +45,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           at all — nine of eleven routes emitted no structured data whatsoever. */}
       <OrganizationJsonLd />
       <ScrollAmbient />
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+      {/* `overflow-hidden` matters: the colour field inside is deliberately
+          oversized (inset -25%) so its edges never show, and without clipping
+          here that overhang reaches the document and produces a horizontal
+          scrollbar on narrow screens. */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="ambient-wash" />
         <div className="ambient-glow" />
         <div className="absolute inset-0 grid-lines" />

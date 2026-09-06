@@ -4,19 +4,32 @@
  * stats bar" but never rendered anywhere. Sits directly under the hero's CTA
  * row, inside the same overlay layer as the rest of the hero text.
  *
- * Wrapped in one solid, fully-opaque card rather than floating the text
- * directly over the ribbon — the ribbon is meant to sit large and full-size
- * behind the hero at every screen width, so whatever overlays it needs its
- * own opaque backing to stay legible instead of relying on the ribbon being
- * small enough to avoid it (server-safe, no hooks).
+ * The panel used to be an opaque near-black slab, chosen so text stayed
+ * legible over the ribbon. That solved legibility by hiding the artwork and
+ * introduced the one genuinely off-brand surface on the site.
+ *
+ * It is now the thickest glass on the page, deliberately overlapping the
+ * ribbon so the colour reads through it. Legibility comes from the blur and
+ * saturation instead of from opacity — that is what the material is for — and
+ * the accent colours are the darkened text-safe stops, so every label clears
+ * 4.5:1 against the panel rather than relying on white-on-black.
+ *
+ * Server-safe: no hooks, no handlers.
  */
 
 import { heroFeatures, stats } from "@/lib/config/brand";
 
 type IconName = (typeof heroFeatures)[number]["icon"];
 
-/** One brand accent per feature/stat — violet, pink, blue, cycling. */
-const ACCENTS = ["#8b7cff", "#ff5ca8", "#5ec8ff", "#a78bfa"];
+/**
+ * One brand accent per feature and stat.
+ *
+ * These are the text-safe stops, not the decorative ones. The previous values
+ * (#8b7cff, #5ec8ff) were picked to glow on black and fall to roughly 2:1 on a
+ * light panel; each of these clears 4.5:1, so the numbers stay readable now
+ * that the panel is glass.
+ */
+const ACCENTS = ["#5b4ae8", "#d92668", "#1272d6", "#7c3aed"];
 
 function FeatureIcon({ name }: { name: IconName }) {
   const common = {
@@ -58,7 +71,7 @@ function FeatureIcon({ name }: { name: IconName }) {
 
 export function HeroStatsBand() {
   return (
-    <div className="hero-stats-card max-w-[920px] rounded-[28px] px-6 py-7 sm:px-10 sm:py-9">
+    <div className="hero-stats-card max-w-[960px] rounded-[30px] px-6 py-7 sm:px-10 sm:py-9">
       <ul className="grid gap-x-8 gap-y-7 sm:grid-cols-3">
         {heroFeatures.map((feature, index) => {
           const accent = ACCENTS[index % ACCENTS.length];
@@ -80,8 +93,8 @@ export function HeroStatsBand() {
                     labels inside a card, not sections of the document — as
                     <h3> they appeared before the page's first <h2>, giving the
                     homepage an h1 → h3 jump. Styling is unchanged. */}
-                <p className="text-[15px] font-semibold text-white">{feature.title}</p>
-                <p className="mt-1.5 max-w-[30ch] text-[13.5px] leading-relaxed text-white/75">
+                <p className="text-[15px] font-semibold text-ink">{feature.title}</p>
+                <p className="mt-1.5 max-w-[30ch] text-[13.5px] leading-relaxed text-ink-muted">
                   {feature.description}
                 </p>
               </div>
@@ -90,9 +103,9 @@ export function HeroStatsBand() {
         })}
       </ul>
 
-      <div className="mt-7 border-t border-white/10 pt-6 sm:mt-8 sm:pt-7">
+      <div className="mt-7 border-t border-ink/10 pt-6 sm:mt-8 sm:pt-7">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[20ch] text-[15px] font-medium text-white">
+          <p className="max-w-[20ch] text-[15px] font-medium text-ink">
             What the engagement actually looks like
           </p>
           <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:flex sm:gap-9">
@@ -105,7 +118,7 @@ export function HeroStatsBand() {
                 >
                   {stat.value}
                 </dd>
-                <p className="mt-1.5 text-[12.5px] text-white/70">{stat.label}</p>
+                <p className="mt-1.5 text-[12.5px] text-ink-muted">{stat.label}</p>
               </div>
             ))}
           </dl>

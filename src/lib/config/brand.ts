@@ -1,5 +1,5 @@
 /**
- * Approved MarineCloudeX brand content.
+ * Approved MarineCloudX brand content.
  *
  * This replaces the Step 12 placeholder module. Everything here is copy the
  * business has supplied and approved — it is no longer marked as provisional.
@@ -68,16 +68,16 @@ export const stats = [
 ] as const;
 
 export const about = {
-  lead: "MarineCloudeX was started to help small businesses bring their work into the digital world.",
+  lead: "MarineCloudX was started to help small businesses bring their work into the digital world.",
   body: [
-    "Many small businesses still depend on manual processes while technology becomes more important to how they operate and compete. That gap is the reason MarineCloudeX exists — to make useful technology practical and accessible for the businesses that need it most.",
+    "Many small businesses still depend on manual processes while technology becomes more important to how they operate and compete. That gap is the reason MarineCloudX exists — to make useful technology practical and accessible for the businesses that need it most.",
     "We work with startups, small and local businesses, growing companies, established businesses and individuals. The work spans websites, applications, business systems, AI, automation and cloud — but it always begins with understanding the problem.",
   ],
   vision:
     "The long-term vision is to grow into a technology company that combines service and product work, creates opportunities for the people who build here, and is known for the experience it gives its customers.",
 } as const;
 
-/** Why MarineCloudeX — the six-step reasoning behind "we understand why you need it". */
+/** Why MarineCloudX — the six-step reasoning behind "we understand why you need it". */
 export const whyPoints = [
   {
     title: "Understand the problem",

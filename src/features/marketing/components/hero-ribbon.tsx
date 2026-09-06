@@ -19,17 +19,24 @@
  * simply appears a moment later. The `import type` below is erased at compile
  * time and ships nothing.
  *
- * The scene is also skipped entirely on small screens. `mobile` was already
- * computed here but only gated the pointer parallax, so phones — the devices
- * least able to afford it — still downloaded and ran the full WebGL loop.
+ * ## The ribbon runs on phones too
+ *
+ * An earlier revision skipped the scene entirely below 860px to save the
+ * download. That was the wrong trade: on a phone this is the only artwork on
+ * the page, and the hero looked empty without it. It runs everywhere now, and
+ * the cost is paid down three other ways instead — a smaller instance count, a
+ * pixel ratio capped lower, and a loop that stops the moment the hero scrolls
+ * out of view. The scene is still skipped for `prefers-reduced-motion`, where
+ * a single static frame is drawn.
  */
 
 import { useEffect, useRef } from "react";
 import type * as ThreeNS from "three";
 
-const PLATE_COUNT = 200;
+/** Fewer plates on a phone: the silhouette is identical, the fill rate is not. */
+const PLATE_COUNT_DESKTOP = 200;
+const PLATE_COUNT_MOBILE = 120;
 
-/** Below this width the scene is not loaded at all; the CSS glow stands in. */
 const MOBILE_MAX_WIDTH = 860;
 
 /** Plum / wine / navy spectrum, matching the reference palette — pushed to
@@ -70,7 +77,8 @@ export function HeroRibbon() {
     if (!rootEl || !hostEl) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches) return;
+    const mobile = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
+    const PLATE_COUNT = mobile ? PLATE_COUNT_MOBILE : PLATE_COUNT_DESKTOP;
 
     // Set by the loader once the module resolves; the cleanup below runs
     // whichever side of that it happens on.
@@ -87,7 +95,10 @@ export function HeroRibbon() {
           antialias: true,
           powerPreference: "high-performance",
         });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        // A phone at DPR 3 would otherwise rasterise nine times the pixels of a
+        // laptop for a background graphic. 1.5 is indistinguishable here because
+        // the plates are soft-edged and constantly moving.
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2));
         hostEl.appendChild(renderer.domElement);
 
         const scene = new THREE.Scene();
@@ -151,7 +162,7 @@ export function HeroRibbon() {
         let cy = 0;
 
         const onMove = (event: PointerEvent) => {
-          if (reduce) return;
+          if (reduce || mobile) return;
           const r = rootEl.getBoundingClientRect();
           mx = (event.clientX - r.left) / r.width - 0.5;
           my = (event.clientY - r.top) / r.height - 0.5;
@@ -161,7 +172,7 @@ export function HeroRibbon() {
           my = 0;
         };
 
-        if (!reduce) {
+        if (!reduce && !mobile) {
           window.addEventListener("pointermove", onMove, { passive: true });
           rootEl.addEventListener("pointerleave", onLeave);
         }

@@ -121,7 +121,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
       <PageIntro
         eyebrow="Insights"
         title="Technical thinking"
-        description="Writing from the MarineCloudeX team — editorial, not a blog grid first."
+        description="Writing from the MarineCloudX team — editorial, not a blog grid first."
       />
 
       <PageBody>
