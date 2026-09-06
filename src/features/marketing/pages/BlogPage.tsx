@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 
 import {
@@ -18,11 +20,26 @@ const DEFAULT_PAGE_SIZE = 12;
 /** Matches the admin API convention. A caller cannot ask for more. */
 const MAX_PAGE_SIZE = 100;
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Writing from the MarineCloudeX team.",
-  alternates: { canonical: "/blog" },
-};
+/**
+ * Marked noindex while the listing is empty.
+ *
+ * A page that answers 200 with "nothing published yet" is a soft 404 — thin
+ * content that consumes crawl budget and lowers the quality of the indexed set.
+ * `follow` stays on so the surrounding navigation is still crawled. Publishing
+ * anything flips it back, because the revalidation webhook rebuilds this along
+ * with the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const rows = await getPublishedPosts(1, 1);
+
+  return pageMetadata({
+  title: "Insights on AI, Cloud & Software Engineering",
+  description:
+    "Practical writing on building production AI, cloud architecture, IoT data pipelines and software delivery, from the engineers who build these systems daily.",
+  path: "/blog",
+    indexable: rows.total > 0,
+  });
+}
 
 interface PageProps {
   searchParams: Promise<{
@@ -203,7 +220,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
         ) : (
           <>
             <CardGrid>
-              {rows.map((post) => (
+              {rows.map((post, index) => (
                 <ContentCard
                   headingLevel={2}
                   key={post.slug}
@@ -211,6 +228,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                   href={`/blog/${post.slug}`}
                   description={post.excerpt}
                   image={post.coverMedia}
+                  priority={index === 0}
                   tags={post.tags.map((entry) => entry.name)}
                   meta={
                     <>

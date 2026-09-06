@@ -108,7 +108,7 @@ export function WorkStage({ projects }: { projects: readonly Project[] | Project
                         <dl className="mt-8 space-y-4 border-t border-ink/8 pt-6">
                           {project.beats.map((beat) => (
                             <div key={beat.k}>
-                              <dt className="tech-label text-[10px] text-ink-muted/70">{beat.k}</dt>
+                              <dt className="tech-label text-[10px] text-ink-muted">{beat.k}</dt>
                               <dd className="mt-1.5 text-[14px] leading-relaxed text-ink/80">
                                 {beat.v}
                               </dd>

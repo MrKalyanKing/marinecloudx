@@ -1,13 +1,37 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs, Container, PageBody, PageIntro } from "@/features/marketing/components/layout";
 import { ServiceJsonLd } from "@/features/marketing/components/structured-data";
-import { getPublishedServiceBySlug } from "@/features/content/services/content";
+import { getPublishedServiceBySlug, getSitemapEntries } from "@/features/content/services/content";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+/**
+ * Prerenders every published slug at build time.
+ *
+ * With the segment now cached rather than `force-dynamic`, this turns the
+ * catalogue into static HTML that is served without touching the API, then
+ * refreshed by the revalidation webhook. Slugs published after the build still
+ * work: `dynamicParams` defaults to true, so an unknown slug renders on demand
+ * and is cached from then on.
+ *
+ * Failure here is deliberately non-fatal. A build should not break because the
+ * API happened to be unreachable — returning no params simply means every page
+ * renders on first request instead, which is the behaviour that existed before.
+ */
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  try {
+    const entries = await getSitemapEntries();
+    return entries.services.map((row) => ({ slug: row.slug }));
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -25,13 +49,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = service.seoTitle ?? service.name;
   const description = service.seoDescription ?? service.shortDescription ?? undefined;
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/services/${service.slug}` },
-    openGraph: { title, description, url: `/services/${service.slug}`, type: "article" },
-    twitter: { title, description },
-  };
+    path: `/services/${service.slug}`,
+  });
 }
 
 export default async function ServiceDetailPage({ params }: PageProps) {

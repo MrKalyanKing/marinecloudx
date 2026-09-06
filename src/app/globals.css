@@ -39,11 +39,21 @@
   --color-hairline-dark: rgb(0 0 0 / 0.1);
   --color-hairline-light: rgb(0 0 0 / 0.1);
 
-  /* Multi-color aurora / ribbon */
+  /* Multi-color aurora / ribbon — decorative use only (glows, dots, canvas).
+     These are tuned for luminance on a white canvas and are NOT legible as
+     text: #ff5ca8 is 2.86:1 and #43a7ff is 2.54:1, both under the 3:1 floor
+     for large text. Text uses the -ink variants below. */
   --color-aurora-1: #ff5ca8;
   --color-aurora-2: #6d5cff;
   --color-aurora-3: #43a7ff;
   --color-aurora-4: #ff8a4c;
+
+  /* Text-safe aurora. Same hues, darkened until each clears 4.5:1 on white,
+     so the gradient headline is legible at every stop rather than only at the
+     violet end: #6d5cff 4.54:1, #d92668 4.74:1, #1272d6 4.77:1. */
+  --color-aurora-ink-1: #d92668;
+  --color-aurora-ink-2: #6d5cff;
+  --color-aurora-ink-3: #1272d6;
 
   /* Fluid type scale — compact, engineered for one-screen heroes */
   --text-display: clamp(2rem, 4.8vw, 3.75rem);
@@ -93,6 +103,36 @@ body {
   outline: 2px solid var(--color-brand-bright);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Skip-to-content link.
+   Off-screen until focused rather than display:none, so it stays in the tab
+   order and is announced; it only becomes visible for the keyboard user who
+   reaches it. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 100;
+  padding: 0.625rem 1rem;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.15s ease-out;
+}
+
+.skip-link:focus-visible {
+  top: 1rem;
+}
+
+/* The <main> target takes focus programmatically after the skip link is used,
+   so it must not paint a focus ring of its own. */
+main:focus,
+main:focus-visible {
+  outline: none;
 }
 
 .tech-label {
@@ -428,16 +468,27 @@ body {
   box-shadow: 0 16px 40px -14px rgb(255 92 168 / 0.4);
 }
 
+/* Gradient headline text.
+   Uses the -ink stops, not the decorative ones: this clips a gradient to live
+   text, so every stop has to pass contrast, not just the darkest. The fallback
+   `color` is painted first and shows anywhere background-clip is unsupported,
+   so it must be a real colour rather than transparent. */
 .text-aurora {
+  color: var(--color-aurora-ink-2);
   background-image: linear-gradient(
     110deg,
-    var(--color-aurora-2),
-    var(--color-aurora-1) 55%,
-    var(--color-aurora-3)
+    var(--color-aurora-ink-2),
+    var(--color-aurora-ink-1) 55%,
+    var(--color-aurora-ink-3)
   );
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .text-aurora {
+    color: transparent;
+  }
 }
 
 /* -------------------------------------------------------------------------- */

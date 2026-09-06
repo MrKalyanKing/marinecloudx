@@ -11,7 +11,7 @@ export function ProcessStage({ stages }: { stages: readonly Stage[] | Stage[] })
     <section id="process" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
       <div className="mx-auto max-w-[1320px]">
         <div className="mb-10 max-w-[760px] sm:mb-12">
-          <p className="tech-label text-brand-bright/85">06&nbsp;&nbsp;How we build</p>
+          <p className="tech-label text-brand">06&nbsp;&nbsp;How we build</p>
           <h2 className="mt-6 text-h2 font-normal text-ink">
             We don&apos;t just write code. We engineer systems.
           </h2>

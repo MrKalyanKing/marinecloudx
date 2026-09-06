@@ -12,7 +12,10 @@
  * Server-safe: no hooks, no handlers.
  */
 
-import { cx } from "@/features/marketing/components/layout";
+import { PublicImage } from "@/features/marketing/components/public-image";
+
+// Re-exported so the pages that already import it from here keep working.
+export { PublicImage };
 
 export interface GalleryItem {
   id: string;
@@ -27,33 +30,6 @@ export interface GalleryItem {
   };
 }
 
-export function PublicImage({
-  url,
-  altText,
-  width,
-  height,
-  className,
-}: {
-  url: string;
-  altText?: string | null;
-  width?: number | null;
-  height?: number | null;
-  className?: string;
-}) {
-  return (
-    // Object-storage URLs vary per deployment, so next/image would need
-    // remotePatterns configured per environment. See docs/media.md.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={url}
-      alt={altText ?? ""}
-      width={width ?? undefined}
-      height={height ?? undefined}
-      loading="lazy"
-      className={cx("h-full w-full object-cover", className)}
-    />
-  );
-}
 
 /** Turns GALLERY / SCREENSHOT / DIAGRAM into a readable label. */
 function roleLabel(role: string): string {
@@ -63,9 +39,19 @@ function roleLabel(role: string): string {
 export function ProjectGallery({
   items,
   heading = "Gallery",
+  context,
 }: {
   items: GalleryItem[];
   heading?: string;
+  /**
+   * What the gallery is of — the project or case-study title.
+   *
+   * Used to build alt text when a media row records neither alt text nor a
+   * caption. "Highway Speed Monitoring — Screenshot" is factual and derived
+   * from data already on the page; it is not an invented description, and it
+   * is far better than the empty string that used to be substituted.
+   */
+  context?: string;
 }) {
   if (items.length === 0) return null;
 
@@ -78,15 +64,21 @@ export function ProjectGallery({
 
       {renderable.length > 0 ? (
         <ul className="mt-3 grid gap-4 sm:grid-cols-2">
-          {renderable.map((item) => (
+          {renderable.map((item, index) => (
             <li key={item.id}>
               <figure>
-                <div className="media-frame aspect-[16/10] bg-ice">
+                <div className="media-frame relative aspect-[16/10] bg-ice">
                   <PublicImage
                     url={item.media.url as string}
-                    altText={item.media.altText ?? item.caption}
-                    width={item.media.width}
-                    height={item.media.height}
+                    alt={
+                      item.media.altText ??
+                      item.caption ??
+                      (context ? `${context} — ${roleLabel(item.role)}` : roleLabel(item.role))
+                    }
+                    // The first gallery image is the LCP candidate on a project
+                    // or case-study page; the rest stay lazy.
+                    priority={index === 0}
+                    sizes="(max-width: 640px) 100vw, 50vw"
                   />
                 </div>
                 {item.caption ? (
@@ -105,7 +97,7 @@ export function ProjectGallery({
               <p className="text-sm text-ink-muted">
                 {item.caption ?? item.media.altText ?? "Media"}
               </p>
-              <p className="mt-1 text-xs text-ink-muted/70">{roleLabel(item.role)}</p>
+              <p className="mt-1 text-xs text-ink-muted">{roleLabel(item.role)}</p>
             </li>
           ))}
         </ul>

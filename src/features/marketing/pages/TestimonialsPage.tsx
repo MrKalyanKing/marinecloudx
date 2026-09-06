@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 
 import {
@@ -9,11 +11,26 @@ import {
 } from "@/features/marketing/components/layout";
 import { getPublishedTestimonials } from "@/features/content/services/content";
 
-export const metadata: Metadata = {
-  title: "Testimonials",
-  description: "What clients have said about working with MarineCloudeX.",
-  alternates: { canonical: "/testimonials" },
-};
+/**
+ * Marked noindex while the listing is empty.
+ *
+ * A page that answers 200 with "nothing published yet" is a soft 404 — thin
+ * content that consumes crawl budget and lowers the quality of the indexed set.
+ * `follow` stays on so the surrounding navigation is still crawled. Publishing
+ * anything flips it back, because the revalidation webhook rebuilds this along
+ * with the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const rows = await getPublishedTestimonials();
+
+  return pageMetadata({
+  title: "Client Reviews of Our Development Work",
+  description:
+    "What clients say about working with MarineCloudX across custom software, cloud platform, AI and connected system projects. In their own words.",
+  path: "/testimonials",
+    indexable: rows.length > 0,
+  });
+}
 
 export default async function TestimonialsPage() {
   const testimonials = await getPublishedTestimonials();

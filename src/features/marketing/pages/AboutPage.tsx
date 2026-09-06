@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 
 import {
@@ -15,12 +17,12 @@ import { about, brand, coreValues, process, whyPoints } from "@/lib/config/brand
 import { siteConfig } from "@/lib/config/site";
 import { getActiveIndustries, getPublishedServices } from "@/features/content/services/content";
 
-export const metadata: Metadata = {
-  title: "About",
+export const metadata: Metadata = pageMetadata({
+  title: "About Us: Problem-First Software Engineers",
   description:
-    "MarineCloudeX helps businesses move from manual processes to useful digital systems. Problem first, technology second.",
-  alternates: { canonical: "/about" },
-};
+    "MarineCloudX helps businesses move from manual processes to systems that work. We define the real problem before choosing any technology. Hyderabad, worldwide.",
+  path: "/about",
+});
 
 /**
  * About page.

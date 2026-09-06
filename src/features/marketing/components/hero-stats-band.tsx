@@ -76,8 +76,12 @@ export function HeroStatsBand() {
                 <FeatureIcon name={feature.icon} />
               </span>
               <div className="sm:mt-4">
-                <h3 className="text-[15px] font-semibold text-white">{feature.title}</h3>
-                <p className="mt-1.5 max-w-[30ch] text-[13.5px] leading-relaxed text-white/60">
+                {/* Deliberately a <p>, not a heading. These are three feature
+                    labels inside a card, not sections of the document — as
+                    <h3> they appeared before the page's first <h2>, giving the
+                    homepage an h1 → h3 jump. Styling is unchanged. */}
+                <p className="text-[15px] font-semibold text-white">{feature.title}</p>
+                <p className="mt-1.5 max-w-[30ch] text-[13.5px] leading-relaxed text-white/75">
                   {feature.description}
                 </p>
               </div>
@@ -101,7 +105,7 @@ export function HeroStatsBand() {
                 >
                   {stat.value}
                 </dd>
-                <p className="mt-1.5 text-[12.5px] text-white/50">{stat.label}</p>
+                <p className="mt-1.5 text-[12.5px] text-white/70">{stat.label}</p>
               </div>
             ))}
           </dl>

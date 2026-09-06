@@ -212,7 +212,7 @@ export function SystemDiagram() {
             </div>
           ))}
         </div>
-        <p className="mt-5 text-[13px] leading-[1.7] text-ink-muted/70">
+        <p className="mt-5 text-[13px] leading-[1.7] text-ink-muted">
           Hover a node to trace its path through the system.
         </p>
       </div>

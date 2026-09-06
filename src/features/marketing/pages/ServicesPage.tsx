@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/config/metadata";
+
 import {
   CardGrid,
   Container,
@@ -8,20 +10,41 @@ import {
   PageBody,
   PageIntro,
 } from "@/features/marketing/components/layout";
+import { ItemListJsonLd } from "@/features/marketing/components/structured-data";
 import { getPublishedServices } from "@/features/content/services/content";
 import { homeCapabilities } from "@/lib/config/brand";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description: "What MarineCloudeX builds and operates for its clients.",
-  alternates: { canonical: "/services" },
-};
+/**
+ * Marked noindex while the listing is empty.
+ *
+ * A page that answers 200 with "nothing published yet" is a soft 404 — thin
+ * content that consumes crawl budget and lowers the quality of the indexed set.
+ * `follow` stays on so the surrounding navigation is still crawled. Publishing
+ * anything flips it back, because the revalidation webhook rebuilds this along
+ * with the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const rows = await getPublishedServices();
+
+  return pageMetadata({
+  title: "Software, Cloud, AI & IoT Development",
+  description:
+    "Custom software development, cloud platform engineering, AI and intelligent systems, and IoT products. Four capability areas, one delivery team, global clients.",
+  path: "/services",
+    indexable: rows.length > 0,
+  });
+}
 
 export default async function ServicesPage() {
   const services = await getPublishedServices();
 
   return (
     <>
+      <ItemListJsonLd
+        name="Services"
+        path="/services"
+        items={services.map((s) => ({ name: s.name, href: `/services/${s.slug}` }))}
+      />
       <PageIntro
         eyebrow="Capabilities"
         title="What we engineer"
@@ -33,7 +56,7 @@ export default async function ServicesPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             {homeCapabilities.map((group, index) => (
               <div key={group.slug} className="mcx-card p-6 sm:p-7">
-                <span className="tech-label text-brand/80">
+                <span className="tech-label text-brand">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <h2 className="mt-3 text-[20px] font-medium tracking-[-0.02em] text-ink">

@@ -14,7 +14,7 @@ export function SiteFooter() {
   return (
     <footer className="relative z-[1] border-t border-hairline-light">
       <Container className="max-w-[1320px] py-10 sm:py-12">
-        <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] tracking-[0.14em] text-ink-muted/70 uppercase">
+        <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] tracking-[0.14em] text-ink-muted uppercase">
           <span>MarineCloudX Technologies</span>
           <span>Engineering what comes next</span>
         </div>
@@ -39,7 +39,7 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <p className="tech-label mt-10 text-ink-muted/50">
+        <p className="tech-label mt-10 text-ink-muted">
           © {new Date().getFullYear()} {siteConfig.legalName}
         </p>
       </Container>

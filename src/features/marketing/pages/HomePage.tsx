@@ -5,7 +5,7 @@ import { CtaGlobe } from "@/features/marketing/components/cta-globe";
 import { FaqAccordion } from "@/features/marketing/components/faq-accordion";
 import { Hero } from "@/features/marketing/components/hero";
 import { Arrow, Container } from "@/features/marketing/components/layout";
-import { OrganizationJsonLd } from "@/features/marketing/components/structured-data";
+import { FaqJsonLd } from "@/features/marketing/components/structured-data";
 import { ProcessStage } from "@/features/marketing/components/process-stage";
 import { ScrollNarrative } from "@/features/marketing/components/scroll-narrative";
 import { SystemDiagram } from "@/features/marketing/components/system-diagram";
@@ -29,7 +29,11 @@ import {
 export default function HomePage() {
   return (
     <>
-      <OrganizationJsonLd />
+      {/* Organization and WebSite now come from the public layout, so they are
+          on every route rather than this one. What is specific to this page is
+          the FAQ section below: five real published answers that were rendered
+          as plain text and described to search engines as nothing at all. */}
+      <FaqJsonLd faqs={homeFaqs} path="/" />
       <ScrollNarrative>
         <Hero />
 
@@ -37,10 +41,10 @@ export default function HomePage() {
         <section id="about" className="relative px-5 py-[clamp(80px,12vh,150px)] sm:px-8">
           <Container className="max-w-[1320px]">
             <div data-reveal-stage className="max-w-[840px]">
-              <p className="tech-label text-brand-bright/85">01&nbsp;&nbsp;Philosophy</p>
+              <p className="tech-label text-brand">01&nbsp;&nbsp;Philosophy</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">{homePhilosophy.heading}</h2>
               <p className="mt-6 max-w-[600px] text-lead text-ink-muted">{homePhilosophy.body}</p>
-              <p className="tech-label mt-8 text-brand/80">{brand.philosophy}</p>
+              <p className="tech-label mt-8 text-brand">{brand.philosophy}</p>
             </div>
           </Container>
         </section>
@@ -49,7 +53,7 @@ export default function HomePage() {
         <section id="why" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
           <Container className="max-w-[1320px]">
             <div data-reveal-stage className="mb-[clamp(36px,5vw,64px)] max-w-[760px]">
-              <p className="tech-label text-brand-bright/85">02&nbsp;&nbsp;Why MarineCloudX</p>
+              <p className="tech-label text-brand">02&nbsp;&nbsp;Why MarineCloudX</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">We understand why you need it</h2>
               <p className="mt-5 text-lead text-ink-muted">
                 Most technology fails because it answered the wrong question. We start earlier than
@@ -79,7 +83,7 @@ export default function HomePage() {
         <section id="solutions" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
           <Container className="max-w-[1320px]">
             <div data-reveal-stage className="mb-[clamp(30px,4vw,52px)] max-w-[720px]">
-              <p className="tech-label text-brand-bright/85">03&nbsp;&nbsp;Solutions</p>
+              <p className="tech-label text-brand">03&nbsp;&nbsp;Solutions</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">Problems we help solve</h2>
               <p className="mt-5 text-lead text-ink-muted">
                 Services are what we build. Solutions are the business problems behind them — usually
@@ -129,7 +133,7 @@ export default function HomePage() {
         <section id="system" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
           <Container className="max-w-[1320px]">
             <div data-reveal-stage className="mb-[clamp(40px,6vw,72px)] max-w-[760px]">
-              <p className="tech-label text-brand-bright/85">05&nbsp;&nbsp;The system</p>
+              <p className="tech-label text-brand">05&nbsp;&nbsp;The system</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">
                 One architecture, six moving parts.
               </h2>
@@ -147,7 +151,7 @@ export default function HomePage() {
         <section id="trust" className="relative px-5 py-[clamp(72px,12vh,140px)] sm:px-8">
           <Container className="max-w-[1320px]">
             <div data-reveal-stage className="mb-[clamp(32px,4vw,56px)] max-w-[700px]">
-              <p className="tech-label text-brand-bright/85">07&nbsp;&nbsp;Working with us</p>
+              <p className="tech-label text-brand">07&nbsp;&nbsp;Working with us</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">What you can expect</h2>
               <p className="mt-5 text-lead text-ink-muted">
                 No logos, no awards, no statistics — just how we run the work.
@@ -184,7 +188,7 @@ export default function HomePage() {
           <Container className="max-w-[920px]">
             <div data-reveal-stage className="mb-[clamp(26px,3vw,44px)] flex flex-wrap items-end justify-between gap-6">
               <div className="max-w-[700px]">
-                <p className="tech-label text-brand-bright/85">08&nbsp;&nbsp;FAQ</p>
+                <p className="tech-label text-brand">08&nbsp;&nbsp;FAQ</p>
                 <h2 className="mt-6 text-h2 font-normal text-ink">
                   You don&apos;t need to know the technology
                 </h2>

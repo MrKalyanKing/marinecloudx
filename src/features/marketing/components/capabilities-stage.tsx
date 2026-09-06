@@ -28,7 +28,7 @@ export function CapabilitiesStage({
     <section id="capabilities" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
       <div className="mx-auto max-w-[1320px]">
         <div data-reveal-stage className="mb-10 max-w-[720px] sm:mb-12">
-          <p className="tech-label text-brand-bright/85">04&nbsp;&nbsp;Capabilities</p>
+          <p className="tech-label text-brand">04&nbsp;&nbsp;Capabilities</p>
           <h2 className="mt-6 text-h2 font-normal text-ink">What we engineer</h2>
           <p className="mt-5 text-lead text-ink-muted">
             Hover a capability to see the stack behind it — problem first, tools second.
@@ -62,7 +62,7 @@ export function CapabilitiesStage({
                         }}
                       >
                         <span
-                          className={cx("tech-label shrink-0 pt-0.5", !isActive && "text-ink-muted/50")}
+                          className={cx("tech-label shrink-0 pt-0.5", !isActive && "text-ink-muted")}
                           style={{ color: isActive ? itemAccent : undefined }}
                         >
                           {String(index + 1).padStart(2, "0")}

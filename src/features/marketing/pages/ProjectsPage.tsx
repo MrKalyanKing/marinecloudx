@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 
 import {
@@ -15,11 +17,26 @@ import { getProjectFilterCategories, getPublishedProjects } from "@/features/con
 
 const PAGE_SIZE = 12;
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description: "Selected work delivered by MarineCloudeX.",
-  alternates: { canonical: "/projects" },
-};
+/**
+ * Marked noindex while the listing is empty.
+ *
+ * A page that answers 200 with "nothing published yet" is a soft 404 — thin
+ * content that consumes crawl budget and lowers the quality of the indexed set.
+ * `follow` stays on so the surrounding navigation is still crawled. Publishing
+ * anything flips it back, because the revalidation webhook rebuilds this along
+ * with the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const rows = await getPublishedProjects(1, 1);
+
+  return pageMetadata({
+  title: "Software, AI and IoT Projects We Have Built",
+  description:
+    "Selected engineering work: AI voice copilots, multi-model platforms, IoT monitoring systems and cloud backends. What we built and the stack behind each one.",
+  path: "/projects",
+    indexable: rows.total > 0,
+  });
+}
 
 interface PageProps {
   searchParams: Promise<{ page?: string; category?: string }>;
@@ -104,7 +121,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
         ) : (
           <>
             <CardGrid>
-              {rows.map((project) => (
+              {rows.map((project, index) => (
                 <ContentCard
                   headingLevel={2}
                   key={project.slug}
@@ -112,6 +129,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                   href={`/projects/${project.slug}`}
                   description={project.shortDescription}
                   image={project.coverMedia}
+                  priority={index === 0}
                   meta={project.category?.name}
                   tags={[
                     ...project.industries.map((industry) => industry.name),

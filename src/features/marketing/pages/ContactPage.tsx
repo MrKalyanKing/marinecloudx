@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/config/metadata";
+
 import { Container, PageIntro, Section, TechLabel } from "@/features/marketing/components/layout";
 import { ContactForm } from "@/features/marketing/components/contact-form";
 import { brand, finalCta, process } from "@/lib/config/brand";
 import { getPublishedServices } from "@/features/content/services/content";
 
-export const metadata: Metadata = {
-  title: "Start a project",
+export const metadata: Metadata = pageMetadata({
+  title: "Start a Software, Cloud or AI Project",
   description:
-    "Tell MarineCloudeX what you are trying to build, improve, automate or solve. We understand the problem first.",
-  alternates: { canonical: "/start-a-project" },
-};
+    "Tell us what you are trying to build, improve, automate or solve. We understand the problem first, then recommend the technology that fits. Global clients.",
+  path: "/start-a-project",
+});
 
 export default async function ContactPage() {
   // Feeds the "what do you need?" select with real CMS services, so the

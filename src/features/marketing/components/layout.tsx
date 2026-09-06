@@ -12,7 +12,9 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { PublicImage } from "@/features/marketing/components/public-image";
 import { ScrollReveal } from "@/features/marketing/components/scroll-reveal";
+import { BreadcrumbJsonLd } from "@/features/marketing/components/structured-data";
 
 /** The four surfaces the site alternates between. */
 export type Tone = "dark" | "ice" | "aqua" | "paper";
@@ -301,9 +303,19 @@ export function PageBody({
   );
 }
 
+/**
+ * Breadcrumb trail, visible and machine-readable from one input.
+ *
+ * The JSON-LD is emitted here rather than in each of the five detail pages on
+ * purpose. Google withdraws breadcrumb rich results when the markup describes a
+ * path different from the one on the page, and the surest way to produce that
+ * mismatch is to maintain the two separately. Both now read the same `trail`,
+ * so they cannot drift.
+ */
 export function Breadcrumbs({ trail }: { trail: { label: string; href?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-8">
+      <BreadcrumbJsonLd trail={trail} />
       <ol className="tech-label flex flex-wrap items-center gap-2 text-ink-muted">
         <li>
           <Link href="/" className="transition-colors hover:text-brand">
@@ -372,6 +384,7 @@ export function ContentCard({
   image,
   tags,
   headingLevel = 3,
+  priority = false,
 }: {
   title: string;
   href: string;
@@ -388,6 +401,11 @@ export function ContentCard({
    * users navigating by heading experience as a missing level.
    */
   headingLevel?: 2 | 3;
+  /**
+   * Eager-load this card's cover. Set on the first card of a grid, which is the
+   * LCP candidate on a listing page; everything below stays lazy.
+   */
+  priority?: boolean;
   /** Optional cover. Omitted entirely when the record has no image — no placeholder is invented. */
   image?: CardImage | null;
   /** Short factual labels (industry, technology) drawn from real relations. */
@@ -406,22 +424,20 @@ export function ContentCard({
       {image?.url ? (
         <div
           className={cx(
-            "-mx-6 -mt-6 mb-6 aspect-[16/10] overflow-hidden border-b",
+            "relative -mx-6 -mt-6 mb-6 aspect-[16/10] overflow-hidden border-b",
             hairline(tone),
             isDark(tone) ? "bg-surface-dark" : "bg-ice",
           )}
         >
-          {/* Media lives on an object-storage host that varies per deployment,
-              so next/image would need remotePatterns configured per environment.
-              See docs/media.md. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={image.url}
-            alt={image.altText ?? ""}
-            width={image.width ?? undefined}
-            height={image.height ?? undefined}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          <PublicImage
+            url={image.url}
+            // Falls back to the card's own title rather than to `""`. A cover
+            // image labelled by the thing it is a cover for is accurate; an
+            // empty alt would tell assistive technology to skip a content image.
+            alt={image.altText ?? title}
+            priority={priority}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="transition-transform duration-500 group-hover:scale-[1.03]"
           />
         </div>
       ) : null}

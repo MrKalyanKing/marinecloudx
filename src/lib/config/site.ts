@@ -12,25 +12,84 @@
 
 import { brand } from "@/lib/config/brand";
 
+/**
+ * The canonical production origin.
+ *
+ * Hardcoded rather than left to an environment variable alone because every
+ * canonical URL, `og:url`, sitemap `<loc>` and robots `Sitemap:` line resolves
+ * through `resolveSiteUrl()`. If the variable is ever missing in production the
+ * old fallback published `http://localhost:3000` to Google, which is worse than
+ * a build failure — the URLs are unreachable and the whole site drops out of the
+ * index. `NEXT_PUBLIC_SITE_URL` still wins when it is set, so nothing about
+ * staging or a rename requires a code change.
+ *
+ * `www.marinecloudx.in` must 301 to this apex at the host or CDN. Next cannot
+ * perform host-level redirects, so that rule lives outside this repository.
+ */
+const PRODUCTION_URL = "https://marinecloudx.in";
+
+function normaliseOrigin(value: string): string {
+  const withScheme =
+    value.startsWith("http://") || value.startsWith("https://") ? value : `https://${value}`;
+  return withScheme.replace(/\/+$/, "");
+}
+
 function resolveSiteUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-  if (envUrl.startsWith("http://") || envUrl.startsWith("https://")) {
-    return envUrl.replace(/\/+$/, "");
-  }
-  return `https://${envUrl}`.replace(/\/+$/, "");
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicit) return normaliseOrigin(explicit);
+
+  // Production must never fall through to a preview host or to localhost.
+  if (process.env.NODE_ENV === "production") return PRODUCTION_URL;
+
+  // Preview deployments: the generated host is correct for that deployment and
+  // those builds are not meant to be indexed anyway.
+  if (process.env.VERCEL_URL) return normaliseOrigin(process.env.VERCEL_URL);
+
+  return "http://localhost:3000";
 }
 
 export const siteConfig = {
-  name: "MarineCloudeX",
+  /**
+   * One spelling, everywhere. This string appears in every `<title>`, every
+   * JSON-LD block and the visible header and footer, and it must match the
+   * verified Google Business Profile exactly — name consistency across the
+   * profile, the markup and the page is a direct local ranking input.
+   */
+  name: "MarineCloudX",
   descriptor: "Technologies",
-  legalName: "MarineCloudeX",
+  legalName: "MarineCloudX Technologies",
   /** Approved positioning line. Single source: src/config/brand.ts. */
   tagline: brand.positioning,
   description:
-    "MarineCloudeX designs and builds software, digital products and intelligent systems.",
+    "MarineCloudX designs and builds custom software, cloud platforms, AI systems and connected products around real business problems. Worldwide delivery.",
   url: resolveSiteUrl(),
   locale: "en",
 } as const;
+
+/**
+ * Registered office.
+ *
+ * Present because the business operates a verified Google Business Profile at
+ * this address; it is not invented. It feeds the `PostalAddress` in the
+ * Organization JSON-LD and nothing else. `telephone` is deliberately absent —
+ * no public number has been published, and a wrong one in structured data is
+ * worse than none.
+ */
+export const siteAddress = {
+  streetAddress: "11th Floor, Building Number 9, SEZ, Hitech City Rd, Madhapur",
+  addressLocality: "Hyderabad",
+  addressRegion: "Telangana",
+  postalCode: "500081",
+  addressCountry: "IN",
+} as const;
+
+/**
+ * Profiles the business actually controls, for JSON-LD `sameAs`.
+ *
+ * Empty until real accounts are provided. An invented profile URL asserts a
+ * false identity to a machine that will repeat it.
+ */
+export const siteProfiles: readonly string[] = [];
 
 /**
  * Primary navigation. Every entry points at a route that exists.

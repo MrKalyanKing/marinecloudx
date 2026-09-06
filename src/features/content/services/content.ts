@@ -26,36 +26,98 @@ interface Envelope<T> {
   error?: { code: string; message: string };
 }
 
-async function api<T>(path: string): Promise<Envelope<T>> {
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: { accept: "application/json" },
-    next: { tags: [CONTENT_TAG], revalidate: REVALIDATE_SECONDS },
-  });
-  const body = (await res.json().catch(() => null)) as Envelope<T> | null;
-  if (!body) {
-    throw new Error(`content: non-JSON response from ${path} (${res.status})`);
+/**
+ * Raised when the API could not be reached or answered with something that is
+ * not a usable envelope — a network failure, a timeout, a 5xx, a proxy error
+ * page. It is deliberately distinct from "the API answered, and the answer is
+ * that this content does not exist".
+ *
+ * Nothing catches this. It propagates to the route's error boundary, which
+ * returns a 500. That is the entire point: see the note on `detail()`.
+ */
+export class ContentUnavailableError extends Error {
+  constructor(path: string, cause: string) {
+    super(`content: ${path} unavailable (${cause})`);
+    this.name = "ContentUnavailableError";
   }
+}
+
+/**
+ * Fetches one envelope.
+ *
+ * Returns the envelope for any answer the API actually produced, including a
+ * `success: false` one — deciding what a business-level error means is the
+ * caller's job. Throws only when there is no usable answer at all.
+ */
+async function api<T>(path: string): Promise<Envelope<T>> {
+  let res: Response;
+
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      headers: { accept: "application/json" },
+      next: { tags: [CONTENT_TAG], revalidate: REVALIDATE_SECONDS },
+    });
+  } catch (err) {
+    throw new ContentUnavailableError(path, err instanceof Error ? err.message : "network error");
+  }
+
+  // 5xx is the API failing, not the API reporting that content is missing.
+  if (res.status >= 500) {
+    throw new ContentUnavailableError(path, `upstream ${res.status}`);
+  }
+
+  const body = (await res.json().catch(() => null)) as Envelope<T> | null;
+  if (!body || typeof body.success !== "boolean") {
+    throw new ContentUnavailableError(path, `non-envelope response (${res.status})`);
+  }
+
   return body;
 }
 
-/** GETs a detail resource, returning `null` on 404 (draft or missing). */
+/**
+ * GETs a detail resource, returning `null` only when the content genuinely is
+ * not there — unpublished, or never existed.
+ *
+ * ## Why this distinction is load-bearing
+ *
+ * Every detail page turns `null` into `notFound()`. An earlier version of this
+ * module caught every failure and returned `null`, which meant a network blip
+ * or a backend restart made `/services/anything`, `/blog/some-post` and every
+ * other detail URL answer **404** — verified, all three, with the API stopped.
+ *
+ * A 404 tells a crawler the page is gone and it should be dropped from the
+ * index. A 500 tells it to come back later. Collapsing the two turns a few
+ * minutes of backend downtime into a deindexed catalogue that takes weeks to
+ * recover. So an outage now throws, and only a real "not found" returns `null`.
+ */
 async function detail<T>(path: string): Promise<T | null> {
   const body = await api<T>(path);
   if (body.success) return body.data;
   if (body.error?.code === "NOT_FOUND") return null;
-  throw new Error(`content: ${path} -> ${body.error?.code ?? "error"}`);
+  throw new ContentUnavailableError(path, body.error?.code ?? "unknown error");
 }
 
-async function ok<T>(path: string): Promise<T> {
+async function ok<T>(path: string, fallback: T): Promise<T> {
   const body = await api<T>(path);
-  if (!body.success) throw new Error(`content: ${path} -> ${body.error?.code ?? "error"}`);
-  return body.data;
+  if (body.success) return body.data;
+  if (body.error?.code === "NOT_FOUND") return fallback;
+  throw new ContentUnavailableError(path, body.error?.code ?? "unknown error");
 }
 
+/**
+ * Lists rows.
+ *
+ * An empty list is a legitimate answer — nothing is published yet — so it is
+ * returned as one. An unreachable API is not, and throws, so a listing page
+ * cannot answer 200 with "nothing published" while the backend is simply down.
+ */
 async function list<T>(path: string): Promise<{ rows: T[]; total: number }> {
   const body = await api<T[]>(path);
-  if (!body.success) throw new Error(`content: ${path} -> ${body.error?.code ?? "error"}`);
-  return { rows: body.data, total: body.pagination?.total ?? body.data.length };
+  if (body.success && Array.isArray(body.data)) {
+    return { rows: body.data, total: body.pagination?.total ?? body.data.length };
+  }
+  if (body.error?.code === "NOT_FOUND") return { rows: [], total: 0 };
+  throw new ContentUnavailableError(path, body.error?.code ?? "unknown error");
 }
 
 function qs(params: Record<string, string | number | undefined>): string {
@@ -82,6 +144,7 @@ export interface MediaRef {
 export function getPublishedServices() {
   return ok<{ id: string; name: string; slug: string; shortDescription: string | null }[]>(
     "/services",
+    [],
   );
 }
 
@@ -103,7 +166,7 @@ export function getPublishedServiceBySlug(slug: string) {
 /* ------------------------------ industries ---------------------------- */
 
 export function getActiveIndustries() {
-  return ok<{ name: string; slug: string; description: string | null }[]>("/industries");
+  return ok<{ name: string; slug: string; description: string | null }[]>("/industries", []);
 }
 
 export function getActiveIndustryBySlug(slug: string) {
@@ -140,6 +203,7 @@ export async function getPublishedProjects(
 export async function getProjectFilterCategories() {
   const rows = await ok<{ name: string; slug: string; count: number }[]>(
     "/projects/filter-categories",
+    [],
   );
   return rows.map((c) => ({ name: c.name, slug: c.slug, _count: { projects: c.count } }));
 }
@@ -194,7 +258,7 @@ export function getPublishedCaseStudies() {
         coverMedia: MediaRef | null;
       };
     }[]
-  >("/case-studies");
+  >("/case-studies", []);
 }
 
 export interface CaseStudyDetail {
@@ -239,13 +303,13 @@ export function getPublishedTestimonials() {
       photoMedia: MediaRef | null;
       project: { title: string; slug: string } | null;
     }[]
-  >("/testimonials");
+  >("/testimonials", []);
 }
 
 /* -------------------------------- faqs ------------------------------- */
 
 export function getPublishedFaqs() {
-  return ok<{ id: string; question: string; answer: string; category: string | null }[]>("/faqs");
+  return ok<{ id: string; question: string; answer: string; category: string | null }[]>("/faqs", []);
 }
 
 /* -------------------------------- blog ------------------------------- */
@@ -276,7 +340,7 @@ export async function getBlogFilterOptions() {
   const data = await ok<{
     categories: { name: string; slug: string; count: number }[];
     tags: { name: string; slug: string }[];
-  }>("/blog/filter-options");
+  }>("/blog/filter-options", { categories: [], tags: [] });
   return {
     categories: data.categories.map((c) => ({
       name: c.name,
@@ -288,7 +352,7 @@ export async function getBlogFilterOptions() {
 }
 
 export function getRelatedPosts(slug: string) {
-  return ok<PostCard[]>(`/blog/${encodeURIComponent(slug)}/related`);
+  return ok<PostCard[]>(`/blog/${encodeURIComponent(slug)}/related`, []);
 }
 
 export function getPublishedPostBySlug(slug: string) {
@@ -316,5 +380,11 @@ export function getSitemapEntries() {
     projects: { slug: string; updatedAt: string }[];
     caseStudies: { slug: string; updatedAt: string }[];
     posts: { slug: string; updatedAt: string }[];
-  }>("/public/sitemap-entries");
+  }>("/public/sitemap-entries", {
+    services: [],
+    industries: [],
+    projects: [],
+    caseStudies: [],
+    posts: [],
+  });
 }

@@ -6,5 +6,5 @@
  * route's config and nothing else.
  */
 
-export { metadata } from "@/features/marketing/pages/TestimonialsPage";
+export { generateMetadata } from "@/features/marketing/pages/TestimonialsPage";
 export { default } from "@/features/marketing/pages/TestimonialsPage";

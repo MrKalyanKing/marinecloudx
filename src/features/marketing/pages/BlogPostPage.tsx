@@ -13,12 +13,34 @@ import {
 } from "@/features/marketing/components/layout";
 import { PublicImage } from "@/features/marketing/components/project-gallery";
 import { finalCta } from "@/lib/config/brand";
-import { absoluteUrl } from "@/lib/config/site";
+import { absoluteUrl, siteConfig } from "@/lib/config/site";
 import { formatDate, toIsoDate } from "@/shared/utils/format";
-import { getPublishedPostBySlug, getRelatedPosts } from "@/features/content/services/content";
+import { getPublishedPostBySlug, getRelatedPosts, getSitemapEntries } from "@/features/content/services/content";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+/**
+ * Prerenders every published slug at build time.
+ *
+ * With the segment now cached rather than `force-dynamic`, this turns the
+ * catalogue into static HTML that is served without touching the API, then
+ * refreshed by the revalidation webhook. Slugs published after the build still
+ * work: `dynamicParams` defaults to true, so an unknown slug renders on demand
+ * and is cached from then on.
+ *
+ * Failure here is deliberately non-fatal. A build should not break because the
+ * API happened to be unreachable — returning no params simply means every page
+ * renders on first request instead, which is the behaviour that existed before.
+ */
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  try {
+    const entries = await getSitemapEntries();
+    return entries.posts.map((row) => ({ slug: row.slug }));
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -44,6 +66,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: `/blog/${post.slug}`,
       type: "article",
+      siteName: siteConfig.name,
+      locale: "en_US",
       publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
       modifiedTime: new Date(post.updatedAt).toISOString(),
       images: post.coverMedia?.url ? [post.coverMedia.url] : undefined,
@@ -151,14 +175,16 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {post.coverMedia?.url ? (
           <figure className="mt-6">
-            <div className="media-frame aspect-16/9 bg-ice">
+            <div className="media-frame relative aspect-16/9 bg-ice">
               <PublicImage
                 url={post.coverMedia.url}
-                /* Empty alt when the CMS has none: a decorative image is better
-                   than an invented description of something unseen. */
-                altText={post.coverMedia.altText}
-                width={post.coverMedia.width}
-                height={post.coverMedia.height}
+                /* Falls back to the post title. The previous empty alt marked a
+                   cover image as decorative, which tells a screen reader to skip
+                   the only illustration on the article. Naming it after the
+                   article it illustrates is accurate and invents nothing. */
+                alt={post.coverMedia.altText ?? post.title}
+                priority
+                sizes="(max-width: 768px) 100vw, 768px"
               />
             </div>
           </figure>
