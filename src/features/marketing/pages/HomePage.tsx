@@ -1,17 +1,16 @@
 import Link from "next/link";
 
 import { CapabilitiesStage } from "@/features/marketing/components/capabilities-stage";
-import { CtaGlobe } from "@/features/marketing/components/cta-globe";
 import { FaqAccordion } from "@/features/marketing/components/faq-accordion";
 import { Hero } from "@/features/marketing/components/hero";
 import { Arrow, Container } from "@/features/marketing/components/layout";
+import { FinalCta } from "@/features/marketing/components/final-cta";
 import { FaqJsonLd } from "@/features/marketing/components/structured-data";
 import { ProcessStage } from "@/features/marketing/components/process-stage";
 import { ScrollNarrative } from "@/features/marketing/components/scroll-narrative";
 import { SystemDiagram } from "@/features/marketing/components/system-diagram";
 import {
   brand,
-  finalCta,
   homeCapabilities,
   homeEvidence,
   homeFaqs,
@@ -212,32 +211,7 @@ export default function HomePage() {
         </section>
 
         {/* CTA */}
-        <section
-          id="contact"
-          className="relative px-5 py-[clamp(40px,8vh,100px)] pb-[clamp(90px,14vh,160px)] sm:px-8"
-        >
-          <Container className="max-w-[900px]">
-            <div
-              data-reveal-stage
-              className="cta-band relative z-0 flex flex-col items-center px-8 py-14 text-center sm:px-12 sm:py-20"
-            >
-              <CtaGlobe />
-              <h2 className="relative z-[1] text-h1 font-normal text-balance text-white">
-                {finalCta.heading}
-              </h2>
-              <p className="relative z-[1] mt-6 max-w-[480px] text-lead text-white/65">
-                Tell us what you&apos;re trying to build, improve or automate.
-              </p>
-              <Link
-                href="/start-a-project"
-                className="cta-band__btn relative z-[1] mt-[clamp(30px,4vw,44px)]"
-              >
-                Start a project
-                <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-          </Container>
-        </section>
+        <FinalCta />
       </ScrollNarrative>
     </>
   );

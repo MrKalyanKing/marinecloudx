@@ -4,9 +4,9 @@ import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ActionLink, Breadcrumbs, Container, PageBody, PageIntro } from "@/features/marketing/components/layout";
+import { Breadcrumbs, Container, PageBody, PageIntro } from "@/features/marketing/components/layout";
+import { FinalCta } from "@/features/marketing/components/final-cta";
 import { ProjectGallery, PublicImage } from "@/features/marketing/components/project-gallery";
-import { finalCta } from "@/lib/config/brand";
 import { PublicationStatus } from "@/contracts";
 import { formatDate, toIsoDate } from "@/shared/utils/format";
 import { getPublishedProjectBySlug, getSitemapEntries } from "@/features/content/services/content";
@@ -198,17 +198,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         ) : null}
 
         {/* Copy comes from the approved brand narrative — nothing invented here. */}
-        <section className="mt-12 border-t border-hairline-light pt-8">
-          <h2 className="text-h3 font-semibold text-ink">{finalCta.heading}</h2>
-          <p className="mt-3 max-w-2xl text-sm text-ink-muted">{finalCta.supporting}</p>
-          <div className="mt-5">
-            <ActionLink href="/contact" tone="paper">
-              Start a conversation
-            </ActionLink>
-          </div>
-        </section>
       </Container>
       </PageBody>
+
+      <FinalCta />
     </>
   );
 }

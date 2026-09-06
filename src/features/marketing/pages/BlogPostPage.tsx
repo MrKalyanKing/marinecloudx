@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
-  ActionLink,
   Breadcrumbs,
   CardGrid,
   Container,
@@ -11,8 +10,8 @@ import {
   PageBody,
   PageIntro,
 } from "@/features/marketing/components/layout";
+import { FinalCta } from "@/features/marketing/components/final-cta";
 import { PublicImage } from "@/features/marketing/components/project-gallery";
-import { finalCta } from "@/lib/config/brand";
 import { absoluteUrl, siteConfig } from "@/lib/config/site";
 import { formatDate, toIsoDate } from "@/shared/utils/format";
 import { getPublishedPostBySlug, getRelatedPosts, getSitemapEntries } from "@/features/content/services/content";
@@ -238,17 +237,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        <section className="mt-14 border-t border-hairline-light pt-8">
-          <h2 className="text-h3 font-semibold text-ink">{finalCta.heading}</h2>
-          <p className="mt-3 max-w-2xl text-sm text-ink-muted">{finalCta.supporting}</p>
-          <div className="mt-5">
-            <ActionLink href="/contact" tone="paper">
-              Start a conversation
-            </ActionLink>
-          </div>
-        </section>
       </Container>
       </PageBody>
+
+      <FinalCta />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { AmbientTrails } from "@/features/marketing/components/ambient-trails";
 import { OrganizationJsonLd } from "@/features/marketing/components/structured-data";
 import { ScrollAmbient } from "@/features/marketing/components/scroll-ambient";
 import { SiteFooter } from "@/features/marketing/components/site-footer";
@@ -54,6 +55,10 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="ambient-glow" />
         <div className="absolute inset-0 grid-lines" />
         <div className="scroll-lines" />
+        {/* Two ribbons that follow the section you are reading. Inside this
+            fixed, z-0 layer, so they sit behind all page content — `main` is
+            z-1 — and behind the noise that sits on top of everything. */}
+        <AmbientTrails />
         <div className="ambient-noise opacity-10" />
       </div>
 

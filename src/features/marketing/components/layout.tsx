@@ -297,7 +297,11 @@ export function PageBody({
   className?: string;
 }) {
   return (
-    <div className={cx("relative flex-1 bg-paper text-ink", className)}>
+    // Translucent rather than solid, so the ambient trails behind the page
+    // read faintly through inner pages too. At 72% over a near-white canvas
+    // the effective background is still ~#fcfcff, so body-text contrast is
+    // unchanged.
+    <div className={cx("relative flex-1 bg-paper/72 text-ink", className)}>
       {children}
     </div>
   );
@@ -372,6 +376,25 @@ export interface CardImage {
   altText?: string | null;
   width?: number | null;
   height?: number | null;
+}
+
+/**
+ * Palette for card accents. The text-safe stops, because these colour a chip
+ * label and a monogram, not just a background wash.
+ */
+const CARD_ACCENTS = ["#5b4ae8", "#d92668", "#1272d6", "#0f9488", "#c2410c", "#7c3aed"];
+
+/**
+ * Small stable hash of the title.
+ *
+ * Deterministic on purpose: a card must keep the same accent between the server
+ * render and the client, and between visits. Anything random would hydrate
+ * mismatched and would also change colour every time the page rebuilt.
+ */
+function hashString(value: string): number {
+  let h = 0;
+  for (let i = 0; i < value.length; i++) h = (h * 31 + value.charCodeAt(i)) | 0;
+  return Math.abs(h);
 }
 
 export function ContentCard({
