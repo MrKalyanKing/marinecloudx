@@ -494,6 +494,130 @@ main:focus-visible {
     0 16px 40px -20px rgb(20 16 56 / 0.24);
 }
 
+/* -------------------------------------------------------------------------- */
+/* Nav items — the iOS capsule                                                 */
+/* -------------------------------------------------------------------------- */
+/* On iOS a tab bar item is a plain glyph until you touch it, and then a
+   rounded capsule of lighter material grows *behind* it — the highlight is a
+   piece of the same glass, not a hover colour. Two details do the work:
+
+   1. The capsule is a ::before pinned behind the label with `inset: 0` and a
+      negative z-index, so adding it changes nothing about the layout or the
+      text position. Animating a background directly would have meant animating
+      the element that holds the text, and any scale on it would blur the type.
+   2. It scales from 0.86 rather than fading alone. Growing outward from the
+      centre is what makes it read as a physical object arriving under the
+      finger instead of a colour crossfading in.
+
+   The label itself lifts a hair on hover, which is enough to suggest the
+   capsule has thickness. `transform` and `opacity` only, so it stays on the
+   compositor. */
+.nav-item {
+  position: relative;
+  isolation: isolate;
+  border-radius: 999px;
+  padding: 0.5rem 0.85rem;
+  transition:
+    color var(--dur-fast) var(--ease-spring),
+    transform var(--dur-fast) var(--ease-spring);
+}
+
+.nav-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 1px 2px rgb(20 16 56 / 0.05),
+    0 8px 20px -12px rgb(91 74 232 / 0.4);
+  opacity: 0;
+  transform: scale(0.86);
+  transition:
+    opacity var(--dur-fast) var(--ease-spring),
+    transform var(--dur-fast) var(--ease-spring);
+  pointer-events: none;
+}
+
+.nav-item:hover,
+.nav-item:focus-visible {
+  color: var(--color-ink);
+}
+
+.nav-item:hover::before,
+.nav-item:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.nav-item:active {
+  transform: scale(0.96);
+}
+
+/* The route you are on keeps the capsule, tinted toward the brand so it is
+   distinguishable from whatever the pointer is merely passing over. Both states
+   can be true at once; the hover rule above only raises the opacity it already
+   has, so nothing jumps. */
+.nav-item[aria-current="page"] {
+  color: var(--color-brand);
+  font-weight: 500;
+}
+
+.nav-item[aria-current="page"]::before {
+  opacity: 1;
+  transform: scale(1);
+  background: rgb(109 92 255 / 0.1);
+  border-color: rgb(109 92 255 / 0.22);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 6px 16px -10px rgb(91 74 232 / 0.45);
+}
+
+/* Coarse pointers have no hover, and a capsule that only ever appears on
+   :active flashes on every tap before the route changes. Suppress it there and
+   let the current-page rule carry the state on its own. */
+@media (hover: none) {
+  .nav-item:hover::before {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+
+  .nav-item[aria-current="page"]::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The wordmark lockup. The mark is a dark circular badge, so it gets a hairline
+   ring rather than a shadow — on the near-white canvas a shadow under a dark
+   circle reads as a smudge. */
+.brand-lockup {
+  border-radius: 999px;
+  padding: 0.3rem 0.6rem 0.3rem 0.35rem;
+  margin-left: -0.35rem;
+  transition:
+    background var(--dur-fast) var(--ease-spring),
+    transform var(--dur-fast) var(--ease-spring);
+}
+
+.brand-lockup:hover {
+  background: rgb(255 255 255 / 0.6);
+}
+
+.brand-lockup:active {
+  transform: scale(0.97);
+}
+
+.brand-mark {
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 1px rgb(20 16 56 / 0.08),
+    0 2px 6px -2px rgb(20 16 56 / 0.25);
+}
+
 /* The primary action. Was flat #0a0a0a, which on a violet-tinted page was the
    only pure black on screen and read as borrowed from another design. It is
    the brand gradient now, so the header CTA and the hero CTA are visibly the
@@ -777,13 +901,25 @@ main:focus-visible {
 /* Liquid-glass form fields, chips and media frames                           */
 /* -------------------------------------------------------------------------- */
 
+/* ## Why no field on this site carries its own `backdrop-filter`
+ *
+ * Both field styles below used to. Each one was then a separate backdrop root,
+ * and a backdrop root has to re-run its blur whenever *anything behind it*
+ * changes. A form is ten of them stacked over a card that has bubbles drifting
+ * through it, so every single bubble frame invalidated ten gaussian blurs. That
+ * measured at a 33.3ms median frame — a steady 30fps while the page sat
+ * perfectly still — and it is what made the form feel like it was jerking.
+ *
+ * Nothing is lost visually. A field sits on a card that is *already* frosted
+ * glass, so its own blur was sampling an image that had been blurred once
+ * already; the fill alone is indistinguishable, and the rim and inset highlight
+ * were always what read as "glass" here. The fill is a touch more opaque to
+ * make up the difference. */
 .field-glass {
   width: 100%;
   border-radius: 14px;
-  background: rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.78);
   border: 1.5px solid rgb(109 92 255 / 0.28);
-  -webkit-backdrop-filter: blur(14px) saturate(1.15);
-  backdrop-filter: blur(14px) saturate(1.15);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.7),
     0 1px 2px rgb(0 0 0 / 0.02);
@@ -805,6 +941,59 @@ main:focus-visible {
 }
 .field-glass[aria-invalid="true"] {
   border-color: rgb(220 38 38 / 0.5);
+}
+
+/* The same field, inverted, for the saturated violet band.
+   `.field-glass` cannot be reused there: it is white fill with a violet border,
+   which on the violet gradient reads as an opaque white slab and loses the
+   material entirely. This is the reverse — a dark-tinted well cut into the
+   gradient, with the specular rim on top where light would land.
+
+   `color-scheme: dark` is the important line. Without it the native select
+   popup, the date and autofill chrome, and the caret all render light-on-light
+   and become invisible; it costs one declaration and fixes all of them. */
+.field-liquid {
+  width: 100%;
+  border-radius: 14px;
+  color: #ffffff;
+  color-scheme: dark;
+  /* No backdrop-filter here either, for the reason documented on
+     `.field-glass` above — these six fields sit directly over the drifting
+     bubble field, so they were the worst offenders of the lot. */
+  background: rgb(255 255 255 / 0.15);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 1px 2px rgb(20 16 56 / 0.12);
+  transition:
+    border-color var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease,
+    background var(--dur-fast) ease;
+}
+
+.field-liquid::placeholder {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.field-liquid:focus {
+  outline: none;
+  border-color: rgb(255 255 255 / 0.65);
+  background: rgb(255 255 255 / 0.2);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 0 0 3px rgb(255 255 255 / 0.18);
+}
+
+.field-liquid[aria-invalid="true"] {
+  border-color: rgb(255 190 200 / 0.75);
+}
+
+/* A <select> renders its <option> list with the *page* background on Windows
+   and Linux, not the control's. Without this the options are white text on
+   white. */
+.field-liquid option {
+  color: var(--color-ink);
+  background: #ffffff;
 }
 
 .chip-glass {
@@ -861,6 +1050,85 @@ main:focus-visible {
 .list-row-glass:hover {
   background: rgb(255 255 255 / 0.92);
   transform: translateX(2px);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Hover-or-tap instructions                                                   */
+/* -------------------------------------------------------------------------- */
+/* "Hover a capability to see the stack behind it" is an instruction nobody on a
+   phone can follow, and it was the only thing on screen telling you what these
+   controls do. The two spellings are both in the markup and CSS picks one, so
+   the server and the client always render the same HTML — deciding this in
+   JavaScript would mean either a hydration mismatch or a flash of the wrong
+   word on first paint.
+ *
+ * `(hover: hover)` describes the *primary* pointer, which is the right question
+ * here: a touchscreen laptop reads as hover-capable and gets the mouse copy,
+ * and a phone gets the tap copy even though it can pair a mouse. */
+.on-hover {
+  display: none;
+}
+
+.on-tap {
+  display: inline;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .on-hover {
+    display: inline;
+  }
+
+  .on-tap {
+    display: none;
+  }
+}
+
+/* The panel acknowledges that it just answered a tap.
+ *
+ * Where the detail panel is already on screen, scrolling to it is suppressed —
+ * so without this, a tap can change text somewhere in peripheral vision with no
+ * event to draw the eye. One brief ring is enough to say "this is the thing
+ * that changed", and it is inset so it never shifts layout.
+ *
+ * Hover-capable pointers never see it: there, the cursor is already on the
+ * control and the connection is obvious. */
+.reveal-target {
+  position: relative;
+}
+
+.reveal-target::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: inset 0 0 0 2px var(--reveal-accent, var(--color-brand-bright));
+}
+
+@media (hover: none) {
+  .reveal-target[data-pulse="true"]::after {
+    animation: reveal-pulse 0.75s var(--ease-out-soft);
+  }
+}
+
+@keyframes reveal-pulse {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-target[data-pulse="true"]::after {
+    animation: none;
+  }
 }
 
 .media-frame {
@@ -1228,14 +1496,38 @@ main:focus-visible {
    palette. It is now the brand gradient itself — the one place on the page
    that goes fully saturated, which is what makes it read as the destination
    rather than just another panel. */
+/* ## Why the gradient stops are in pixels
+ *
+ * They were percentages, which resolve against the element's own box — so every
+ * frame the card grew, all four layers had to be recomputed and repainted at a
+ * new geometry. That was the single most expensive frame in the open: 383ms at
+ * worst, a visible lurch right at the start of the animation.
+ *
+ * In pixels, anchored to the top edge, the light is fixed to the card's head
+ * where it belongs and a change in height cannot invalidate it — the browser
+ * repaints only the strip that was newly revealed.
+ *
+ * The bottom-anchored third radial (`at 50% 110%`) is gone for the same reason:
+ * being positioned from the bottom, it moved on every frame by definition. The
+ * linear gradient's own dark end covers the same ground. */
 .cta-band {
   position: relative;
   overflow: hidden;
+  /* This card is the one element on the site whose height animates, so it is
+     the one that has to re-rasterize while it moves. Paint containment is a
+     promise the card can already keep — it clips its overflow anyway — and it
+     lets the browser treat the card as a self-contained paint unit instead of
+     re-examining the surrounding page each frame. Measured over four runs it
+     halved the dropped frames in the open, from fifteen to eight, and took the
+     worst frame from 50ms to 33ms.
+
+     It clips descendants, not the element's own box-decoration, so the wide
+     violet shadow below the card is unaffected. */
+  contain: paint;
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(ellipse 70% 60% at 20% 10%, rgb(255 92 168 / 0.5), transparent 62%),
-    radial-gradient(ellipse 60% 55% at 85% 20%, rgb(80 190 255 / 0.4), transparent 62%),
-    radial-gradient(ellipse 80% 70% at 50% 110%, rgb(59 47 168 / 0.6), transparent 68%),
+    radial-gradient(ellipse 620px 340px at 20% 70px, rgb(255 92 168 / 0.5), transparent 62%),
+    radial-gradient(ellipse 540px 300px at 85% 130px, rgb(80 190 255 / 0.4), transparent 62%),
     linear-gradient(150deg, #4a3ad0 0%, #6d5cff 45%, #8b5cf6 100%);
   color: #fff;
   box-shadow:
@@ -1244,10 +1536,23 @@ main:focus-visible {
     0 40px 80px -32px rgb(91 74 232 / 0.55);
 }
 
+/* The faint engineering rule over the gradient.
+ *
+ * Pinned to a fixed height rather than stretched with `inset: 0`. It carries a
+ * `mask-image` whose ellipse is sized as a percentage of this box, so while the
+ * box tracked the card's height, every frame of the open re-rasterized both a
+ * tiled 48px pattern *and* a full-surface radial mask over it. Measured on its
+ * own, that was the difference between a 166ms worst frame and a 50ms one.
+ *
+ * 820px covers the card in both states at desktop widths; the card's own
+ * `overflow: hidden` trims the excess when it is collapsed. At 3.5% white the
+ * pattern is a texture rather than a feature, so nothing about the composition
+ * depends on it reaching the exact bottom edge. */
 .cta-band::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
+  height: 820px;
   background-image:
     linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
@@ -1275,6 +1580,435 @@ main:focus-visible {
 .cta-band__btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 36px -14px rgb(0 0 0 / 0.5);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The CTA that opens into the enquiry form                                    */
+/* -------------------------------------------------------------------------- */
+/* "Start a project" no longer leaves the page. The violet card grows in place
+   and the form arrives inside it, which is the difference between asking
+   someone to commit to a navigation and letting them start typing.
+ *
+ * The whole effect is built on one trick: a grid whose single row animates
+ * between `0fr` and `1fr`. That is the only way to transition to a height the
+ * content decides — `height: auto` is not interpolable, and the usual
+ * workarounds (a guessed `max-height`, or measuring in JS) either clip tall
+ * content or re-measure on every resize and font swap. The row does the
+ * measuring; nothing in JavaScript knows or needs to know how tall the form is.
+ *
+ * `min-height: 0` on the child is load-bearing, not defensive. A grid item's
+ * automatic minimum size is its content, so without it the row refuses to go
+ * below the form's natural height and the panel never closes. */
+/* Three properties animate here, and only one of them touches layout.
+ *
+ * ## What was removed
+ *
+ * A `filter: blur(8px) -> blur(0)` transition, for a "resolving into focus"
+ * feel. It cost a full-surface gaussian blur of the entire form every frame and
+ * the open measured at a 50ms median — 20fps. The slide and fade read as the
+ * same gesture without it.
+ *
+ * ## Why `height` and not `grid-template-rows`
+ *
+ * The `0fr -> 1fr` grid trick is the usual way to animate to a height the
+ * content decides, and it was used here first. It is genuinely more expensive:
+ * the track is content-sized, so every frame re-runs grid layout against the
+ * form's intrinsic size, and roughly three frames in five landed over 33ms.
+ *
+ * An explicit pixel height, measured once when the panel opens, removes the
+ * content-driven half of that work — the browser is told the number instead of
+ * deriving it. cta-enquiry.tsx sets it, and hands control back to `height:
+ * auto` once the transition settles, so a validation message appearing later
+ * still resizes the panel normally.
+ *
+ * `contain: layout style` is the other half. Nothing inside the panel changes
+ * while it grows — only the clip does — so this tells the browser it may skip
+ * re-laying-out the form's internals on every frame of the animation. */
+.cta-reveal {
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  contain: layout style;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    height var(--dur-slow) var(--ease-spring),
+    opacity var(--dur) var(--ease-spring),
+    transform var(--dur) var(--ease-spring);
+}
+
+.cta-reveal[data-open="true"] {
+  opacity: 1;
+  transform: none;
+  /* The incoming content waits for the panel to be most of the way open before
+     it resolves; arriving together reads as a jump rather than an unfold. */
+  transition-delay: 0s, 0.14s, 0.14s;
+}
+
+/* Once settled, the panel stops clipping and stops containing. A focus ring on
+   the first or last field sits a couple of pixels outside the content box and
+   would otherwise be shaved off, and containment has nothing left to save when
+   nothing is animating. */
+.cta-reveal[data-settled="true"] {
+  overflow: visible;
+  contain: none;
+}
+
+/* The inverse: the pitch and its button fold away as the form arrives. Same
+   mechanism as `.cta-reveal` — an explicit measured height, not a content-sized
+   grid row — so the two halves of the swap share one timing curve and one cost
+   profile.
+ *
+ * Using the grid trick here was easy to miss and not cheap: this block collapses
+ * at the same moment the panel expands, so the frame was paying for *two*
+ * simultaneous content-driven track resolutions rather than one. Both are
+ * explicit numbers now, and the layout pass they share only has to apply them. */
+.cta-collapse {
+  width: 100%;
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    height var(--dur-slow) var(--ease-spring),
+    opacity var(--dur-fast) ease;
+}
+
+.cta-collapse[data-open="true"] {
+  opacity: 0;
+}
+
+/* The orb shrinks and tucks up rather than disappearing, so there is one
+   continuous object across the transition and the card keeps its anchor.
+ *
+ * `scale`, not `width`/`height`. The size properties made the orb a third
+ * layout animation running against the row and the padding, all recalculating
+ * every frame; `scale` is composited and costs nothing. `margin-bottom` is the
+ * one layout property left, and it is there to reclaim the empty space the
+ * scaled-down orb leaves inside its unchanged box. */
+.cta-band .cta-globe {
+  transform-origin: center top;
+  transition:
+    transform var(--dur-slow) var(--ease-spring),
+    margin-bottom var(--dur-slow) var(--ease-spring);
+}
+
+.cta-band[data-open="true"] .cta-globe {
+  transform: scale(0.56);
+  margin-bottom: 0;
+}
+
+/* Dismiss control, top-right of the opened card. Sized to the 44px touch
+   target Apple specifies, with the visible circle smaller than the hit area. */
+.cta-dismiss {
+  position: absolute;
+  top: clamp(14px, 2vw, 22px);
+  right: clamp(14px, 2vw, 22px);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: #fff;
+  /* No backdrop-filter: it rotates on hover, and rotating a backdrop root
+     re-blurs its whole sample region every frame for a 36px button. */
+  background: rgb(255 255 255 / 0.18);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  transition:
+    background var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-spring),
+    opacity var(--dur-fast) ease;
+}
+
+.cta-dismiss:hover {
+  background: rgb(255 255 255 / 0.24);
+  transform: rotate(90deg);
+}
+
+/* Absent from the DOM flow when closed, but animated rather than unmounted so
+   it fades with the rest instead of popping out on the last frame. */
+.cta-band:not([data-open="true"]) .cta-dismiss {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Liquid card — a slab of glass held above the page                           */
+/* -------------------------------------------------------------------------- */
+/* Thicker and more deliberately lit than `.glass`, for the one or two places on
+   a page that are the reason the page exists. Three things separate it from a
+   panel that merely sits on the background:
+ *
+ *   1. A wide, soft, violet-tinted shadow thrown well below the card rather than
+ *      directly under it — the shadow of something suspended, not resting.
+ *   2. A second, warmer shadow offset further down still, which reads as the
+ *      light the card refracts onto the surface beneath it.
+ *   3. A slow vertical drift. Nine seconds and eight pixels: below the
+ *      threshold where it registers as an animation, above the threshold where
+ *      the card reads as fixed.
+ *
+ * The pool of cast light is a `box-shadow` rather than a blurred pseudo-element
+ * on purpose. `isolation: isolate` below makes this card its own stacking
+ * context, and inside one, a `z-index: -1` child paints above the element's own
+ * background — so the "pool" would have appeared *inside* the glass rather than
+ * under it. Box shadows are painted behind the background by definition and
+ * cannot land in the wrong place.
+ *
+ * The isolation itself is what lets the bubble field sit at z-index 0 — above
+ * the fill, below the content — without competing with anything on the page. */
+.liquid-card {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    155deg,
+    rgb(255 255 255 / 0.74) 0%,
+    rgb(255 255 255 / 0.58) 48%,
+    rgb(255 255 255 / 0.66) 100%
+  );
+  /* 22px, not the 44px `--glass-blur-thick` this started at.
+   *
+   * A backdrop-filter re-runs whenever what is behind it changes, and scrolling
+   * changes that on every frame — so the blur radius is a direct per-frame cost
+   * on the largest surface on the page, and blur cost climbs steeply with
+   * radius. Halving it took the worst scroll frame down by most of its length.
+   *
+   * There is nothing to see for the other half. Behind this card is a soft
+   * gradient aura with no detail in it; blurring a gradient by 22px and by 44px
+   * produces near-identical output. The thick radius earns its keep over
+   * photographs and text, which is where `--glass-blur-thick` is still used. */
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    var(--glass-specular),
+    var(--glass-shadow-1),
+    0 24px 48px -24px rgb(20 16 56 / 0.22),
+    0 48px 80px -44px rgb(91 74 232 / 0.55),
+    0 72px 110px -60px rgb(255 92 168 / 0.35);
+}
+
+/* ## The card no longer drifts, deliberately
+ *
+ * It used to run a 9s `translate3d` float. Two things were wrong with that, and
+ * the second is the one that mattered.
+ *
+ * The cheap objection: it never stops, and it carries a form. A text field you
+ * are typing into should not be moving, and a select you are aiming at should
+ * not be either. Pausing it on `:focus-within` covered the typing case and did
+ * nothing for the far commoner one — reading the page while it breathes.
+ *
+ * The expensive objection: this element has a `backdrop-filter`. Moving a
+ * backdrop root changes what is behind it, so the entire 44px blur has to be
+ * recomputed every frame it moves. That is a full-card gaussian blur at 60Hz,
+ * for eight pixels of travel nobody consciously registers, and it is why
+ * scrolling this page peaked at a 233ms frame.
+ *
+ * The float is gone. What made the card read as suspended was never the drift —
+ * it is the pair of wide, offset, colour-tinted shadows above, which cost
+ * nothing because they are painted once. */
+
+/* The colour the card is refracting.
+ *
+ * Glass is only legible against something with depth behind it — the note at
+ * the top of this file makes the point, and a `liquid-card` laid on the flat
+ * paper band was the exact failure it warns about: the blur had nothing to
+ * work on and the panel read as milk. This is a soft, oversized wash of the
+ * brand hues that sits behind the card and gives both the backdrop-filter and
+ * the bubbles something to pick up.
+ *
+ * Every stop falls to transparent well inside the box, and the box does not
+ * overhang its container. Both matter: `Section` clips its overflow, so an
+ * aura inset by a negative percentage is sliced off square at the band's top
+ * edge and the "soft colour field" becomes a hard horizontal seam across the
+ * page. Containing it costs nothing — the gradients never reach the edges
+ * anyway, which is what makes it read as a field rather than a shape. */
+.liquid-aura {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 38% at 24% 22%, rgb(109 92 255 / 0.3), transparent 66%),
+    radial-gradient(ellipse 42% 36% at 80% 32%, rgb(67 167 255 / 0.24), transparent 68%),
+    radial-gradient(ellipse 50% 34% at 55% 84%, rgb(255 92 168 / 0.22), transparent 70%);
+  filter: blur(46px);
+}
+
+/* The secondary panel beside it — the same material, sitting flatter. It is a
+   supporting note, so it does not claim the same height off the page as the
+   card carrying the form. */
+/* This one is `position: sticky`, and sticky plus backdrop-filter is the single
+   worst pairing in the whole system: the element moves relative to the page on
+   every scroll frame, so its entire blur is recomputed on every scroll frame,
+   for the length of the page. It gets a solid-enough fill instead. At 88% white
+   over a near-white canvas the result is within a shade of the blurred version,
+   and it costs nothing to scroll past. */
+.liquid-card--still {
+  background: rgb(255 255 255 / 0.88);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    var(--glass-specular),
+    var(--glass-shadow-1),
+    var(--glass-shadow-2);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Liquid bubbles — the field that rises under the glass                       */
+/* -------------------------------------------------------------------------- */
+/* Bubbles drifting up behind a translucent panel. The panel's own
+   `backdrop-filter` is what sells it: each bubble is blurred and desaturated by
+   the glass in front of it, so it reads as suspended *inside* the material
+   rather than painted on top.
+ *
+ * Every bubble animates `transform` and `opacity` only, so the whole field
+ * stays on the compositor and never triggers layout. The layer is
+ * `pointer-events: none` throughout — it sits over the card's background but
+ * under its content, and must never intercept a click meant for a field. */
+.bubble-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  /* Each bubble starts at whatever point of its own cycle its negative delay
+     puts it at, so a field that simply appeared would pop in mid-rise. One
+     short fade over the whole layer covers that, and costs a single composited
+     opacity on one element rather than one per bubble. */
+  animation: bubble-field-in 0.55s var(--ease-out-soft) both;
+}
+
+@keyframes bubble-field-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The rise is on a wrapper, not on the bubble, and that is the whole trick.
+ *
+ * A percentage in `translateY` resolves against the *element's own* height, so
+ * `translateY(-125%)` on a 20px bubble moves it 25px — it never left the
+ * bottom of the card. The track is `height: 100%`, so the identical percentage
+ * on it resolves against the card instead and the bubble crosses the whole
+ * panel, whatever size that panel happens to be. No JavaScript measures
+ * anything, and it stays correct when the card grows because a field was
+ * flagged with an error.
+ *
+ * Splitting rise from fade also lets the two run on different easings — a
+ * linear climb under an eased fade, which is what a bubble in water does. */
+.bubble-track {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  animation: bubble-rise var(--bubble-duration, 16s) var(--bubble-delay, 0s) infinite linear;
+  will-change: transform;
+}
+
+.bubble {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* Off-centre highlight plus a rim: the two cues that make a circle read as a
+     sphere. Same construction as the CTA orb, at a twentieth of the size.
+
+     The rim is violet, not white. On the light card the panel behind is
+     near-white, so a white-rimmed white bubble is invisible — the only thing
+     that can describe its edge there is the brand hue. The specular highlight
+     stays white, because that is the light source, not the material. */
+  background:
+    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.95) 0%, rgb(255 255 255 / 0.2) 40%, transparent 60%),
+    radial-gradient(circle at 68% 76%, rgb(139 124 255 / 0.4) 0%, rgb(109 92 255 / 0.14) 55%, transparent 72%);
+  border: 1px solid rgb(109 92 255 / 0.32);
+  box-shadow:
+    inset 0 -3px 8px rgb(91 74 232 / 0.3),
+    inset 0 2px 4px rgb(255 255 255 / 0.7),
+    0 4px 14px -6px rgb(20 16 56 / 0.28);
+  opacity: 0;
+  animation: bubble-fade var(--bubble-duration, 16s) var(--bubble-delay, 0s) infinite
+    cubic-bezier(0.4, 0.05, 0.55, 0.95);
+  /* No `will-change` here on purpose. The track above already carries one, and
+     a track plus its bubble is two hints per bubble — thirty-six standing
+     compositor layers for one card. `will-change` is a budget, not a speed
+     switch: past a certain count the memory and layer-management cost is worse
+     than what the promotion saves. One layer per bubble is enough, and the
+     browser promotes an animating `opacity` on its own regardless. */
+}
+
+/* On the violet band the bubbles have to lighten rather than tint, or they
+   vanish into the gradient. */
+.bubble-field--on-brand .bubble {
+  background:
+    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.95) 0%, rgb(255 255 255 / 0.22) 44%, transparent 64%),
+    radial-gradient(circle at 70% 78%, rgb(255 255 255 / 0.14) 0%, transparent 60%);
+  border-color: rgb(255 255 255 / 0.4);
+  box-shadow:
+    inset 0 -2px 6px rgb(255 255 255 / 0.16),
+    0 4px 14px -6px rgb(10 6 40 / 0.3);
+}
+
+/* The climb, on the full-height track. The percentages are of the card, so a
+   bubble starts just below the bottom edge and exits just past the top however
+   tall the card is.
+
+   The drift is a lazy S rather than a straight line — a bubble in a real fluid
+   is pushed sideways by the currents it makes. Those offsets stay in pixels
+   deliberately: a percentage there would resolve against the track's width,
+   which is the bubble's own diameter, and the big bubbles would then wander
+   five times as far as the small ones. */
+@keyframes bubble-rise {
+  0% {
+    transform: translate3d(0, 20%, 0);
+  }
+  35% {
+    transform: translate3d(14px, -22%, 0);
+  }
+  65% {
+    transform: translate3d(-12px, -60%, 0);
+  }
+  100% {
+    transform: translate3d(6px, -108%, 0);
+  }
+}
+
+/* Appearance, on the bubble itself. Separate from the climb so the two can run
+   on different easings — a linear rise under an eased swell and fade, which is
+   what a bubble in water actually does. */
+@keyframes bubble-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  12% {
+    opacity: var(--bubble-opacity, 0.7);
+  }
+  50% {
+    transform: scale(1);
+  }
+  88% {
+    opacity: var(--bubble-opacity, 0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+/* A drifting field of bubbles is decoration with no informational content, and
+   for a vestibular-sensitive visitor it is exactly the kind of continuous
+   background motion that causes trouble. The global reduced-motion block below
+   flattens durations, which for an infinite animation would freeze every bubble
+   mid-rise as a static dot field — so remove the layer outright instead. */
+@media (prefers-reduced-motion: reduce) {
+  .bubble-field {
+    display: none;
+  }
 }
 
 

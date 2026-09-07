@@ -1,8 +1,6 @@
-import Link from "next/link";
-
-import { CtaGlobe } from "@/features/marketing/components/cta-globe";
+import { CtaEnquiry } from "@/features/marketing/components/cta-enquiry";
 import { Container } from "@/features/marketing/components/layout";
-import { finalCta } from "@/lib/config/brand";
+import { getPublishedServices } from "@/features/content/services/content";
 
 /**
  * The closing call to action.
@@ -13,35 +11,42 @@ import { finalCta } from "@/lib/config/brand";
  * ended on a near-white panel that read as unfinished rather than as a
  * destination. One component now, used everywhere, so the last thing a visitor
  * sees is the same on every route.
+ *
+ * ## Why this is async now
+ *
+ * The card opens into the enquiry form rather than linking away to it (see
+ * cta-enquiry.tsx), and that form's "what do you need?" select is populated
+ * from the published CMS services so the resulting lead points at a real
+ * service record the CRM can filter on. Fetching here keeps every page that
+ * renders the CTA a server component: only the open/closed state crosses into
+ * the client.
+ *
+ * The read is cheap and safe to repeat. It goes through the same `fetch` tagged
+ * with `CONTENT_TAG` that the contact page already uses, so a page rendering
+ * both is served one cached response, and `getPublishedServices` returns `[]`
+ * rather than throwing if the API is unreachable — an unavailable backend
+ * costs the select its options, not the page.
  */
-export function FinalCta({
+export async function FinalCta({
   supporting = "Tell us what you're trying to build, improve or automate.",
 }: {
   supporting?: string;
 }) {
+  const services = await getPublishedServices();
+
   return (
     <section
       id="contact"
       className="relative px-5 py-[clamp(40px,8vh,100px)] pb-[clamp(90px,14vh,160px)] sm:px-8"
     >
-      <Container className="max-w-[900px]">
-        <div
-          data-reveal-stage
-          className="cta-band relative z-0 flex flex-col items-center px-8 py-14 text-center sm:px-12 sm:py-20"
-        >
-          <CtaGlobe />
-          <h2 className="relative z-[1] text-h1 font-normal text-balance text-white">
-            {finalCta.heading}
-          </h2>
-          <p className="relative z-[1] mt-6 max-w-[480px] text-lead text-white/75">{supporting}</p>
-          <Link
-            href="/start-a-project"
-            className="cta-band__btn relative z-[1] mt-[clamp(30px,4vw,44px)]"
-          >
-            Start a project
-            <span aria-hidden="true">→</span>
-          </Link>
-        </div>
+      {/* Widens as the form opens: 900px is right for a headline and a button
+          and too narrow for a two-column form. The card itself controls the
+          growth, so the container only has to stop constraining it. */}
+      <Container className="max-w-[980px]">
+        <CtaEnquiry
+          services={services.map((service) => ({ id: service.id, name: service.name }))}
+          supporting={supporting}
+        />
       </Container>
     </section>
   );

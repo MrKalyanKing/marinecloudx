@@ -4,12 +4,38 @@
  * Public navigation — same links and labels; light chrome on white canvas.
  */
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { cx } from "@/features/marketing/components/layout";
 import { publicNavigation, siteConfig } from "@/lib/config/site";
+
+/**
+ * The circular mark, sized to the cap height of the wordmark beside it.
+ *
+ * 26px is deliberate and small: the lockup has to read as one unit with
+ * "MarineCloudX", and anything taller than the text turns the bar into a logo
+ * with a caption. `priority` because this sits in the fixed header on every
+ * route, so it is in the first viewport of every page load; without it the mark
+ * pops in after the rest of the bar has painted.
+ *
+ * The asset is the mark alone rather than `/brand/logo.png`, which carries the
+ * wordmark too — using the full lockup here would print the company name twice.
+ */
+function BrandMark() {
+  return (
+    <Image
+      src="/brand/mark.png"
+      alt=""
+      width={26}
+      height={26}
+      priority
+      className="brand-mark block h-[26px] w-[26px] shrink-0"
+    />
+  );
+}
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -52,29 +78,25 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5 text-ink"
+          className="brand-lockup flex shrink-0 items-center gap-2.5 text-ink"
           aria-label={`${siteConfig.name} ${siteConfig.descriptor} — home`}
         >
-          <span
-            aria-hidden="true"
-            className="block h-3 w-3 rounded-full shadow-[0_0_12px_rgb(109_92_255_/_0.45)]"
-            style={{
-              background: "linear-gradient(135deg, #ff5ca8, #6d5cff 50%, #43a7ff)",
-            }}
-          />
-          <span className="text-[15.5px] font-semibold tracking-[-0.01em]">MarineCloudX</span>
+          <BrandMark />
+          <span className="text-[15.5px] font-semibold tracking-[-0.01em]">
+            {siteConfig.name}
+          </span>
         </Link>
 
-        <div className="ml-auto hidden items-center justify-end gap-5 text-[14px] text-ink-muted lg:flex xl:gap-7">
+        {/* `gap` is tighter than it was, because each link now carries its own
+            horizontal padding for the capsule to sit in. Keeping the old gap on
+            top of that padding pushed the row past the CTA on a 1024px screen. */}
+        <div className="ml-auto hidden items-center justify-end gap-0.5 text-[14px] text-ink-muted lg:flex xl:gap-1.5">
           {publicNavigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
-              className={cx(
-                "whitespace-nowrap transition-colors duration-200 hover:text-ink",
-                isActive(item.href) && "text-ink",
-              )}
+              className="nav-item whitespace-nowrap"
             >
               {item.label}
             </Link>
@@ -135,18 +157,23 @@ export function SiteHeader() {
         )}
       >
         <div className="flex items-center justify-between px-6 pt-6">
-          <span className="flex items-center gap-2.5 text-ink">
-            <span
-              aria-hidden="true"
-              className="block h-3 w-3 rounded-full"
-              style={{
-                background: "linear-gradient(135deg, #ff5ca8, #6d5cff 50%, #43a7ff)",
-              }}
-            />
+          {/* Was a plain <span>, so on a phone — the only place this drawer
+              exists — the company name was the one piece of branding on the
+              site that did not go home when tapped. It is a link now, and it
+              closes the drawer on the way, otherwise tapping it on the homepage
+              navigates nowhere and leaves the panel open over the page. */}
+          <Link
+            href="/"
+            tabIndex={open ? 0 : -1}
+            onClick={() => setOpen(false)}
+            aria-label={`${siteConfig.name} ${siteConfig.descriptor} — home`}
+            className="brand-lockup flex items-center gap-2.5 text-ink"
+          >
+            <BrandMark />
             <span className="text-[15.5px] font-semibold tracking-[-0.01em]">
               {siteConfig.name}
             </span>
-          </span>
+          </Link>
           <button
             type="button"
             onClick={() => setOpen(false)}

@@ -5,9 +5,10 @@
  */
 
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Arrow, cx } from "@/features/marketing/components/layout";
+import { useRevealOnSelect } from "@/features/marketing/hooks/use-reveal-on-select";
 import type { homeCapabilities } from "@/lib/config/brand";
 
 type Capability = (typeof homeCapabilities)[number];
@@ -24,30 +25,61 @@ export function CapabilitiesStage({
   const current = items[active] ?? items[0];
   const accent = ACCENTS[active % ACCENTS.length];
 
+  // On a phone this grid stacks, putting the Focus panel a long way below the
+  // list — so a tap changed something off screen and read as a dead button.
+  const { targetRef, reveal } = useRevealOnSelect<HTMLDivElement>();
+
+  const panelId = useId();
+
+  /**
+   * Hover still previews, but only a real activation reveals.
+   *
+   * `onMouseEnter` fires on touch too — browsers synthesise it before the tap —
+   * so calling `reveal()` from there would scroll the page on a stray finger
+   * drag across the list. The click handler is the only one that commits.
+   */
+  const select = (index: number, activate: boolean) => {
+    setActive(index);
+    if (activate) reveal();
+  };
+
   return (
     <section id="capabilities" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
       <div className="mx-auto max-w-[1320px]">
         <div data-reveal-stage className="mb-10 max-w-[720px] sm:mb-12">
           <p className="tech-label text-brand">04&nbsp;&nbsp;Capabilities</p>
           <h2 className="mt-6 text-h2 font-normal text-ink">What we engineer</h2>
+          {/* Both spellings ship; CSS shows one. Deciding in JavaScript would
+              either mismatch on hydration or flash the wrong verb. */}
           <p className="mt-5 text-lead text-ink-muted">
-            Hover a capability to see the stack behind it — problem first, tools second.
+            <span className="on-hover">Hover</span>
+            <span className="on-tap">Tap</span> a capability to see the stack behind it — problem
+            first, tools second.
           </p>
         </div>
 
         <div data-reveal-stage className="mcx-card overflow-hidden">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
             <div className="border-b border-black/8 p-6 sm:p-8 lg:border-r lg:border-b-0">
-              <ul className="flex flex-col gap-1">
+              {/* A tablist, which is what this actually is: a row of choices
+                  that swap one panel. Before, the buttons announced nothing
+                  about what they controlled or which was chosen, so a screen
+                  reader user got four unlabelled buttons and no way to tell
+                  that pressing one had changed anything — the same problem the
+                  sighted phone user had, for the same reason. */}
+              <ul role="tablist" aria-label="Capabilities" className="flex flex-col gap-1">
                 {items.map((item, index) => {
                   const isActive = index === active;
                   const itemAccent = ACCENTS[index % ACCENTS.length];
                   return (
-                    <li key={item.slug}>
+                    <li key={item.slug} role="presentation">
                       <button
                         type="button"
-                        onClick={() => setActive(index)}
-                        onMouseEnter={() => setActive(index)}
+                        role="tab"
+                        aria-selected={isActive}
+                        aria-controls={panelId}
+                        onClick={() => select(index, true)}
+                        onMouseEnter={() => select(index, false)}
                         /* `transition-all` used to be here. It animated every
                            animatable property, including the ones that change
                            layout, which is half of why hovering this list made
@@ -118,9 +150,22 @@ export function CapabilitiesStage({
             </div>
 
             <div
-              className="relative flex min-h-[260px] flex-col justify-between overflow-hidden p-6 sm:p-8 lg:min-h-[340px] lg:p-10"
+              ref={targetRef}
+              id={panelId}
+              role="tabpanel"
+              tabIndex={-1}
+              // Announces the swap to a screen reader without moving focus,
+              // which is the assistive-technology version of the same fix:
+              // something changed and you are told about it.
+              aria-live="polite"
+              // Clears the fixed header when this is scrolled to on a phone.
+              className={cx(
+                "reveal-target relative flex min-h-[260px] scroll-mt-24 flex-col justify-between",
+                "overflow-hidden p-6 sm:p-8 lg:min-h-[340px] lg:p-10",
+              )}
               style={{
                 background: `radial-gradient(120% 100% at 100% 0%, ${accent}14, transparent 60%)`,
+                ["--reveal-accent" as string]: accent,
               }}
             >
               <div>

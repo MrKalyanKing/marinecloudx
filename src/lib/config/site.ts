@@ -34,16 +34,68 @@ function normaliseOrigin(value: string): string {
   return withScheme.replace(/\/+$/, "");
 }
 
+/**
+ * The host this particular deployment is actually served from, when the
+ * platform publishes one.
+ *
+ * Vercel exposes `VERCEL_BRANCH_URL` (stable for the branch) and `VERCEL_URL`
+ * (unique per deployment); Render exposes `RENDER_EXTERNAL_URL`. The branch URL
+ * is preferred because it survives a redeploy, which matters for a link someone
+ * has already shared.
+ */
+function deploymentOrigin(): string | null {
+  const host =
+    process.env.NEXT_PUBLIC_SITE_ORIGIN?.trim() ||
+    process.env.RENDER_EXTERNAL_URL?.trim() ||
+    process.env.VERCEL_BRANCH_URL?.trim() ||
+    process.env.VERCEL_URL?.trim();
+
+  return host ? normaliseOrigin(host) : null;
+}
+
+/**
+ * Resolves the origin that every canonical URL, `og:url`, `og:image`, sitemap
+ * `<loc>` and `robots.txt` `Sitemap:` line is built against.
+ *
+ * ## Why the ordering changed
+ *
+ * The previous version returned `PRODUCTION_URL` for *any* build with
+ * `NODE_ENV === "production"` — which is every built deployment, not only the
+ * one serving the apex. The `VERCEL_URL` branch beneath it was therefore
+ * unreachable in practice.
+ *
+ * That is what broke link previews on the staging host. `dev-frontend.marinecloudx.in`
+ * emitted `og:image = https://marinecloudx.in/opengraph-image.png`, so WhatsApp,
+ * Slack and Twitter fetched the image from the *old* site still answering on the
+ * apex and rendered its SMIVORA artwork beside this site's title and
+ * description. Nothing about the image file in this repository was wrong — the
+ * URL simply pointed at a different website.
+ *
+ * A deployment now describes itself unless it has been told it is the canonical
+ * one. `VERCEL_ENV === "production"` is that signal on Vercel; setting
+ * `NEXT_PUBLIC_SITE_URL` is the explicit signal anywhere else, and it still wins
+ * over everything. Self-description is also the safer failure mode: a preview
+ * that names itself is merely un-indexed, whereas a preview that claims the apex
+ * hands Google duplicate canonicals for the whole site.
+ */
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return normaliseOrigin(explicit);
 
-  // Production must never fall through to a preview host or to localhost.
-  if (process.env.NODE_ENV === "production") return PRODUCTION_URL;
+  // The platform states this deployment *is* production, so it may claim the
+  // canonical origin even though nobody configured one.
+  if (process.env.VERCEL_ENV === "production") return PRODUCTION_URL;
 
-  // Preview deployments: the generated host is correct for that deployment and
-  // those builds are not meant to be indexed anyway.
-  if (process.env.VERCEL_URL) return normaliseOrigin(process.env.VERCEL_URL);
+  // Staging, preview and branch deployments: the generated host is the origin
+  // the visitor is actually on, so every absolute URL — the social image above
+  // all — has to resolve there rather than to the apex.
+  const deployment = deploymentOrigin();
+  if (deployment) return deployment;
+
+  // A production build with no platform host at all (a container behind a
+  // proxy, a self-hosted `next start`). The apex is the only sane answer and is
+  // almost always right — but set NEXT_PUBLIC_SITE_URL and remove the doubt.
+  if (process.env.NODE_ENV === "production") return PRODUCTION_URL;
 
   return "http://localhost:3000";
 }

@@ -22,8 +22,9 @@
  * a circle and the whole thing reads as orbits rather than as a net.
  */
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
+import { useRevealOnSelect } from "@/features/marketing/hooks/use-reveal-on-select";
 import { systemNodes } from "@/lib/config/brand";
 
 /**
@@ -89,6 +90,20 @@ export function SystemDiagram() {
   const [active, setActive] = useState(0);
   const node = systemNodes[active];
   const accent = WEB_COLORS[active];
+
+  // The diagram is a full-width square, so on a phone the panel describing the
+  // selected node starts below the fold. Tapping a node updated text nobody
+  // could see. See the hook for the whole reasoning.
+  const { targetRef, reveal } = useRevealOnSelect<HTMLDivElement>();
+
+  const panelId = useId();
+
+  // Only a real activation reveals. Pointer entry is a preview, and on touch it
+  // fires from a finger passing over a node on the way to somewhere else.
+  const select = (index: number, activate: boolean) => {
+    setActive(index);
+    if (activate) reveal();
+  };
 
   return (
     <div className="grid items-center gap-[clamp(28px,4vw,56px)] lg:grid-cols-2">
@@ -173,7 +188,19 @@ export function SystemDiagram() {
 
         {/* Labels.
             Styled inline rather than with a shared card class, so nothing can
-            reintroduce a `position` that fights the `absolute` utility. */}
+            reintroduce a `position` that fights the `absolute` utility.
+
+            Wrapped in a tablist rather than marking the square itself as one:
+            a tablist may only contain tabs, and the square also holds the SVG
+            and the centre lockup. The wrapper is `inset-0` so the labels keep
+            positioning against the same box, and `pointer-events-none` so
+            covering the diagram costs nothing — the buttons re-enable it for
+            themselves. */}
+        <div
+          role="tablist"
+          aria-label="System areas"
+          className="pointer-events-none absolute inset-0"
+        >
         {systemNodes.map((n, i) => {
           const { x, y } = nodePosition(i);
           const on = i === active;
@@ -182,11 +209,13 @@ export function SystemDiagram() {
             <button
               key={n.name}
               type="button"
-              onMouseEnter={() => setActive(i)}
-              onFocus={() => setActive(i)}
-              onClick={() => setActive(i)}
-              aria-pressed={on}
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-4 py-2 font-mono text-[clamp(9px,1vw,11px)] tracking-[0.12em] whitespace-nowrap uppercase transition-[background,border-color,box-shadow,color] duration-300 ease-out"
+              role="tab"
+              aria-selected={on}
+              aria-controls={panelId}
+              onMouseEnter={() => select(i, false)}
+              onFocus={() => select(i, false)}
+              onClick={() => select(i, true)}
+              className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-4 py-2 font-mono text-[clamp(9px,1vw,11px)] tracking-[0.12em] whitespace-nowrap uppercase transition-[background,border-color,box-shadow,color] duration-300 ease-out"
               style={{
                 left: `${x}%`,
                 top: `${y}%`,
@@ -205,9 +234,18 @@ export function SystemDiagram() {
             </button>
           );
         })}
+        </div>
       </div>
 
-      <div className="max-w-[420px]">
+      <div
+        ref={targetRef}
+        id={panelId}
+        role="tabpanel"
+        tabIndex={-1}
+        aria-live="polite"
+        className="reveal-target max-w-[420px] scroll-mt-24 rounded-[18px]"
+        style={{ ["--reveal-accent" as string]: accent }}
+      >
         <div
           className="tech-label inline-flex items-center gap-2 rounded-full px-3 py-1"
           style={{
@@ -240,7 +278,8 @@ export function SystemDiagram() {
           ))}
         </div>
         <p className="mt-5 text-[13px] leading-[1.7] text-ink-muted">
-          Hover a node to trace its path through the system.
+          <span className="on-hover">Hover</span>
+          <span className="on-tap">Tap</span> a node to trace its path through the system.
         </p>
       </div>
     </div>
