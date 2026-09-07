@@ -105,29 +105,32 @@ export const publicNavigation = [
   { label: "Insights", href: "/blog" },
 ] as const;
 
+/**
+ * Footer columns.
+ *
+ * Two groups rather than three. The footer sits under a call-to-action card and
+ * the whole block has to stay short enough to read as a footer; three narrow
+ * columns of two or three links each pushed it to the height of a page section
+ * and left the last column with a single orphaned entry at most breakpoints.
+ */
 export const footerNavigation = [
   {
     heading: "Company",
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
+      { label: "Testimonials", href: "/testimonials" },
       { label: "FAQ", href: "/faq" },
     ],
   },
   {
-    heading: "Work",
+    heading: "What we do",
     links: [
       { label: "Services", href: "/services" },
       { label: "Industries", href: "/industries" },
       { label: "Projects", href: "/projects" },
       { label: "Case studies", href: "/case-studies" },
-    ],
-  },
-  {
-    heading: "More",
-    links: [
-      { label: "Testimonials", href: "/testimonials" },
-      { label: "Blog", href: "/blog" },
+      { label: "Insights", href: "/blog" },
     ],
   },
 ] as const;

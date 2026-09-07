@@ -37,20 +37,65 @@
 
 import { useEffect, useRef } from "react";
 
-/** Pink. The text-safe stop, so the line stays visible against the canvas. */
-const PINK = "224, 66, 138";
-/** Green. Cool enough to sit beside the violet palette without clashing. */
-const GREEN = "18, 176, 148";
+/**
+ * Each ribbon is a two-stop ramp rather than one flat colour.
+ *
+ * A single RGB value drawn at varying alpha only ever gets *paler* toward the
+ * tail, which on this near-white canvas means it dissolves into the background
+ * well before the taper says it should. Ramping hue as well as alpha keeps the
+ * tail readable — it reads as a colour shift into the page rather than as a
+ * line that gave up — and gives the head somewhere deeper to land.
+ *
+ * The identity stays pink and green: both stops of a ramp are the same family,
+ * so neither line is mistaken for a third colour where they cross.
+ */
+type Ramp = readonly string[];
+
+/** Stops per ramp. Enough that no band shows along a 600px body. */
+const RAMP_STEPS = 24;
+
+/**
+ * Precomputed at module scope, not per frame.
+ *
+ * The loop needs an `rgba()` string for every one of ~144 segments, and
+ * interpolating three channels for each of them sixty times a second is real
+ * arithmetic for a result that never changes. Only the alpha varies per frame,
+ * so the `r, g, b` half is baked once and concatenated.
+ */
+function ramp(from: [number, number, number], to: [number, number, number]): Ramp {
+  return Array.from({ length: RAMP_STEPS + 1 }, (_, i) => {
+    const t = i / RAMP_STEPS;
+    const c = (a: number, b: number) => Math.round(a + (b - a) * t);
+    return `${c(from[0], to[0])}, ${c(from[1], to[1])}, ${c(from[2], to[2])}`;
+  });
+}
+
+/** Pink: soft rose at the tail into a deep, text-safe magenta at the head. */
+const PINK = ramp([255, 122, 186], [206, 24, 104]);
+/**
+ * Green: mint at the tail into a deep emerald head. Cool enough to sit beside
+ * the violet background field without clashing with it.
+ */
+const GREEN = ramp([64, 214, 178], [4, 138, 112]);
 
 /**
  * Widest point of the body. It tapers from here to nothing at the tail and to
  * a rounded tip at the head — a constant width reads as a border rather than
  * as something alive.
  */
-const BODY_WIDTH = 7;
+const BODY_WIDTH = 8;
 
 /** Points along the spine. Beyond this, more stops looking smoother. */
-const STEPS = 56;
+const STEPS = 72;
+
+/**
+ * Resting angle of each body, in radians, measured from the head backwards.
+ *
+ * Not 0 and not exactly pi: a dead-horizontal tail reads as a rule drawn across
+ * the page. The small tilt is what gives each ribbon its arc.
+ */
+const LEFT_DIR = 0.16;
+const RIGHT_DIR = Math.PI - 0.16;
 
 interface Anchor {
   /** Where the head is now, in viewport pixels. */
@@ -93,10 +138,8 @@ export function AmbientTrails() {
 
     /* ------------------------------------------------ section tracking */
 
-    // Every section except the one containing the hero ribbon.
-    const sections = [...document.querySelectorAll("main section")].filter(
-      (el) => !el.querySelector(".hero-ribbon"),
-    ) as HTMLElement[];
+    /** Every section except the one containing the hero ribbon. */
+    let sections: HTMLElement[] = [];
 
     /** Document-space geometry of the section currently in view. */
     let target: { top: number; bottom: number } | null = null;
@@ -118,6 +161,7 @@ export function AmbientTrails() {
 
     const measure = () => {
       const scroll = window.scrollY;
+      geometry.clear();
       for (const el of sections) {
         const r = el.getBoundingClientRect();
         geometry.set(el, { top: r.top + scroll, bottom: r.bottom + scroll });
@@ -136,8 +180,6 @@ export function AmbientTrails() {
       target = !best || bestRatio < 0.08 ? null : (geometry.get(best) ?? null);
     };
 
-    measure();
-
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) ratios.set(e.target, e.intersectionRatio);
@@ -145,7 +187,6 @@ export function AmbientTrails() {
       },
       { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] },
     );
-    for (const s of sections) io.observe(s);
 
     // Sections change height when the page reflows — images arriving, fonts
     // swapping, a breakpoint crossing — so the cached geometry is refreshed
@@ -154,7 +195,51 @@ export function AmbientTrails() {
       measure();
       pick();
     });
-    for (const s of sections) ro.observe(s);
+
+    /**
+     * (Re)binds the observers to whatever sections are on the page now.
+     *
+     * This is mounted by the public layout, and a layout is not remounted on
+     * client navigation, so this effect runs exactly once for the whole visit.
+     * Collecting the sections a single time therefore left both observers
+     * watching elements React had already unmounted the moment the visitor
+     * followed any link: nothing ever reported intersecting again, `presence`
+     * eased to zero, and the ribbons stayed invisible for the rest of the
+     * session.
+     */
+    const collect = () => {
+      const next = [...document.querySelectorAll("main section")].filter(
+        (el) => !el.querySelector(".hero-ribbon"),
+      ) as HTMLElement[];
+
+      if (next.length === sections.length && next.every((el, i) => el === sections[i])) return;
+
+      io.disconnect();
+      ro.disconnect();
+      ratios.clear();
+      sections = next;
+      for (const s of sections) {
+        io.observe(s);
+        ro.observe(s);
+      }
+      measure();
+      pick();
+    };
+
+    collect();
+
+    // Route changes swap the contents of `main` without remounting it. Coalesced
+    // to one pass per burst — React commits a subtree in many small mutations.
+    let recollect = 0;
+    const mo = new MutationObserver(() => {
+      if (recollect) return;
+      recollect = window.setTimeout(() => {
+        recollect = 0;
+        collect();
+      }, 180);
+    });
+    const main = document.querySelector("main");
+    if (main) mo.observe(main, { childList: true, subtree: true });
 
     /* -------------------------------------------------- pointer tracking */
 
@@ -173,11 +258,11 @@ export function AmbientTrails() {
 
     /* ------------------------------------------------------------ curves */
 
-    // Both start inside the frame. The first version had them entering from
-    // beyond the left and right edges, which is what made them read as two
+    // Both heads live inside the frame. The first version had them entering
+    // from beyond the left and right edges, which is what made them read as two
     // stray lines crossing the page rather than as creatures swimming in it.
-    const left: Anchor = { x: width * 0.3, y: height * 0.5, tx: width * 0.3, ty: height * 0.5 };
-    const right: Anchor = { x: width * 0.7, y: height * 0.5, tx: width * 0.7, ty: height * 0.5 };
+    const left: Anchor = { x: width * 0.26, y: height * 0.42, tx: width * 0.26, ty: height * 0.42 };
+    const right: Anchor = { x: width * 0.74, y: height * 0.58, tx: width * 0.74, ty: height * 0.58 };
 
     const points: { x: number; y: number }[] = Array.from({ length: STEPS + 1 }, () => ({
       x: 0,
@@ -232,22 +317,22 @@ export function AmbientTrails() {
         points[i].x = x;
         points[i].y = y;
       }
+
+      // One relaxation pass over the interior.
+      //
+      // The pointer term above is a Gaussian, so where the cursor sits close to
+      // the spine it displaces neighbouring samples by different amounts and
+      // leaves a visible kink at the shoulder of the bulge. Averaging each point
+      // with its neighbours removes that without flattening the arc; the ends
+      // are held fixed, so the head still lands exactly on its anchor.
+      for (let i = 1; i < STEPS; i++) {
+        points[i].x = (points[i - 1].x + points[i].x * 2 + points[i + 1].x) / 4;
+        points[i].y = (points[i - 1].y + points[i].y * 2 + points[i + 1].y) / 4;
+      }
     };
 
-    /**
-     * Strokes the spine as a tapered body.
-     *
-     * Canvas has no variable-width stroke, so the body is drawn as a run of
-     * short overlapping segments whose width follows a taper curve — fat about
-     * a third of the way along, narrowing to a point at the tail and a rounded
-     * tip at the head. Round caps hide the joins. A constant-width stroke is
-     * what made the first version read as a border rather than as a creature.
-     */
-    const stroke = (rgb: string, alpha: number) => {
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      // Halo: one soft wide pass, far cheaper than shadowBlur.
+    /** Lays the smoothed spine down as a path, ready to stroke at any width. */
+    const trace = () => {
       ctx.beginPath();
       ctx.moveTo(points[0].x, points[0].y);
       for (let i = 1; i < points.length - 1; i++) {
@@ -255,34 +340,76 @@ export function AmbientTrails() {
         const my = (points[i].y + points[i + 1].y) / 2;
         ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
       }
-      ctx.strokeStyle = `rgba(${rgb}, ${alpha * 0.09})`;
-      ctx.lineWidth = BODY_WIDTH * 3.4;
+      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+    };
+
+    /**
+     * Strokes the spine as a tapered, glowing body.
+     *
+     * Canvas has no variable-width stroke, so the body is drawn as a run of
+     * short overlapping segments whose width follows a taper curve — a hair at
+     * the tail, thickening into a rounded tip at the head. Round caps hide the
+     * joins.
+     *
+     * The taper used to be `sin(pi * min(1, t * 1.15))`, which is exactly zero
+     * across the last thirteen per cent of the body: the ribbon stopped short
+     * and left a gap between itself and its own head. It now rises all the way
+     * into the head, so body and head read as one object.
+     */
+    const stroke = (colors: Ramp, alpha: number) => {
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      const head = points[points.length - 1];
+      const headRgb = colors[RAMP_STEPS];
+
+      // Halo: two soft passes over one path, far cheaper than shadowBlur, and
+      // the reason the line still reads over the busy background field.
+      trace();
+      ctx.strokeStyle = `rgba(${colors[Math.round(RAMP_STEPS * 0.7)]}, ${alpha * 0.05})`;
+      ctx.lineWidth = BODY_WIDTH * 6.5;
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(${colors[Math.round(RAMP_STEPS * 0.8)]}, ${alpha * 0.1})`;
+      ctx.lineWidth = BODY_WIDTH * 3.2;
       ctx.stroke();
 
-      // The tapered body, brighter toward the head.
+      // The tapered body, deepening in colour and weight toward the head.
       for (let i = 0; i < points.length - 1; i++) {
         const t = i / (points.length - 1);
-        const taper = Math.sin(Math.PI * Math.min(1, t * 1.15)) ** 0.7;
+        const taper = Math.sqrt(t) * (1 - 0.22 * t * t);
         ctx.beginPath();
         ctx.moveTo(points[i].x, points[i].y);
         ctx.lineTo(points[i + 1].x, points[i + 1].y);
-        ctx.strokeStyle = `rgba(${rgb}, ${alpha * (0.14 + 0.48 * t)})`;
-        ctx.lineWidth = Math.max(0.4, BODY_WIDTH * taper);
+        ctx.strokeStyle = `rgba(${colors[Math.round(t * RAMP_STEPS)]}, ${alpha * (0.26 + 0.62 * t)})`;
+        ctx.lineWidth = Math.max(0.5, BODY_WIDTH * taper);
         ctx.stroke();
       }
 
-      // The head: bright core inside a soft corona.
-      const head = points[points.length - 1];
+      // The head: a bright core inside a corona that fades to nothing, so the
+      // glow has no visible rim where a flat translucent disc would show one.
+      const corona = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, BODY_WIDTH * 3.4);
+      corona.addColorStop(0, `rgba(${headRgb}, ${alpha * 0.42})`);
+      corona.addColorStop(0.45, `rgba(${headRgb}, ${alpha * 0.14})`);
+      corona.addColorStop(1, `rgba(${headRgb}, 0)`);
       ctx.beginPath();
-      ctx.arc(head.x, head.y, BODY_WIDTH * 1.9, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rgb}, ${alpha * 0.11})`;
+      ctx.arc(head.x, head.y, BODY_WIDTH * 3.4, 0, Math.PI * 2);
+      ctx.fillStyle = corona;
       ctx.fill();
 
       ctx.beginPath();
-      ctx.arc(head.x, head.y, BODY_WIDTH * 0.6, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rgb}, ${alpha * 0.9})`;
+      ctx.arc(head.x, head.y, BODY_WIDTH * 0.62, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${headRgb}, ${alpha * 0.92})`;
       ctx.fill();
     };
+
+    /**
+     * How far the body trails behind its head.
+     *
+     * Sized so the tail runs out just past the viewport edge. Because the taper
+     * is zero there, the line fades to nothing rather than being cut off by the
+     * edge — which is what made the earlier version read as a stray rule.
+     */
+    const bodyLength = () => Math.min(width * 0.34, 560);
 
     /* -------------------------------------------------------------- loop */
 
@@ -315,18 +442,22 @@ export function AmbientTrails() {
         const inset = Math.min(90, (target.bottom - target.top) * 0.08);
         const top = target.top - scroll + inset;
         const bottom = target.bottom - scroll - inset;
-        const lo = height * 0.14;
-        const hi = height * 0.86;
+        const lo = height * 0.16;
+        const hi = height * 0.84;
 
-        left.tx = width * 0.22;
+        left.tx = width * 0.26;
         left.ty = Math.max(lo, Math.min(hi, top));
-        right.tx = width * 0.78;
+        right.tx = width * 0.74;
         right.ty = Math.max(lo, Math.min(hi, bottom));
       } else {
-        // Over the hero, or between sections: retreat and idle.
-        presence += (0 - presence) * 0.05;
+        // Over the hero, or between sections: retreat and idle. A page whose
+        // `main` holds no sections at all keeps them swimming at reduced
+        // strength rather than blanking the background entirely.
+        presence += ((sections.length === 0 ? 0.6 : 0) - presence) * 0.05;
+        left.tx = width * 0.26;
         left.ty = height * 0.4;
-        right.ty = height * 0.6;
+        right.tx = width * 0.74;
+        right.ty = height * 0.62;
       }
 
       // Heads glide to their anchors rather than jumping when the section
@@ -339,11 +470,32 @@ export function AmbientTrails() {
       ctx.clearRect(0, 0, width, height);
       if (presence > 0.01) {
         const amp = height * 0.055;
+        const length = bodyLength();
 
-        build(-90, height * 0.34, left.x, left.y, time * 0.75, amp, 5.1, 0.3);
+        // A slow wander on the resting angle, so the two arcs never settle into
+        // the same shape twice.
+        build(
+          left.x,
+          left.y,
+          LEFT_DIR + Math.sin(time * 0.21) * 0.13,
+          length,
+          time * 0.75,
+          amp,
+          5.1,
+          0.3,
+        );
         stroke(PINK, presence);
 
-        build(width + 90, height * 0.66, right.x, right.y, time * 0.62 + 2.1, amp, 4.4, 0.26);
+        build(
+          right.x,
+          right.y,
+          RIGHT_DIR + Math.sin(time * 0.17 + 1.3) * 0.13,
+          length,
+          time * 0.62 + 2.1,
+          amp,
+          4.4,
+          0.26,
+        );
         stroke(GREEN, presence);
       }
     };
@@ -367,10 +519,11 @@ export function AmbientTrails() {
       presence = 1;
       ctx.clearRect(0, 0, width, height);
       const amp = height * 0.045;
-      build(-90, height * 0.4, width * 0.22, height * 0.42, 0, amp, 5.1, 0);
-      stroke(PINK, 0.75);
-      build(width + 90, height * 0.6, width * 0.78, height * 0.58, 2.1, amp, 4.4, 0);
-      stroke(GREEN, 0.75);
+      const length = bodyLength();
+      build(width * 0.26, height * 0.4, LEFT_DIR, length, 0, amp, 5.1, 0);
+      stroke(PINK, 0.8);
+      build(width * 0.74, height * 0.62, RIGHT_DIR, length, 2.1, amp, 4.4, 0);
+      stroke(GREEN, 0.8);
     };
 
     const onResize = () => {
@@ -393,6 +546,8 @@ export function AmbientTrails() {
       pause();
       io.disconnect();
       ro.disconnect();
+      mo.disconnect();
+      if (recollect) clearTimeout(recollect);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
       if (!coarse) window.removeEventListener("pointermove", onPointer);

@@ -77,7 +77,10 @@ const organization = {
   alternateName: siteConfig.name,
   url: siteConfig.url,
   description: siteConfig.description,
-  logo: absoluteUrl("/icon.png"),
+  // The full lockup, not the favicon. `/icon.png` is the mark alone, cropped to
+  // stay legible at 16px; what Google surfaces beside the organisation is the
+  // logo as the company actually writes it, wordmark included.
+  logo: absoluteUrl("/brand/logo.png"),
   image: absoluteUrl("/opengraph-image.png"),
   address: {
     "@type": "PostalAddress",

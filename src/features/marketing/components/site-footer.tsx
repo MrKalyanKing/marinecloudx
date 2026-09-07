@@ -1,20 +1,31 @@
 /**
  * Public footer.
  *
- * The previous version was three link columns between two thin rules — correct,
- * and completely anonymous. A footer is the last thing a prospective client
- * reads, and on a services site it is where they look for who you are and how
- * to reach you, so it now leads with the company rather than with navigation:
- * the mark, the positioning line, the office, and a direct call to action, with
- * the link columns supporting that rather than being the whole thing.
+ * Deliberately a *panel*, not a full-bleed band. Every section above it is
+ * transparent over the ambient background, so a footer built the same way had
+ * no edge of its own — the legal line simply appeared after the last section
+ * and read as more page content. Sitting it inside a glass box with its own rim
+ * and shadow is what tells a visitor the page has ended.
+ *
+ * It carries no call to action: that is the closing band's job (see
+ * final-cta.tsx), and repeating the same heading and button twice in a row
+ * halved the weight of both.
+ *
+ * The brand orbit occupies the fourth column rather than a row of its own, so
+ * it sits level with the link lists and costs the panel no extra height. The
+ * office details moved up into the identity column to make room — which is
+ * where a visitor looks for them anyway.
  *
  * Everything stated here is already true elsewhere on the site. There is no
  * phone number and no social row because neither has been published — the same
- * rule the structured data follows.
+ * rule the structured data follows — and no newsletter field, because nothing
+ * would receive the address.
  */
 
+import Image from "next/image";
 import Link from "next/link";
 
+import { BrandOrbit } from "@/features/marketing/components/brand-orbit";
 import { Arrow, Container } from "@/features/marketing/components/layout";
 import { footerNavigation, siteAddress, siteConfig } from "@/lib/config/site";
 import { brand } from "@/lib/config/brand";
@@ -23,99 +34,89 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative z-[1] mt-8 border-t border-hairline-light">
-      <Container className="max-w-[1320px] py-14 sm:py-20">
-        {/* Lead block: identity on the left, the call to action on the right. */}
-        <div className="flex flex-col gap-10 border-b border-hairline-light pb-12 lg:flex-row lg:items-start lg:justify-between lg:gap-16">
-          <div className="max-w-[420px]">
-            <span className="flex items-center gap-2.5 text-ink">
-              <span
-                aria-hidden="true"
-                className="block h-3.5 w-3.5 rounded-full"
-                style={{
-                  background: "linear-gradient(135deg, #ff5ca8, #6d5cff 50%, #43a7ff)",
-                  boxShadow: "0 0 14px rgb(109 92 255 / 0.45)",
-                }}
-              />
-              <span className="text-[17px] font-semibold tracking-[-0.01em]">
-                {siteConfig.name}
-              </span>
-              <span className="text-[17px] font-normal text-ink-muted">
-                {siteConfig.descriptor}
-              </span>
-            </span>
+    <footer className="relative z-[1] px-5 pb-6 sm:px-8 sm:pb-8">
+      <Container className="max-w-[1180px] px-0 sm:px-0">
+        <div className="glass-light glass-rim rounded-[clamp(18px,2.4vw,26px)] px-6 pt-8 pb-6 sm:px-9 sm:pt-9 sm:pb-7">
+          {/* Two columns from the narrowest width up: the link lists are short
+              labels, and one per row turned the mobile footer into a screen and
+              a half of scrolling. */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-7 sm:gap-x-10 sm:gap-y-8 lg:grid-cols-[1.25fr_repeat(2,minmax(0,0.85fr))_1fr] lg:gap-x-8">
+            <div className="col-span-2 lg:col-span-1">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-ink transition-opacity hover:opacity-80"
+              >
+                <Image
+                  src="/brand/mark.png"
+                  alt=""
+                  width={44}
+                  height={44}
+                  sizes="22px"
+                  className="h-[22px] w-[22px] rounded-full"
+                />
+                <span className="text-[15px] font-semibold tracking-[-0.01em]">
+                  {siteConfig.name}
+                </span>
+                <span className="text-[15px] font-normal text-ink-muted">
+                  {siteConfig.descriptor}
+                </span>
+              </Link>
 
-            <p className="mt-5 text-[15px] leading-relaxed text-ink-muted">
-              {siteConfig.description}
-            </p>
+              <p className="tech-label mt-3.5 text-brand">{brand.philosophy}</p>
 
-            <p className="tech-label mt-6 text-brand">{brand.philosophy}</p>
-          </div>
+              {/* Matches the PostalAddress in the Organization JSON-LD exactly.
+                  Name, address and phone consistency across the site, the markup
+                  and the Google Business Profile is a direct local ranking
+                  input, so these two must not drift apart. */}
+              <address className="mt-4 text-[14px] leading-relaxed text-ink-muted not-italic">
+                {siteAddress.streetAddress}
+                <br />
+                {siteAddress.addressLocality}, {siteAddress.addressRegion}{" "}
+                {siteAddress.postalCode}
+              </address>
 
-          <div className="mcx-card w-full max-w-[380px] p-6 sm:p-7">
-            <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">
-              Have a problem worth solving?
-            </p>
-            <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
-              Tell us what you are trying to build, improve or automate.
-            </p>
-            <Link
-              href="/start-a-project"
-              className="btn-solid group mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium"
-            >
-              Start a project
-              <Arrow />
-            </Link>
-          </div>
-        </div>
+              <Link
+                href="/contact"
+                className="group mt-3 inline-flex items-center gap-1.5 text-[14px] font-medium text-brand transition-colors hover:text-brand-deep"
+              >
+                Contact us
+                <Arrow />
+              </Link>
+            </div>
 
-        {/* Navigation and location. */}
-        <div className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {footerNavigation.map((group) => (
-            <nav key={group.heading} aria-label={group.heading}>
-              <p className="tech-label text-ink-muted">{group.heading}</p>
-              <ul className="mt-5 flex flex-col gap-3">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group inline-flex items-center gap-1.5 text-[15px] text-ink-muted transition-colors hover:text-ink"
-                    >
-                      {link.label}
-                      <span
-                        aria-hidden="true"
-                        className="translate-x-[-4px] opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+            {footerNavigation.map((group) => (
+              <nav key={group.heading} aria-label={group.heading}>
+                <p className="tech-label text-ink-muted">{group.heading}</p>
+                <ul className="mt-3.5 flex flex-col gap-2">
+                  {group.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="group inline-flex items-center gap-1.5 text-[14px] text-ink-muted transition-colors hover:text-ink"
                       >
-                        →
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+                        {link.label}
+                        <span
+                          aria-hidden="true"
+                          className="translate-x-[-4px] opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                        >
+                          →
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
 
-          <div>
-            <p className="tech-label text-ink-muted">Office</p>
-            {/* Matches the PostalAddress in the Organization JSON-LD exactly.
-                Name, address and phone consistency across the site, the markup
-                and the Google Business Profile is a direct local ranking input,
-                so these two must not drift apart. */}
-            <address className="mt-5 text-[15px] leading-relaxed text-ink-muted not-italic">
-              {siteAddress.streetAddress}
-              <br />
-              {siteAddress.addressLocality}, {siteAddress.addressRegion}{" "}
-              {siteAddress.postalCode}
-            </address>
+            <BrandOrbit className="brand-orbit--compact col-span-2 justify-self-center lg:col-span-1 lg:justify-self-end" />
           </div>
-        </div>
 
-        {/* Legal row. */}
-        <div className="mt-14 flex flex-col gap-3 border-t border-hairline-light pt-7 sm:flex-row sm:items-center sm:justify-between">
-          <p className="tech-label text-ink-muted">
-            © {year} {siteConfig.legalName}
-          </p>
-          <p className="tech-label text-ink-muted">Engineering what comes next</p>
+          <div className="mt-7 flex flex-col gap-2 border-t border-hairline-light pt-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <p className="tech-label text-ink-muted">
+              © {year} {siteConfig.legalName} · All rights reserved
+            </p>
+            <p className="tech-label text-ink-muted">{brand.positioning}</p>
+          </div>
         </div>
       </Container>
     </footer>
