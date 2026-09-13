@@ -21,6 +21,7 @@ import { useId, useState } from "react";
 
 import { cx } from "@/features/marketing/components/layout";
 import { BUDGET_CURRENCY, budgetOptions, timelineOptions } from "@/lib/config/brand";
+import { UniversalSelector } from "@/shared/components/universal-selector";
 
 interface FieldErrors {
   [path: string]: string;
@@ -298,13 +299,17 @@ export function ContactForm({
               <label htmlFor={fid("budget")} className={label}>
                 Budget
               </label>
-              <select id={fid("budget")} name="budget" defaultValue="" className={"mt-2 " + field}>
-                {budgetOptions.map((option) => (
-                  <option key={option.label} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <UniversalSelector
+                id={fid("budget")}
+                name="budget"
+                defaultValue=""
+                className="mt-2"
+                placeholder="Select budget"
+                options={budgetOptions.map((opt) => ({
+                  value: opt.value,
+                  label: opt.label,
+                }))}
+              />
             </div>
           </>
         )}
@@ -315,28 +320,40 @@ export function ContactForm({
           </label>
           {/* Options come from the published CMS services, so the enquiry links
               to a real service record the CRM can filter on. */}
-          <select id={fid("serviceId")} name="serviceId" defaultValue="" className={"mt-2 " + field}>
-            <option value="">Not sure yet</option>
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </select>
+          <UniversalSelector
+            id={fid("serviceId")}
+            name="serviceId"
+            defaultValue=""
+            className="mt-2"
+            placeholder="Not sure yet"
+            options={[
+              { value: "", label: "Not sure yet" },
+              ...services.map((service) => ({
+                value: service.id,
+                label: service.name,
+              })),
+            ]}
+          />
         </div>
 
         <div className={compact ? undefined : "sm:col-span-2"}>
           <label htmlFor={fid("timeline")} className={label}>
             Timeline
           </label>
-          <select id={fid("timeline")} name="timeline" defaultValue="" className={"mt-2 " + field}>
-            <option value="">Not sure yet</option>
-            {timelineOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <UniversalSelector
+            id={fid("timeline")}
+            name="timeline"
+            defaultValue=""
+            className="mt-2"
+            placeholder="Not sure yet"
+            options={[
+              { value: "", label: "Not sure yet" },
+              ...timelineOptions.map((option) => ({
+                value: option,
+                label: option,
+              })),
+            ]}
+          />
         </div>
 
         <div className="sm:col-span-2">
