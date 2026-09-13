@@ -48,14 +48,31 @@ export function CapabilitiesStage({
       <div className="mx-auto max-w-[1320px]">
         <div data-reveal-stage className="mb-10 max-w-[720px] sm:mb-12">
           <p className="tech-label text-brand">04&nbsp;&nbsp;Capabilities</p>
-          <h2 className="mt-6 text-h2 font-normal text-ink">What we engineer</h2>
+          <h2 className="mt-6 text-h2 font-normal text-ink">Core Engineering Capabilities</h2>
           {/* Both spellings ship; CSS shows one. Deciding in JavaScript would
               either mismatch on hydration or flash the wrong verb. */}
           <p className="mt-5 text-lead text-ink-muted">
             <span className="on-hover">Hover</span>
-            <span className="on-tap">Tap</span> a capability to see the stack behind it — problem
-            first, tools second.
+            <span className="on-tap">Tap</span> a capability to see the stack behind it — from
+            discovery and custom applications to cloud, AI, integrations, and continuous engineering.
           </p>
+        </div>
+
+        <div className="mb-6 flex flex-wrap items-center gap-2 rounded-2xl border border-black/8 bg-black/[0.02] px-4 py-3 text-[12px] text-ink-muted">
+          <span className="font-semibold text-brand">Connected Lifecycle:</span>
+          <span>Strategy</span>
+          <span aria-hidden="true" className="text-brand">→</span>
+          <span>Design</span>
+          <span aria-hidden="true" className="text-brand">→</span>
+          <span>Applications</span>
+          <span aria-hidden="true" className="text-brand">→</span>
+          <span>Cloud</span>
+          <span aria-hidden="true" className="text-brand">→</span>
+          <span>AI &amp; Automation</span>
+          <span aria-hidden="true" className="text-brand">→</span>
+          <span>Integrations</span>
+          <span aria-hidden="true" className="text-brand">→</span>
+          <span>Continuous Engineering</span>
         </div>
 
         <div data-reveal-stage className="mcx-card overflow-hidden">
@@ -175,33 +192,58 @@ export function CapabilitiesStage({
                 <h3 className="mt-4 text-[clamp(1.35rem,2.4vw,1.85rem)] font-medium tracking-[-0.025em] text-ink">
                   {current.name}
                 </h3>
-                <p className="mt-3 max-w-[42ch] text-[15px] leading-relaxed text-ink-muted">
+                <p className="mt-3 max-w-[50ch] text-[15px] leading-relaxed text-ink-muted">
                   {current.shortDescription}
                 </p>
-              </div>
 
-              <ul className="relative mt-10 flex flex-wrap gap-2">
-                {current.technologies.map((tech) => (
-                  <li
-                    key={tech}
-                    className="chip-glass px-3.5 py-1.5 text-[12px] font-medium tracking-wide"
-                    style={{
-                      color: accent,
-                      background: `${accent}14`,
-                      borderColor: `${accent}40`,
-                    }}
-                  >
-                    {tech}
-                  </li>
-                ))}
-              </ul>
+                {/* Capability tags placed directly under the description */}
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {current.technologies.map((tech) => (
+                    <li
+                      key={tech}
+                      className="chip-glass px-3 py-1 text-[12px] font-medium tracking-wide"
+                      style={{
+                        color: accent,
+                        background: `${accent}14`,
+                        borderColor: `${accent}40`,
+                      }}
+                    >
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Additional rich content describing each deliverable / highlight */}
+                {Boolean(current.highlights?.length) && (
+                  <div className="mt-6 border-t border-black/8 pt-5">
+                    <p className="tech-label mb-3 text-[11px] tracking-wider uppercase" style={{ color: accent }}>
+                      Key Capabilities & Deliverables
+                    </p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {current.highlights.map((hl) => (
+                        <div
+                          key={hl.title}
+                          className="rounded-xl border border-black/[0.06] bg-white/70 p-3.5 shadow-sm backdrop-blur-sm transition-colors hover:border-black/15 hover:bg-white/90"
+                        >
+                          <h4 className="text-[13px] font-semibold text-ink">
+                            {hl.title}
+                          </h4>
+                          <p className="mt-1 text-[12px] leading-relaxed text-ink-muted">
+                            {hl.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <p className="mt-8 max-w-[520px] text-sm leading-relaxed text-ink-muted/80">
-          Blockchain and cybersecurity are engineered into the systems that need them, not sold as
-          separate line items.
+        <p className="mt-8 max-w-[640px] text-sm leading-relaxed text-ink-muted/80">
+          We provide end-to-end technology engineering, from discovery and design through
+          development, deployment and continuous evolution.
         </p>
       </div>
     </section>

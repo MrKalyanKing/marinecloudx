@@ -62,14 +62,23 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <PageIntro
-        eyebrow="Selected work"
-        title="Systems in the field"
-        description="Published projects from the CMS — real work, not invented case studies."
-      />
+      {/* Compact, elegant header matching services & industries pages */}
+      <section className="relative px-5 pt-28 pb-6 sm:px-8 sm:pt-32 sm:pb-8 text-ink">
+        <Container className="max-w-[1320px]">
+          <span className="tech-label text-brand uppercase tracking-wider text-xs font-semibold">
+            Selected Work
+          </span>
+          <h1 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink max-w-4xl text-balance">
+            Systems in the Field
+          </h1>
+          <p className="mt-3 text-base sm:text-lg text-ink-muted max-w-3xl leading-relaxed">
+            Published platforms and production systems engineered by MarineCloudX — real work delivering business value, not invented case studies.
+          </p>
+        </Container>
+      </section>
 
       <PageBody>
-      <Container className="py-8">
+        <Container className="py-6 max-w-[1320px]">
         {/* Filtering is a plain set of links, so it works without JavaScript
             and every filtered view has its own shareable URL. */}
         {categories.length > 0 ? (

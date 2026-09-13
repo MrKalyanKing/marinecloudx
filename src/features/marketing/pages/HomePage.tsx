@@ -9,6 +9,7 @@ import { FaqJsonLd } from "@/features/marketing/components/structured-data";
 import { ProcessStage } from "@/features/marketing/components/process-stage";
 import { ScrollNarrative } from "@/features/marketing/components/scroll-narrative";
 import { SystemDiagram } from "@/features/marketing/components/system-diagram";
+import { IndustryExperienceStage } from "@/features/marketing/components/industry-experience-stage";
 import {
   brand,
   homeCapabilities,
@@ -16,22 +17,20 @@ import {
   homeFaqs,
   homePhilosophy,
   homeProcess,
-  solutions,
+  homeProjects,
   trustPillars,
   whyPoints,
 } from "@/lib/config/brand";
 
 /**
- * Homepage narrative order (from feature/UI-version-1):
- * Belief → Method → Problems → Capabilities → Architecture → Delivery → Trust → FAQ → CTA
+ * Homepage narrative order:
+ * Hero & Stats → Philosophy → Method → Industry Experience & Solutions →
+ * Core Capabilities → Selected Work (Proof of Range) → System Architecture →
+ * 6-Stage Delivery Process → Engineering Standards & Trust → FAQ → CTA
  */
 export default function HomePage() {
   return (
     <>
-      {/* Organization and WebSite now come from the public layout, so they are
-          on every route rather than this one. What is specific to this page is
-          the FAQ section below: five real published answers that were rendered
-          as plain text and described to search engines as nothing at all. */}
       <FaqJsonLd faqs={homeFaqs} path="/" />
       <ScrollNarrative>
         <Hero />
@@ -42,7 +41,7 @@ export default function HomePage() {
             <div data-reveal-stage className="max-w-[840px]">
               <p className="tech-label text-brand">01&nbsp;&nbsp;Philosophy</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">{homePhilosophy.heading}</h2>
-              <p className="mt-6 max-w-[600px] text-lead text-ink-muted">{homePhilosophy.body}</p>
+              <p className="mt-6 max-w-[640px] text-lead text-ink-muted">{homePhilosophy.body}</p>
               <p className="tech-label mt-8 text-brand">{brand.philosophy}</p>
             </div>
           </Container>
@@ -55,15 +54,10 @@ export default function HomePage() {
               <p className="tech-label text-brand">02&nbsp;&nbsp;Why MarineCloudX</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">We understand why you need it</h2>
               <p className="mt-5 text-lead text-ink-muted">
-                Most technology fails because it answered the wrong question. We start earlier than
-                the build.
+                Most technology fails because it answered the wrong question. We start earlier — analysing operational workflows, users, and the actual business requirement.
               </p>
             </div>
 
-            {/* These six were plain text separated by hairline rules, which read
-                as an unstyled list next to the card grids above and below them.
-                They are the same card surface as the rest of the page now, so
-                the section has the same weight as its neighbours. */}
             <ol data-reveal-stage className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {whyPoints.map((point, index) => (
                 <li key={point.title} className="mcx-card flex flex-col p-6 sm:p-7">
@@ -82,64 +76,51 @@ export default function HomePage() {
           </Container>
         </section>
 
-        {/* 03 — Solutions */}
+        {/* 03 — Industry Experience */}
         <section id="solutions" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
           <Container className="max-w-[1320px]">
-            <div data-reveal-stage className="mb-[clamp(30px,4vw,52px)] max-w-[720px]">
-              <p className="tech-label text-brand">03&nbsp;&nbsp;Solutions</p>
-              <h2 className="mt-6 text-h2 font-normal text-ink">Problems we help solve</h2>
-              <p className="mt-5 text-lead text-ink-muted">
-                Services are what we build. Solutions are the business problems behind them — usually
-                solved with several capabilities together.
-              </p>
+            <div data-reveal-stage className="mb-[clamp(30px,4vw,52px)] flex flex-wrap items-end justify-between gap-6">
+              <div className="max-w-[760px]">
+                <p className="tech-label text-brand">03&nbsp;&nbsp;Industry Experience</p>
+                <h2 className="mt-6 text-h2 font-normal text-ink">Industries we understand, engineering that scales</h2>
+                <p className="mt-5 text-lead text-ink-muted">
+                  Our current work spans Education, Interiors, and Dental — three distinct domains where we have engineered practical software solutions. These implementations demonstrate our ability to understand complex workflows, multi-role user journeys, and operational requirements, with underlying engineering designed to scale for large, enterprise-grade technology engagements.
+                </p>
+              </div>
+              <Link
+                href="/industries"
+                className="group inline-flex items-center gap-2 text-sm text-brand"
+              >
+                All industries
+                <Arrow />
+              </Link>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
-              {solutions.map((solution) => (
-                <article key={solution.title} data-reveal-stage className="mcx-card flex flex-col p-7 sm:p-8">
-                  <h3 className="text-h3 font-medium tracking-[-0.02em] text-ink">
-                    {solution.title}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">{solution.problem}</p>
-                  <ol className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1">
-                    {solution.flow.map((step, stepIndex) => (
-                      <li key={step} className="flex items-center gap-2">
-                        <span className="tech-label text-ink">{step}</span>
-                        {stepIndex < solution.flow.length - 1 ? (
-                          <span aria-hidden="true" className="text-brand">
-                            →
-                          </span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ol>
-                  <ul className="mt-auto flex flex-wrap gap-2 pt-8">
-                    {solution.technologies.map((technology) => (
-                      <li
-                        key={technology}
-                        className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 text-xs text-ink-muted"
-                      >
-                        {technology}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
+            <IndustryExperienceStage
+              items={homeProjects.slice(0, 3)}
+              defaultShow={false}
+              allowToggle={true}
+            />
           </Container>
         </section>
 
         {/* 04 — Capabilities */}
         <CapabilitiesStage items={[...homeCapabilities]} />
 
+        {/* Selected Work — commented out as requested to keep focus on engineering breadth and domain capability rather than small past projects */}
+        {/* <WorkStage projects={homeProjects} /> */}
+
         {/* 05 — Architecture */}
         <section id="system" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
           <Container className="max-w-[1320px]">
             <div data-reveal-stage className="mb-[clamp(40px,6vw,72px)] max-w-[760px]">
-              <p className="tech-label text-brand">05&nbsp;&nbsp;The system</p>
+              <p className="tech-label text-brand">05&nbsp;&nbsp;System Architecture</p>
               <h2 className="mt-6 text-h2 font-normal text-ink">
-                One architecture, six moving parts.
+                One architecture. Every layer connected.
               </h2>
+              <p className="mt-4 text-lead text-ink-muted">
+                From user-facing applications and cloud infrastructure to applied AI and system integrations — designed to operate as a coherent system.
+              </p>
             </div>
             <div data-reveal-stage>
               <SystemDiagram />
@@ -150,14 +131,14 @@ export default function HomePage() {
         {/* 06 — Process */}
         <ProcessStage stages={[...homeProcess]} />
 
-        {/* 07 — Trust */}
+        {/* 07 — Trust & Standards */}
         <section id="trust" className="relative px-5 py-[clamp(72px,12vh,140px)] sm:px-8">
           <Container className="max-w-[1320px]">
-            <div data-reveal-stage className="mb-[clamp(32px,4vw,56px)] max-w-[700px]">
+            <div data-reveal-stage className="mb-[clamp(32px,4vw,56px)] max-w-[760px]">
               <p className="tech-label text-brand">07&nbsp;&nbsp;Working with us</p>
-              <h2 className="mt-6 text-h2 font-normal text-ink">What you can expect</h2>
+              <h2 className="mt-6 text-h2 font-normal text-ink">Engineering discipline you can rely on</h2>
               <p className="mt-5 text-lead text-ink-muted">
-                No logos, no awards, no statistics — just how we run the work.
+                Transparent communication, structured delivery milestones, and verified capabilities — how we run every technical engagement.
               </p>
             </div>
 
@@ -193,10 +174,10 @@ export default function HomePage() {
               <div className="max-w-[700px]">
                 <p className="tech-label text-brand">08&nbsp;&nbsp;FAQ</p>
                 <h2 className="mt-6 text-h2 font-normal text-ink">
-                  You don&apos;t need to know the technology
+                  Common Questions
                 </h2>
                 <p className="mt-5 text-lead text-ink-muted">
-                  Tell us the problem. These are the questions we are asked most.
+                  How we start, define architecture, collaborate with your team, and support systems after deployment.
                 </p>
               </div>
               <Link href="/faq" className="group inline-flex items-center gap-2 text-sm text-brand">

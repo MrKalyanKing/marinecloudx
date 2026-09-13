@@ -1,213 +1,209 @@
 /**
  * Approved MarineCloudX brand content.
  *
- * This replaces the Step 12 placeholder module. Everything here is copy the
- * business has supplied and approved — it is no longer marked as provisional.
- *
- * What is deliberately NOT here, because it has not been provided and must
- * never be invented: founder names, office locations, employee counts, years in
- * business, client counts, revenue, awards, certifications, uptime figures or
- * any performance metric.
+ * Positioning: Technology Solutions & Engineering Partner.
+ * Designing and engineering digital products, applications, and intelligent systems
+ * around real-world business requirements.
  *
  * Content that has a CMS model — services, industries, FAQs, projects, case
- * studies, testimonials — is NOT duplicated here. It lives in the database and
- * is read through src/server/public/content.ts, so the team can edit it without
- * a developer. Only the narrative sections with no CMS model live in this file.
+ * studies, testimonials — is read through src/server/public/content.ts.
+ * Static narrative sections and verified engineering capabilities live in this file.
  */
 
 export const brand = {
-  philosophy: "Problem first. Technology second.",
-  positioning: "Think Different. Build Better.",
-  /** Used on the industries band. */
-  industriesLine: "Technology that understands your industry.",
+  name: "MarineCloudX",
+  legalName: "MarineCloudX Technologies Private Limited",
+  tagline: "Technology Solutions & Engineering Partner",
+  philosophy: "We engineer technology around real-world business requirements.",
+  positioning: "Technology Solutions & Engineering Partner",
+  /** Used on the industry sections. */
+  industriesLine: "Industry Experience: Education, Interiors, and Dental.",
 } as const;
 
 export const hero = {
-  eyebrow: "Problem first. Technology second.",
-  heading: "Complex problems. Intelligent systems.",
-  headingLines: ["Complex problems.", "Intelligent systems."],
+  eyebrow: "Technology Solutions & Engineering Partner",
+  heading: "Engineering digital products, custom applications and intelligent systems.",
+  headingLines: [
+    "Engineering digital products,",
+    "applications & intelligent systems.",
+  ],
   supporting:
-    "We design and build intelligent software, cloud platforms and connected systems around real business problems.",
+    "We design and engineer custom software, web platforms, cloud infrastructure, AI systems and workflow integrations — built around real-world business requirements with structured delivery and long-term commitment.",
 } as const;
 
 /**
  * The three supporting points under the hero copy. `icon` maps to a small inline
- * SVG in the hero component — not an icon font or image.
+ * SVG in the hero component.
  */
 export const heroFeatures = [
   {
     icon: "compass",
-    title: "Problem-first",
-    description: "We define the real problem before choosing any technology.",
+    title: "Problem-First Discovery",
+    description: "We analyse operational workflows and business requirements before recommending architecture or writing code.",
   },
   {
     icon: "code",
-    title: "Practical engineering",
-    description: "Systems your team can actually run — not a demo that impresses once.",
+    title: "End-to-End Engineering",
+    description: "Full-stack applications, robust cloud infrastructure, AI integrations, and connected systems built to scale.",
   },
   {
     icon: "shield",
-    title: "Owned outcomes",
-    description: "We stay responsible for what we ship, through launch and after.",
+    title: "Continuous Engineering",
+    description: "We provide ongoing technical support, system monitoring, and continuous engineering as requirements evolve.",
   },
 ] as const;
 
 /**
  * Hero stats bar.
  *
- * Deliberately NOT client counts, years in business, revenue or performance
- * metrics — none of those have been provided and must never be invented (see the
- * note at the top of this file). Every figure here describes the offering and is
- * verifiable elsewhere on the site.
+ * Verifiable capabilities describing our delivery model, engineering breadth,
+ * domain experience, and execution approach.
  */
 export const stats = [
-  { value: "6", label: "Stage delivery process" },
-  { value: "8", label: "Capability areas" },
-  { value: "8", label: "Industries served" },
-  { value: "12", label: "Managed content types" },
+  { value: "6", label: "Delivery Stages" },
+  { value: "8", label: "Core Capabilities" },
+  { value: "3", label: "Industry Experience" },
 ] as const;
 
 export const about = {
-  lead: "MarineCloudX was started to help small businesses bring their work into the digital world.",
+  lead: "We are a technology solutions and engineering partner designing and building digital products, applications, and intelligent systems around real business requirements.",
   body: [
-    "Many small businesses still depend on manual processes while technology becomes more important to how they operate and compete. That gap is the reason MarineCloudX exists — to make useful technology practical and accessible for the businesses that need it most.",
-    "We work with startups, small and local businesses, growing companies, established businesses and individuals. The work spans websites, applications, business systems, AI, automation and cloud — but it always begins with understanding the problem.",
+    "Our industry experience spans Education, Interiors, and Dental — three distinct domains with different operational models, customer journeys, and technical workflows. These projects demonstrate our ability to understand complex business environments and engineer tailored software solutions that perform in production.",
+    "Our engineering capabilities encompass custom application development, cloud infrastructure, AI integrations, workflow automation, data systems, and system integrations. We provide end-to-end technology engineering, from initial discovery and design through deployment and continuous evolution.",
   ],
   vision:
-    "The long-term vision is to grow into a technology company that combines service and product work, creates opportunities for the people who build here, and is known for the experience it gives its customers.",
+    "We are building toward larger, more sophisticated, and longer-term technology engineering engagements — partnering with ambitious organisations to design, engineer, and continuously advance their digital products and core platforms.",
 } as const;
 
 /** Why MarineCloudX — the six-step reasoning behind "we understand why you need it". */
 export const whyPoints = [
   {
-    title: "Understand the problem",
-    description: "We start with what is actually going wrong, not with a product to sell you.",
+    title: "Understand the Requirement",
+    description: "We start with what your business and users actually need, not with a pre-packaged product to sell you.",
   },
   {
-    title: "Analyse the current process",
-    description: "How the work happens today, who does it, and where the time goes.",
+    title: "Analyse Operational Workflows",
+    description: "How the work happens today, who does it, where the bottlenecks lie, and where technology delivers genuine leverage.",
   },
   {
-    title: "Identify what can be simplified",
-    description: "Some steps should be automated. Some should be removed entirely.",
+    title: "Simplify Architecture Before Building",
+    description: "Some steps require custom software, some need automation, and some should be eliminated to avoid technical debt.",
   },
   {
-    title: "Select appropriate technology",
-    description: "The stack follows the problem. Nothing is chosen because it is fashionable.",
+    title: "Select Purpose-Fit Technology",
+    description: "The technical stack follows the problem. Every framework, database, and service is chosen for durability and fit.",
   },
   {
-    title: "Build practical solutions",
-    description: "Systems your team can actually use, not a demo that impresses once.",
+    title: "Engineer Resilient Systems",
+    description: "We build reliable, maintainable software and infrastructure your team can run with confidence in production.",
   },
   {
-    title: "Improve over time",
-    description: "What ships is a starting point. It gets better with real use.",
+    title: "Continuous Evolution",
+    description: "Deployment is a milestone, not the finish line. We monitor, maintain, and advance systems as requirements scale.",
   },
 ] as const;
 
 export const coreValues = [
   {
     title: "Think Different",
-    description: "The obvious solution is not always the right one. We question the brief before we build against it.",
+    description: "The obvious solution is not always the right one. We question the brief and explore optimal architecture before building.",
   },
   {
-    title: "Customer First",
-    description: "Your outcome matters more than our preferred tools. We recommend what serves the problem.",
+    title: "Requirements First",
+    description: "Your business outcomes dictate technical choices. We recommend what serves the operational reality best.",
   },
   {
     title: "Build With Purpose",
-    description: "Every feature earns its place. Anything that does not help someone do their work comes out.",
+    description: "Every feature earns its place. We build clean, high-utility systems without unnecessary bloat.",
   },
   {
-    title: "Make Technology Accessible",
-    description: "You should not need to speak our language. We explain what we are building and why.",
+    title: "Transparent Engineering",
+    description: "We communicate clearly about architecture, trade-offs, timelines, and progress at every phase of the project.",
   },
   {
     title: "Own the Outcome",
-    description: "We are responsible for what we ship — through launch, and after it.",
+    description: "We are responsible for what we ship — through discovery, implementation, deployment, and ongoing operation.",
   },
   {
-    title: "Grow Together",
-    description: "Good work compounds. We build relationships that outlast a single project.",
+    title: "Long-Term Partnership",
+    description: "Good engineering compounds. We build relationships that grow alongside your technology needs.",
   },
 ] as const;
 
 /**
- * Solutions are business problems, distinct from services (what we build).
- * The technology lists describe what a solution may involve, not a fixed offer.
+ * Solutions: Real business challenges across our industry experience,
+ * demonstrating how capabilities come together to solve concrete operational problems.
  */
 export const solutions = [
   {
-    title: "Lead Management",
-    problem: "Enquiries arrive from everywhere and get lost between them.",
-    flow: ["Capture", "Qualify", "Assign", "Follow up", "Convert"],
-    technologies: ["Website", "CRM", "AI", "WhatsApp", "Automation"],
+    title: "Education: Admissions & Student Journey Platform",
+    problem: "Educational institutions require structured workflows to manage enquiries, student admissions, documentation, and communication without fragmented tool sprawl.",
+    flow: ["Enquiry capture", "Lead qualification", "Admissions workflow", "Communication", "Reporting"],
+    technologies: ["Web application", "PostgreSQL", "Role-based portals", "Notification APIs", "Cloud"],
   },
   {
-    title: "Business Digitization",
-    problem: "The work runs on paper, spreadsheets and memory.",
-    flow: ["Manual process", "Digital workflow", "Dashboard", "Automation"],
-    technologies: ["Web application", "Custom software", "Integrations"],
+    title: "Interiors: Project Lifecycle & Client Experience Portal",
+    problem: "Design-led businesses need project deliverables, visual asset approvals, client revisions, and quotation tracking unified in one connected system.",
+    flow: ["Enquiry", "Portfolio review", "Project workflow", "Client approvals", "Milestone sign-off"],
+    technologies: ["Custom software", "Cloud asset storage", "Workflow engine", "Client portal", "APIs"],
   },
   {
-    title: "Customer Support",
-    problem: "The same questions arrive again and again, and answers are inconsistent.",
-    flow: ["Question", "AI / knowledge", "Response", "Human escalation"],
-    technologies: ["AI assistant", "Knowledge base", "WhatsApp", "CRM"],
+    title: "Dental: Patient Journey & Practice Operations",
+    problem: "Healthcare practices require streamlined patient appointment booking, automated visit reminders, and operational coordination without front-desk bottlenecks.",
+    flow: ["Patient enquiry", "Online scheduling", "Automated reminders", "Visit follow-up", "Practice dashboard"],
+    technologies: ["Web application", "Calendar automation", "Messaging gateways", "Cloud backend", "Audit logs"],
   },
   {
-    title: "Business Operations",
-    problem: "The data exists, but nobody can see what it means.",
-    flow: ["Data", "Systems", "Dashboards", "Decisions"],
-    technologies: ["Dashboards", "APIs", "Cloud", "Reporting"],
+    title: "Cross-Industry: Complex Workflows, Data Systems & Integrations",
+    problem: "Organisations face similar technical challenges across domains: turning fragmented operational workflows into connected, reliable digital systems built for scale.",
+    flow: ["Process analysis", "System architecture", "Connected services", "Data visibility", "Continuous evolution"],
+    technologies: ["Custom applications", "Cloud infrastructure", "REST APIs", "Data pipelines", "Automation"],
   },
 ] as const;
 
 export const process = [
-  { title: "Discover", description: "Understand the business, its users, the problem and the goal." },
-  { title: "Define", description: "Identify the actual problem and decide what should be built." },
-  { title: "Design", description: "Shape the experience, the architecture and the solution." },
-  { title: "Build", description: "Develop, integrate and test." },
-  { title: "Deploy", description: "Bring the system into production." },
-  { title: "Improve", description: "Maintain, optimise and evolve it." },
+  { title: "Discover", description: "Understand the business, its users, the operational workflows, and the core goal." },
+  { title: "Define", description: "Identify core requirements, shape system architecture, and specify what should be built." },
+  { title: "Design", description: "Architect user experiences, system components, API contracts, and infrastructure." },
+  { title: "Build", description: "Engineer, integrate, and test in reviewed, incremental cycles." },
+  { title: "Deploy", description: "Bring the system into production with automated, observable deployment pipelines." },
+  { title: "Evolve", description: "Maintain, optimise, monitor, and advance the platform as business needs grow." },
 ] as const;
 
 /**
- * Trust built on how we operate — not on social proof we do not have.
- * There are no client logos, awards, certifications or statistics here by design.
+ * Trust built on engineering discipline and transparent collaboration.
  */
 export const trustPillars = [
   {
     title: "Clear communication",
-    description: "You should understand what is being built and why, at every stage.",
+    description: "You understand what is being built, how it operates, and why specific technical choices were made.",
   },
   {
     title: "Practical engineering",
-    description: "Technology is selected for the problem, not for the pitch.",
+    description: "Technology is chosen for stability, performance, and long-term maintainability — never for novelty.",
   },
   {
-    title: "Transparent process",
-    description: "The project has understandable stages, and you know where it stands.",
+    title: "Structured delivery",
+    description: "The project progresses through well-defined stages with clear milestones, deliverables, and visibility.",
   },
   {
-    title: "Long-term support",
-    description: "The relationship can continue after launch — maintenance, improvement, and what comes next.",
+    title: "Continuous engineering",
+    description: "We support the software after launch — providing maintenance, performance optimisation, and feature expansion.",
   },
 ] as const;
 
 /**
  * Technology groups shown on the homepage — chosen for the problem, not the résumé.
- * Static narrative; not a CMS model.
  */
 export const techGroups = [
-  { key: "AI", items: ["OpenAI", "Anthropic", "LangChain", "Vector DBs"] },
-  { key: "Cloud", items: ["AWS", "Docker", "Kubernetes", "Terraform"] },
-  { key: "Backend", items: ["Node.js", "Python", "Go", "PostgreSQL"] },
-  { key: "Frontend", items: ["React", "Next.js", "TypeScript"] },
-  { key: "Mobile", items: ["React Native", "Flutter", "Swift"] },
-  { key: "Data", items: ["Kafka", "Redis", "TimescaleDB"] },
-  { key: "IoT", items: ["MQTT", "Edge runtimes", "Modbus"] },
-  { key: "Security", items: ["OAuth 2.0", "Zero-trust", "Audit logging"] },
+  { key: "AI", items: ["OpenAI", "Anthropic", "Model Routing", "Streaming APIs"] },
+  { key: "Cloud", items: ["AWS", "Docker", "Containerization", "CI/CD"] },
+  { key: "Backend", items: ["Node.js", "Python", "REST APIs", "PostgreSQL"] },
+  { key: "Frontend", items: ["React", "Next.js", "TypeScript", "TailwindCSS"] },
+  { key: "Databases", items: ["PostgreSQL", "Prisma", "Redis", "Relational Modeling"] },
+  { key: "Integrations", items: ["REST APIs", "Webhooks", "Event-Driven", "External Connectors"] },
+  { key: "Security", items: ["OAuth / NextAuth", "RBAC", "HTTPS / SSL", "Audit Logging"] },
+  { key: "DevOps", items: ["Automated Builds", "Logging", "Health Checks", "Observability"] },
 ] as const;
 
 /**
@@ -216,227 +212,363 @@ export const techGroups = [
 export const systemNodes = [
   {
     name: "AI",
-    title: "Models that make decisions",
-    items: ["Models", "Agents", "Voice", "RAG", "Automation"],
+    title: "Applied Intelligence",
+    items: ["LLM Integration", "Streaming Responses", "Task Automation", "Model Routing"],
   },
   {
     name: "Cloud",
-    title: "Infrastructure that scales quietly",
-    items: ["AWS", "APIs", "Infrastructure", "Scaling"],
+    title: "Resilient Infrastructure",
+    items: ["Cloud Hosting", "APIs", "Scalability", "Containerization"],
   },
   {
     name: "Data",
-    title: "One source of truth",
-    items: ["Pipelines", "Warehousing", "Vector search", "Analytics"],
+    title: "Structured Information",
+    items: ["PostgreSQL", "Relational Schemas", "Pipelines", "Audit Visibility"],
   },
   {
-    name: "Devices",
-    title: "The physical edge",
-    items: ["Devices", "Telemetry", "Edge compute", "Real-time data"],
+    name: "Integrations",
+    title: "Connected Systems",
+    items: ["REST APIs", "Webhooks", "Gateway Connectors", "Event Workflows"],
   },
   {
     name: "Apps",
-    title: "Where people meet the system",
-    items: ["Web", "Mobile", "ERP", "CRM"],
+    title: "Product Interfaces",
+    items: ["Web Applications", "Client Portals", "Admin Dashboards", "Responsive UIs"],
   },
   {
     name: "Automation",
-    title: "Work that runs itself",
-    items: ["Workflows", "Integrations", "Event triggers", "Reporting"],
+    title: "Streamlined Workflows",
+    items: ["Notification Triggers", "Status Pipelines", "Background Jobs", "Scheduling"],
   },
 ] as const;
 
 /**
- * Static homepage content from the Glass UI design reference.
- * Homepage does not fetch CMS/DB data — it renders this content only.
+ * 8 Core Capabilities covering end-to-end technology engineering.
  */
 export const homeCapabilities = [
   {
-    name: "AI & Intelligent Systems",
-    slug: "ai-intelligent-systems",
-    shortDescription: "Systems that reason over your data and act on it.",
-    technologies: ["AI Agents", "Voice AI", "RAG", "LLM Integration", "Automation"],
+    name: "Strategy & Discovery",
+    slug: "strategy-discovery",
+    shortDescription: "Understanding business operations, user journeys and technical requirements before selecting any stack.",
+    technologies: ["Workflow Analysis", "System Architecture", "Technical Roadmaps", "Requirements Scoping"],
+    highlights: [
+      { title: "Workflow Analysis", description: "Mapping real-world operational bottlenecks, manual friction points, and multi-role user journeys." },
+      { title: "System Architecture", description: "Defining resilient technical architecture, data boundaries, and API contracts before coding." },
+      { title: "Technical Roadmaps", description: "Staged engineering blueprints prioritizing core milestones, dependencies, and business impact." },
+      { title: "Requirements Scoping", description: "Translating business goals into precise functional and technical specifications." },
+    ],
   },
   {
-    name: "Cloud & Software Platforms",
-    slug: "cloud-software-platforms",
-    shortDescription: "Infrastructure that holds up under real load.",
-    technologies: ["AWS", "APIs", "SaaS", "Backend", "DevOps"],
+    name: "Product & UX Design",
+    slug: "product-ux-design",
+    shortDescription: "Shaping intuitive experiences, responsive interfaces and design systems built around complex workflows.",
+    technologies: ["UI/UX Design", "Design Systems", "Prototyping", "Information Architecture"],
+    highlights: [
+      { title: "Task-Centered UX", description: "Designing clear, low-friction task flows for complex administrative and customer portals." },
+      { title: "Design Systems", description: "Scalable component libraries and design tokens engineered for visual consistency and rapid extension." },
+      { title: "Interactive Prototyping", description: "Simulating interface states and user interactions to validate requirements early." },
+      { title: "Information Architecture", description: "Structuring application hierarchies, navigation patterns, and dense data displays cleanly." },
+    ],
   },
   {
-    name: "Connected & IoT Systems",
-    slug: "connected-iot-systems",
-    shortDescription: "Hardware, telemetry and the cloud in one loop.",
-    technologies: ["IoT", "Real-time Systems", "Telemetry", "Monitoring", "Edge"],
+    name: "Web & Digital Experiences",
+    slug: "web-digital-experiences",
+    shortDescription: "High-performance web platforms and digital experiences engineered for speed, SEO, and engagement.",
+    technologies: ["Next.js", "React", "TypeScript", "Performance Tuning", "Modern Web Standards"],
+    highlights: [
+      { title: "High-Performance Next.js", description: "Modern React and Next.js applications engineered for instant page transitions and low latency." },
+      { title: "Core Web Vitals Optimization", description: "Sub-second initial loads, optimized asset delivery, and responsive layout stability." },
+      { title: "Semantic Accessibility", description: "Structured HTML5, ARIA compliance, and keyboard navigation meeting modern web standards." },
+      { title: "CMS Architecture", description: "Dynamic content integration empowering marketing teams without developer intervention." },
+    ],
   },
   {
-    name: "Digital Products",
-    slug: "digital-products",
-    shortDescription: "Interfaces people actually want to use.",
-    technologies: ["Web", "Mobile", "ERP", "CRM"],
+    name: "Application Development",
+    slug: "application-development",
+    shortDescription: "Custom web applications, business platforms, portals and internal operational systems.",
+    technologies: ["Full-Stack Engineering", "Relational Databases", "REST APIs", "Authentication", "Dashboard UIs"],
+    highlights: [
+      { title: "Full-Stack Architecture", description: "End-to-end frontend and backend engineering built with TypeScript and modular design." },
+      { title: "Relational Modeling", description: "Structured PostgreSQL schemas, optimized query indexing, and robust transaction safety." },
+      { title: "Role-Based Access Control", description: "Granular permissions, secure session handling, and authenticated multi-tenant workflows." },
+      { title: "Operational Dashboards", description: "Interactive management consoles, real-time status tracking, and reporting tools." },
+    ],
+  },
+  {
+    name: "Cloud & Infrastructure",
+    slug: "cloud-infrastructure",
+    shortDescription: "Resilient, secure and scalable cloud infrastructure for modern web applications and services.",
+    technologies: ["Cloud Architecture", "Docker", "CI/CD Pipelines", "Monitoring", "Security Best Practices"],
+    highlights: [
+      { title: "Cloud Architecture", description: "Scalable, highly available cloud hosting topologies configured for real production load." },
+      { title: "Containerization", description: "Standardized Docker runtimes ensuring reproducible environments across staging and production." },
+      { title: "Automated CI/CD", description: "Continuous integration pipelines with automated type checking, test suites, and deployments." },
+      { title: "Security & TLS Controls", description: "Automated HTTPS certificate management, firewall rules, and security header hardening." },
+    ],
+  },
+  {
+    name: "AI & Intelligent Automation",
+    slug: "ai-intelligent-automation",
+    shortDescription: "Practical AI integrations and intelligent workflows that automate operational friction and assist users.",
+    technologies: ["AI Model Integration", "LLM APIs", "Streaming Responses", "Workflow Automation"],
+    highlights: [
+      { title: "Foundation Model Integration", description: "Connecting leading AI providers (OpenAI, Anthropic) directly into core business workflows." },
+      { title: "Low-Latency Response Streaming", description: "Real-time SSE and WebSocket streaming delivering conversational and predictive responses." },
+      { title: "Intelligent Workflows", description: "Automated text extraction, intent routing, and intelligent triage reducing manual handling." },
+      { title: "Provider-Agnostic Design", description: "Abstracted integration gateways preventing lock-in to any single AI foundation provider." },
+    ],
+  },
+  {
+    name: "Data, Integrations & Systems",
+    slug: "data-integrations-systems",
+    shortDescription: "Connecting third-party platforms, external APIs, and structured data into cohesive business systems.",
+    technologies: ["API Development", "Webhooks", "Third-Party Connectors", "Data Synchronization"],
+    highlights: [
+      { title: "Custom API Services", description: "Clean, documented REST API services designed for dependable service-to-service communication." },
+      { title: "Event-Driven Webhooks", description: "Real-time automated triggers syncing data across payment gateways, CRMs, and internal tools." },
+      { title: "Data Pipelines & Sync", description: "Structured ingestion and scheduled reconciliation ensuring accurate data consistency." },
+      { title: "System Interoperability", description: "Connecting modern applications with existing databases and legacy operational tools." },
+    ],
+  },
+  {
+    name: "Deployment & Continuous Engineering",
+    slug: "deployment-support-continuous-engineering",
+    shortDescription: "Reliable production releases, system observability, proactive maintenance, and feature evolution.",
+    technologies: ["Automated Deployment", "Health Monitoring", "Ongoing Engineering", "Feature Iteration"],
+    highlights: [
+      { title: "Automated Deployment", description: "Zero-downtime release pipelines with automated build checks and instant rollback safety." },
+      { title: "Health Monitoring", description: "Proactive uptime alerts, application telemetry, error logging, and performance monitoring." },
+      { title: "Ongoing Engineering", description: "Continuous codebase maintenance, security patch updates, and framework dependency tuning." },
+      { title: "Feature Iteration", description: "Ongoing engineering sprints to build new modules, optimize features, and scale with business growth." },
+    ],
   },
 ] as const;
 
+/**
+ * Selected Work — real project experience demonstrating technical range and execution depth.
+ * Every entry strictly presents: Challenge, What We Built, Technology/Capabilities,
+ * What This Demonstrates, and Verified Outcome.
+ */
 export const homeProjects = [
   {
-    name: "AI Meeting Copilot",
-    line: "Real-time voice-based AI assistant with intelligent model responses.",
-    tags: ["AI", "Voice", "Real-time", "Cloud"],
-    slot: "Placeholder — product screenshot",
+    name: "Education Admissions & Student Portal",
+    industry: "Education",
+    line: "Custom admissions management application and student inquiry tracking system.",
+    tags: ["Web Application", "PostgreSQL", "REST APIs", "Cloud"],
     beats: [
       {
-        k: "Capability",
-        v: "Live voice capture, transcription and intelligent response in one loop.",
+        k: "Challenge",
+        v: "High enquiry volume, multi-step document verification, and fragmented communication across disconnected files and messaging channels.",
       },
       {
-        k: "Stack",
-        v: "Streaming audio, multi-model reasoning, cloud backend.",
+        k: "What We Built",
+        v: "A dedicated web application featuring structured student application workflows, role-based administration dashboards, and automated status notifications.",
+      },
+      {
+        k: "Technology / Capabilities",
+        v: "Full-stack Next.js, React, TypeScript, PostgreSQL database, secure session authentication, REST APIs, and automated messaging integration.",
+      },
+      {
+        k: "What This Demonstrates",
+        v: "End-to-end web application engineering, relational data modeling, role-based workflows, and cross-channel notification pipelines.",
+      },
+      {
+        k: "Outcome",
+        v: "A unified admissions pipeline replacing manual tracking with structured digital records and real-time status visibility.",
       },
     ],
   },
   {
-    name: "Multi-Model AI Platform",
-    line: "Switch between AI providers and models through a unified interface.",
-    tags: ["AI", "Platform", "APIs"],
-    slot: "Placeholder — platform screenshot",
+    name: "Interiors Project Lifecycle & Client Portal",
+    industry: "Interiors",
+    line: "Central project management, design showcase, and milestone tracking platform.",
+    tags: ["Custom Software", "Cloud Storage", "Workflow Engine", "Client Portal"],
     beats: [
       {
-        k: "Capability",
-        v: "One interface across providers, with model selection per task.",
+        k: "Challenge",
+        v: "Coordinating multi-phase interior design deliverables, visual revisions, vendor schedules, and client approvals across unlinked email threads.",
       },
       {
-        k: "Stack",
-        v: "Provider abstraction layer, unified API, streaming responses.",
+        k: "What We Built",
+        v: "A collaborative web portal providing milestone tracking, visual asset presentation, revision management, and client approval records in one system.",
+      },
+      {
+        k: "Technology / Capabilities",
+        v: "Modern responsive web interfaces, cloud asset delivery, structured project state workflows, and third-party communication APIs.",
+      },
+      {
+        k: "What This Demonstrates",
+        v: "High-fidelity user interface design, media asset workflow handling, and structured project state management.",
+      },
+      {
+        k: "Outcome",
+        v: "Direct visibility for clients into project milestones and structured design sign-offs between interior designers and project managers.",
       },
     ],
   },
   {
-    name: "Highway Speed Monitoring",
-    line: "IoT-based vehicle monitoring and speed detection system.",
-    tags: ["IoT", "Telemetry", "Edge", "Real-time"],
-    slot: "Placeholder — monitoring dashboard",
+    name: "Dental Practice Operations & Patient System",
+    industry: "Dental",
+    line: "Digital appointment coordination, automated patient reminders, and clinic dashboard.",
+    tags: ["Automation", "Cloud Infrastructure", "APIs", "Healthcare Workflows"],
     beats: [
       {
-        k: "Capability",
-        v: "Roadside devices detecting and reporting vehicle speed continuously.",
+        k: "Challenge",
+        v: "Appointment scheduling friction, manual reminder calls by front-desk staff, and patient drop-off outside regular clinic operating hours.",
       },
       {
-        k: "Stack",
-        v: "Edge sensing, telemetry pipeline, real-time monitoring.",
+        k: "What We Built",
+        v: "An integrated patient appointment booking workflow, automated SMS/email reminder pipelines, and an administrative clinic management dashboard.",
+      },
+      {
+        k: "Technology / Capabilities",
+        v: "Custom web interface, calendar scheduling logic, communication API integrations, and secure cloud-hosted backend services.",
+      },
+      {
+        k: "What This Demonstrates",
+        v: "Resilient workflow automation, external API orchestration, and reliable scheduling logic tailored to healthcare operations.",
+      },
+      {
+        k: "Outcome",
+        v: "24/7 patient booking availability and automated appointment notifications operating without requiring manual front-desk intervention.",
       },
     ],
   },
   {
-    name: "Cloud Backend Platform",
-    line: "Scalable APIs, cloud deployment, monitoring, and production infrastructure.",
-    tags: ["Cloud", "DevOps", "APIs", "AWS"],
-    slot: "Placeholder — architecture diagram",
+    name: "Multi-Model AI Integration Platform",
+    industry: "Cross-Industry / Technology Proof",
+    line: "Unified API gateway and interface for real-time AI model interactions and response streaming.",
+    tags: ["AI & LLMs", "Streaming APIs", "Cloud Deployment", "Modern Web"],
     beats: [
       {
-        k: "Capability",
-        v: "Production infrastructure with deployment and monitoring built in.",
+        k: "Business Value",
+        v: "Enables organisations to evaluate and deploy multiple AI foundation models across business workflows through a single interface — eliminating vendor lock-in.",
       },
       {
-        k: "Stack",
-        v: "Scalable APIs, cloud deployment pipelines, observability.",
+        k: "Challenge",
+        v: "Evaluating and integrating multiple AI model providers into software workflows without vendor lock-in or fragile custom wrappers.",
+      },
+      {
+        k: "What We Built",
+        v: "A unified application and API layer that connects to major foundation model providers with real-time token streaming and prompt configuration.",
+      },
+      {
+        k: "Technical Architecture",
+        v: "Next.js, TypeScript, Provider API abstractions (OpenAI/Anthropic), Server-Sent Events (SSE) streaming, and cloud container deployment.",
+      },
+      {
+        k: "What This Demonstrates",
+        v: "Practical AI systems engineering, low-latency streaming integration, and modular third-party API architecture.",
+      },
+      {
+        k: "Outcome",
+        v: "A functional, vendor-neutral AI integration gateway capable of streaming model responses into application workflows.",
       },
     ],
   },
 ] as const;
 
+/** 6-Stage Delivery Process supporting applications, platforms, cloud, and AI. */
 export const homeProcess = [
-  { title: "Understand", description: "The problem, the constraints and who lives with the result." },
-  { title: "Architect", description: "Decide the shape of the system before writing it." },
-  { title: "Build", description: "Small, reviewed increments with tests that mean something." },
-  { title: "Deploy", description: "Automated, observable, reversible." },
-  { title: "Improve", description: "Measure in production and act on what it tells you." },
+  {
+    title: "Discover",
+    description: "Understand the business environment, users, operational workflows and technical constraints before selecting any technology.",
+  },
+  {
+    title: "Define",
+    description: "Scope the core technical requirements, specify system architecture and data models, and establish clear project milestones.",
+  },
+  {
+    title: "Design",
+    description: "Architect the user experience, design systems, data workflows, API contracts, and infrastructure topology.",
+  },
+  {
+    title: "Build",
+    description: "Engineer resilient frontend and backend services, integrations, databases, and automated test suites in reviewed increments.",
+  },
+  {
+    title: "Deploy",
+    description: "Implement automated CI/CD pipelines and configure production cloud environments with monitoring and security controls.",
+  },
+  {
+    title: "Evolve",
+    description: "Provide continuous engineering support, system monitoring, performance optimisation, and feature expansion as requirements grow.",
+  },
 ] as const;
 
-/** Static FAQs for the homepage — no CMS dependency. */
+/** Static FAQs for the homepage. */
 export const homeFaqs = [
   {
     id: "faq-1",
-    question: "Do I need to know the technology before we start?",
+    question: "Do we need fully defined technical specifications before reaching out?",
     answer:
-      "No. Tell us the problem you are trying to solve. We will recommend the technology that fits — and explain why in plain language.",
+      "No. Tell us the business requirement, the problem you are solving, or the system you want to build. During discovery, we work with you to define the architecture, technical requirements, and project scope.",
   },
   {
     id: "faq-2",
-    question: "How does a project usually start?",
+    question: "How does a technology engagement typically start?",
     answer:
-      "We begin by understanding the current process, the people involved, and what success looks like. Only then do we shape the solution.",
+      "We begin with discovery: understanding your operational workflows, user journeys, data requirements, and integration needs. From there, we define the architecture and build plan before any development begins.",
   },
   {
     id: "faq-3",
-    question: "Can you work with systems we already have?",
+    question: "Can you work with our existing infrastructure and software?",
     answer:
-      "Yes. Most work builds on what you already run — websites, CRMs, spreadsheets, or internal tools. We integrate and improve rather than replace everything by default.",
+      "Yes. Most engineering projects connect with existing systems — including databases, third-party APIs, legacy platforms, and cloud services. We integrate and modernize rather than rebuild without reason.",
   },
   {
     id: "faq-4",
-    question: "What happens after launch?",
+    question: "How do you approach ongoing maintenance and continuous engineering?",
     answer:
-      "We can stay on for maintenance, improvements, and the next phase. The relationship does not have to end when the first version ships.",
+      "We design systems for long-term reliability and can partner with you after initial deployment for ongoing engineering, monitoring, performance optimisation, and continuous feature development.",
   },
   {
     id: "faq-5",
-    question: "How do you price the work?",
+    question: "How is project pricing and scope structured?",
     answer:
-      "Pricing follows the scope of the problem and the system that solves it. We clarify that before build starts, so you know what you are committing to.",
+      "Pricing is structured around clear project milestones, technical deliverables, and required engineering scope. We establish transparent terms and deliverables before development commences.",
   },
 ] as const;
 
 export const homeEvidence = [
   {
-    label: "Open source",
-    title: "Read the code",
-    description: "Public repositories reviewers can inspect directly.",
+    label: "Open Source & Code",
+    title: "Inspectable Engineering",
+    description: "Clean code structure, TypeScript typing, and architectural standards.",
   },
   {
-    label: "Architecture",
-    title: "Decision records",
-    description: "System diagrams and the trade-offs behind them.",
+    label: "System Architecture",
+    title: "Engineered Decisions",
+    description: "Documented technical blueprints, data flows, and schema trade-offs.",
   },
   {
-    label: "Certification",
-    title: "Verified credentials",
-    description: "Only certifications the team actually holds.",
+    label: "Delivery Standards",
+    title: "Structured Execution",
+    description: "6-stage delivery process from discovery through continuous evolution.",
   },
   {
-    label: "Outcomes",
-    title: "Measured results",
-    description: "Real numbers from delivered projects, when available.",
+    label: "Real Projects",
+    title: "Verified Capabilities",
+    description: "Practical applications and platforms built for real operating environments.",
   },
-] as const;
-
-export const homeInsights = [
-  { title: "How AI voice systems actually work", label: "AI / Voice" },
-  { title: "How RAG changes enterprise search", label: "AI / Data" },
-  { title: "Designing multi-model AI systems", label: "Architecture" },
-  { title: "How IoT data reaches the cloud", label: "IoT / Cloud" },
-  { title: "Building production-ready AI applications", label: "Engineering" },
 ] as const;
 
 export const homePhilosophy = {
-  heading: "Technology is only useful when it solves something.",
-  body: "We start with the problem, understand the environment, and then choose the technology that actually makes sense.",
+  heading: "We engineer technology around real-world business requirements.",
+  body: "We start with the business requirement, understand the operating environment, and engineer the technology that actually makes sense — whether that is a digital product, a custom web application, cloud infrastructure, or an intelligent system.",
 } as const;
 
 export const finalCta = {
-  heading: "Have a problem worth solving?",
+  heading: "Ready to discuss your technology requirement?",
   supporting:
-    "Tell us what you are trying to build, improve, automate or solve. We will understand the problem first, then help you determine the right technology.",
-  line: "Your problem is unique. Your technology should be too.",
+    "Whether you are planning a new application, building a business platform, migrating to cloud infrastructure, or integrating AI and automation — we engineer solutions designed for reliability and long-term evolution.",
+  line: "We provide end-to-end technology engineering, from discovery and design through development, deployment and continuous evolution.",
 } as const;
 
 /* -------------------------------------------------------------------------- */
 /* Enquiry form options                                                        */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Budget bands, mapped to the numeric range the lead API stores.
- * `null` bounds mean open-ended; "not decided" sends no budget at all.
- */
 export const budgetOptions = [
   { value: "", label: "Not decided yet", min: null, max: null },
   { value: "under-50k", label: "Under ₹50K", min: null, max: 50_000 },

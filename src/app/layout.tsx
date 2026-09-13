@@ -48,7 +48,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Custom Software, Cloud & AI Development | MarineCloudX",
+    default: "Technology Solutions & Engineering | MarineCloudX",
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -57,14 +57,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
-    title: "Custom Software, Cloud & AI Development | MarineCloudX",
+    title: "Technology Solutions & Engineering | MarineCloudX",
     description: siteConfig.description,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Custom Software, Cloud & AI Development | MarineCloudX",
+    title: "Technology Solutions & Engineering | MarineCloudX",
     description: siteConfig.description,
   },
   robots: { index: true, follow: true },

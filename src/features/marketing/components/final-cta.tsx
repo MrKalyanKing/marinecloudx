@@ -32,7 +32,7 @@ export async function FinalCta({
 }: {
   supporting?: string;
 }) {
-  const services = await getPublishedServices();
+  const services = await getPublishedServices().catch(() => []);
 
   return (
     <section

@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
   Breadcrumbs,
-  CardGrid,
   Container,
-  ContentCard,
   PageBody,
-  PageIntro,
 } from "@/features/marketing/components/layout";
 import { FinalCta } from "@/features/marketing/components/final-cta";
-import { PublicImage } from "@/features/marketing/components/project-gallery";
+import { BlogCard, SERVICE_BLOG_IMAGES } from "@/features/marketing/components/blog-card";
 import { absoluteUrl, siteConfig } from "@/lib/config/site";
 import { formatDate, toIsoDate } from "@/shared/utils/format";
 import { getPublishedPostBySlug, getRelatedPosts, getSitemapEntries } from "@/features/content/services/content";
@@ -20,19 +18,6 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-/**
- * Prerenders every published slug at build time.
- *
- * With the segment now cached rather than `force-dynamic`, this turns the
- * catalogue into static HTML that is served without touching the API, then
- * refreshed by the revalidation webhook. Slugs published after the build still
- * work: `dynamicParams` defaults to true, so an unknown slug renders on demand
- * and is cached from then on.
- *
- * Failure here is deliberately non-fatal. A build should not break because the
- * API happened to be unreachable — returning no params simply means every page
- * renders on first request instead, which is the behaviour that existed before.
- */
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   try {
     const entries = await getSitemapEntries();
@@ -42,11 +27,6 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   }
 }
 
-/**
- * Metadata is derived from the same publication-filtered query the page uses,
- * so a draft cannot reach a title, description, canonical URL or Open Graph
- * tag — an unpublished slug is indistinguishable from one that never existed.
- */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
@@ -55,6 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = post.seoTitle ?? post.title;
   const description = post.seoDescription ?? post.excerpt ?? undefined;
+  const imageUrl = post.coverMedia?.url || SERVICE_BLOG_IMAGES[post.slug] || undefined;
 
   return {
     title,
@@ -69,26 +50,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: "en_US",
       publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
       modifiedTime: new Date(post.updatedAt).toISOString(),
-      images: post.coverMedia?.url ? [post.coverMedia.url] : undefined,
+      images: imageUrl ? [imageUrl] : undefined,
     },
     twitter: {
-      card: post.coverMedia?.url ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title,
       description,
-      images: post.coverMedia?.url ? [post.coverMedia.url] : undefined,
+      images: imageUrl ? [imageUrl] : undefined,
     },
   };
 }
 
-/**
- * Renders stored content as paragraphs.
- *
- * The content column holds plain text. It is rendered as React children, so any
- * markup an editor types is escaped and displayed literally — there is no
- * `dangerouslySetInnerHTML` anywhere in this pipeline and no sanitiser to get
- * wrong. Blank lines separate paragraphs; single newlines are preserved within
- * one. See docs/blog.md for why no rich-text editor was introduced.
- */
 function PostContent({ content }: { content: string }) {
   const paragraphs = content
     .split(/\n\s*\n/)
@@ -96,12 +68,22 @@ function PostContent({ content }: { content: string }) {
     .filter(Boolean);
 
   return (
-    <div className="mt-8 max-w-[46rem]">
-      {paragraphs.map((paragraph, index) => (
-        <p key={index} className="mb-5 whitespace-pre-wrap text-lg leading-relaxed text-ink-muted">
-          {paragraph}
-        </p>
-      ))}
+    <div className="mx-auto mt-10 max-w-[50rem] space-y-6 text-[17px] leading-[1.8] text-ink/85">
+      {paragraphs.map((paragraph, index) => {
+        // Check if paragraph is a subheader
+        if (paragraph.length < 80 && !paragraph.endsWith(".") && !paragraph.includes("\n")) {
+          return (
+            <h2 key={index} className="pt-4 text-2xl font-bold tracking-tight text-ink">
+              {paragraph}
+            </h2>
+          );
+        }
+        return (
+          <p key={index} className="whitespace-pre-wrap">
+            {paragraph}
+          </p>
+        );
+      })}
     </div>
   );
 }
@@ -112,18 +94,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   if (!post) notFound();
 
-  // The backend computes "same category, then shared tag" itself from the slug.
   const related = await getRelatedPosts(post.slug);
+  const imageUrl = post.coverMedia?.url || SERVICE_BLOG_IMAGES[post.slug] || "/images/blog/strategy-discovery.jpg";
 
-  /**
-   * BlogPosting structured data.
-   *
-   * Only columns that actually exist are emitted. `author` is deliberately
-   * absent: `BlogPost.authorId` points at an internal admin user, and there is
-   * no approved public author identity — inventing one to satisfy a schema
-   * validator would be fabricating a credential. No publisher, rating or review
-   * data is claimed either.
-   */
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -133,111 +106,108 @@ export default async function BlogPostPage({ params }: PageProps) {
       : {}),
     ...(post.publishedAt ? { datePublished: new Date(post.publishedAt).toISOString() } : {}),
     dateModified: new Date(post.updatedAt).toISOString(),
-    ...(post.coverMedia?.url ? { image: [post.coverMedia.url] } : {}),
+    image: [imageUrl],
     mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(`/blog/${post.slug}`) },
   };
 
   return (
     <>
-      <PageIntro eyebrow="Insights" title={post.title} description={post.excerpt ?? undefined} />
-
-      {/*
-        Escaping `<` prevents a `</script>` sequence inside any article field
-        from closing this block early and turning stored text into markup.
-        JSON.stringify handles quoting; this handles the one character that
-        matters inside a script element.
-      */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
+      <section className="relative overflow-hidden px-5 pt-32 pb-8 text-ink sm:px-8 sm:pt-36">
+        <Container className="relative max-w-[1020px]">
+          <div className="mb-6">
+            <Breadcrumbs trail={[{ label: "Insights", href: "/blog" }, { label: post.title }]} />
+          </div>
+
+          {/* Category Badge & Date Header matching Image 3 */}
+          <div className="text-center">
+            {post.category ? (
+              <div className="inline-flex">
+                <Link
+                  href={`/blog?category=${encodeURIComponent(post.category.slug)}`}
+                  className="chip-glass rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider text-brand uppercase hover:bg-brand/10 transition-colors"
+                >
+                  {post.category.name}
+                </Link>
+              </div>
+            ) : null}
+
+            <h1 className="mt-5 text-[clamp(2.2rem,4.5vw,3.6rem)] font-bold leading-tight tracking-[-0.03em] text-ink">
+              {post.title}
+            </h1>
+
+            {post.publishedAt ? (
+              <div className="mt-4 text-sm font-medium text-ink-muted">
+                <time dateTime={toIsoDate(post.publishedAt)}>
+                  {formatDate(post.publishedAt)}
+                </time>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Featured Hero Illustration matching Image 3 */}
+          <div className="relative mx-auto mt-8 aspect-[16/9] w-full max-w-[940px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-md">
+            <Image
+              src={imageUrl}
+              alt={post.coverMedia?.altText || post.title}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 940px"
+              className="object-cover"
+            />
+          </div>
+        </Container>
+      </section>
+
       <PageBody>
-      <Container className="py-8">
-        <Breadcrumbs trail={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
+        <Container className="max-w-[1020px] py-10">
+          {/* Article Body Content */}
+          {post.content ? <PostContent content={post.content} /> : null}
 
-        <div className="flex flex-wrap items-center gap-3 text-sm text-ink-muted">
-          {post.category ? (
-            <Link
-              href={`/blog?category=${encodeURIComponent(post.category.slug)}`}
-              className="text-brand hover:underline"
-            >
-              {post.category.name}
-            </Link>
-          ) : null}
-          {post.publishedAt ? (
-            <time dateTime={toIsoDate(post.publishedAt)}>{formatDate(post.publishedAt)}</time>
-          ) : null}
-          {/* No author is shown: the author relation is an internal admin user
-              and there is no approved public author identity. See docs/blog.md. */}
-        </div>
-
-        {post.coverMedia?.url ? (
-          <figure className="mt-6">
-            <div className="media-frame relative aspect-16/9 bg-ice">
-              <PublicImage
-                url={post.coverMedia.url}
-                /* Falls back to the post title. The previous empty alt marked a
-                   cover image as decorative, which tells a screen reader to skip
-                   the only illustration on the article. Naming it after the
-                   article it illustrates is accurate and invents nothing. */
-                alt={post.coverMedia.altText ?? post.title}
-                priority
-                sizes="(max-width: 768px) 100vw, 768px"
-              />
-            </div>
-          </figure>
-        ) : null}
-
-        {post.content ? <PostContent content={post.content} /> : null}
-
-        {post.tags.length > 0 ? (
-          <nav aria-label="Post tags" className="mt-10">
-            <h2 className="tech-label text-ink-muted">Tags</h2>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <li key={tag.slug}>
-                  <Link
-                    href={`/blog?tag=${encodeURIComponent(tag.slug)}`}
-                    className="chip-glass px-3 py-1 text-sm text-ink-muted hover:text-brand"
-                  >
-                    #{tag.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ) : null}
-
-        {/* Only published posts reach this list, and the current post is
-            excluded at the query level. Fewer than three is shown as fewer. */}
-        {related.length > 0 ? (
-          <section className="mt-14 border-t border-hairline-light pt-10">
-            <h2 className="text-h3 font-semibold text-ink">Related reading</h2>
-            <div className="mt-6">
-              <CardGrid>
-                {related.map((entry) => (
-                  <ContentCard
-                    key={entry.slug}
-                    title={entry.title}
-                    href={`/blog/${entry.slug}`}
-                    description={entry.excerpt}
-                    image={entry.coverMedia}
-                    meta={
-                      entry.publishedAt ? (
-                        <time dateTime={toIsoDate(entry.publishedAt)}>
-                          {formatDate(entry.publishedAt)}
-                        </time>
-                      ) : undefined
-                    }
-                  />
+          {/* Tags */}
+          {post.tags.length > 0 ? (
+            <div className="mx-auto mt-12 max-w-[50rem] border-t border-hairline-light pt-8">
+              <p className="tech-label text-ink-muted mb-3">Tagged With</p>
+              <ul className="flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <li key={tag.slug}>
+                    <Link
+                      href={`/blog?tag=${encodeURIComponent(tag.slug)}`}
+                      className="chip-glass px-3.5 py-1.5 text-xs font-medium text-ink-muted hover:text-brand transition-colors"
+                    >
+                      #{tag.name}
+                    </Link>
+                  </li>
                 ))}
-              </CardGrid>
+              </ul>
             </div>
-          </section>
-        ) : null}
+          ) : null}
 
-      </Container>
+          {/* Related Blog Articles matching Image 3 and Point 3 */}
+          {related.length > 0 ? (
+            <section className="mt-20 border-t border-hairline-light pt-12">
+              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="tech-label text-brand">Related Insights</p>
+                  <h2 className="mt-2 text-h2 font-semibold text-ink">Related Articles</h2>
+                </div>
+                <Link href="/blog" className="text-sm font-medium text-brand hover:underline">
+                  All articles →
+                </Link>
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {related.map((entry) => (
+                  <BlogCard key={entry.slug} post={entry} />
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </Container>
       </PageBody>
 
       <FinalCta />

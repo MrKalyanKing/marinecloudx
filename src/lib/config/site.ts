@@ -113,7 +113,7 @@ export const siteConfig = {
   /** Approved positioning line. Single source: src/config/brand.ts. */
   tagline: brand.positioning,
   description:
-    "MarineCloudX designs and builds custom software, cloud platforms, AI systems and connected products around real business problems. Worldwide delivery.",
+    "MarineCloudX is a technology solutions and engineering partner designing and building digital products, applications, cloud platforms, AI, and intelligent systems around real business requirements. Industry experience: Education, Interiors, Dental. Worldwide delivery.",
   url: resolveSiteUrl(),
   locale: "en",
 } as const;

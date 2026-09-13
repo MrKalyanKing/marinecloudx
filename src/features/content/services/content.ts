@@ -248,6 +248,7 @@ export interface GalleryItem {
 export interface ProjectDetail {
   title: string;
   slug: string;
+  status?: string;
   shortDescription: string | null;
   fullDescription: string | null;
   liveUrl: string | null;

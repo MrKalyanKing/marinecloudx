@@ -38,8 +38,8 @@ export function Hero() {
         <HeroRibbon />
       </div>
 
-      <Container className="relative z-10 w-full max-w-[1200px] px-5 sm:px-8">
-        <div className="max-w-[660px]">
+      <Container className="relative z-10 w-full max-w-[1320px] px-5 sm:px-8">
+        <div className="w-full lg:max-w-[75%]">
           <span className="glass glass-rim inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-[13px] font-medium text-ink-muted">
             <span
               aria-hidden="true"
@@ -52,9 +52,12 @@ export function Hero() {
             {heroContent.eyebrow}
           </span>
 
-          <h1 className="mt-7 text-[clamp(2.5rem,5.6vw,4.5rem)] leading-[1.02] font-semibold tracking-[-0.035em] text-balance text-ink">
+          <h1 className="mt-7 text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.04] font-semibold tracking-[-0.035em] text-ink">
             {heroContent.headingLines.map((line, index) => (
-              <span key={line} className="block">
+              <span
+                key={line}
+                className={index === 0 ? "block sm:whitespace-nowrap" : "block"}
+              >
                 {index === heroContent.headingLines.length - 1 ? (
                   <span className="text-aurora">{line}</span>
                 ) : (
@@ -64,7 +67,7 @@ export function Hero() {
             ))}
           </h1>
 
-          <p className="mt-6 max-w-[52ch] text-[16px] leading-relaxed font-medium text-ink-muted sm:text-[17.5px]">
+          <p className="mt-6 max-w-[64ch] text-[16px] leading-relaxed font-medium text-ink-muted sm:text-[17.5px]">
             {heroContent.supporting}
           </p>
 

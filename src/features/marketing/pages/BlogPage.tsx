@@ -4,16 +4,13 @@ import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 
 import {
-  CardGrid,
   Container,
-  ContentCard,
   PageBody,
-  PageIntro,
   PublicEmptyState,
   PublicPagination,
   cx,
 } from "@/features/marketing/components/layout";
-import { formatDate, toIsoDate } from "@/shared/utils/format";
+import { BlogCard } from "@/features/marketing/components/blog-card";
 import { getBlogFilterOptions, getPublishedPosts } from "@/features/content/services/content";
 
 const DEFAULT_PAGE_SIZE = 12;
@@ -118,144 +115,140 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <PageIntro
-        eyebrow="Insights"
-        title="Technical thinking"
-        description="Writing from the MarineCloudX team — editorial, not a blog grid first."
-      />
+      {/* 01 — Unified Header Section with Search & Categories */}
+      <section className="relative overflow-hidden px-5 pt-32 pb-12 text-ink sm:px-8 sm:pt-36 sm:pb-16">
+        <Container className="relative max-w-[1320px]">
+          <div className="max-w-[840px]">
+            <p className="tech-label text-brand">Insights</p>
+            <h1 className="mt-4 text-[clamp(2.4rem,5vw,3.8rem)] font-semibold tracking-[-0.035em] text-ink">
+              Technical thinking
+            </h1>
+            <p className="mt-4 text-lead text-ink-muted">
+              Writing from the MarineCloudX team — editorial, not a blog grid first.
+            </p>
 
-      <PageBody>
-      <Container className="py-8">
-        <form method="get" className="mb-6 flex flex-wrap items-end gap-3">
-          <div className="min-w-56 flex-1">
-            <label htmlFor="blog-search" className="tech-label text-ink-muted">
-              Search posts
-            </label>
-            <input
-              id="blog-search"
-              name="q"
-              type="search"
-              defaultValue={search ?? ""}
-              placeholder="Title or summary"
-              className="field-glass mt-2 px-3 py-2 text-sm text-ink"
-            />
+            {/* Search Input Bar inside Header */}
+            <div className="mt-8 max-w-[640px]">
+              <form method="get" className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <input
+                    id="blog-search"
+                    name="q"
+                    type="search"
+                    defaultValue={search ?? ""}
+                    placeholder="Search articles by title, topic or keyword..."
+                    className="w-full rounded-full border border-black/15 bg-white/90 px-5 py-3 text-[14.5px] text-ink placeholder:text-ink-muted/70 shadow-sm backdrop-blur-md focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                  />
+                </div>
+                {category ? <input type="hidden" name="category" value={category} /> : null}
+                {tag ? <input type="hidden" name="tag" value={tag} /> : null}
+                <button
+                  type="submit"
+                  className="btn-solid rounded-full px-6 py-3 text-sm font-medium whitespace-nowrap"
+                >
+                  Search
+                </button>
+                {isFiltered ? (
+                  <Link href="/blog" className="whitespace-nowrap text-sm text-brand hover:underline ml-2">
+                    Clear
+                  </Link>
+                ) : null}
+              </form>
+            </div>
+
+            {/* Category Filter Pills inside Header */}
+            {filterOptions.categories.length > 0 ? (
+              <div className="mt-7">
+                <p className="tech-label text-[11px] text-ink-muted mb-2.5">Filter by Service</p>
+                <ul className="flex flex-wrap gap-2">
+                  <li>
+                    <FilterPill href={filterHref({ category: undefined })} active={!category}>
+                      All categories
+                    </FilterPill>
+                  </li>
+                  {filterOptions.categories.map((entry) => (
+                    <li key={entry.slug}>
+                      <FilterPill
+                        href={filterHref({ category: entry.slug })}
+                        active={entry.slug === category}
+                      >
+                        {entry.name} ({entry._count.posts})
+                      </FilterPill>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {/* Tag Pills inside Header */}
+            {filterOptions.tags.length > 0 ? (
+              <div className="mt-4">
+                <ul className="flex flex-wrap gap-1.5">
+                  {tag ? (
+                    <li>
+                      <FilterPill href={filterHref({ tag: undefined })} active={false}>
+                        ✕ Clear tag
+                      </FilterPill>
+                    </li>
+                  ) : null}
+                  {filterOptions.tags.map((entry) => (
+                    <li key={entry.slug}>
+                      <FilterPill href={filterHref({ tag: entry.slug })} active={entry.slug === tag}>
+                        #{entry.name}
+                      </FilterPill>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
+        </Container>
+      </section>
 
-          {/* Filters already applied stay applied when a search is submitted. */}
-          {category ? <input type="hidden" name="category" value={category} /> : null}
-          {tag ? <input type="hidden" name="tag" value={tag} /> : null}
-
-          <button
-            type="submit"
-            className="chip-glass px-4 py-2.5 text-sm text-ink hover:text-brand"
-          >
-            Search
-          </button>
-
-          {isFiltered ? (
-            <Link href="/blog" className="text-sm text-brand hover:underline">
-              Clear filters
-            </Link>
-          ) : null}
-        </form>
-
-        {filterOptions.categories.length > 0 ? (
-          <nav aria-label="Filter posts by category" className="mb-4">
-            <ul className="flex flex-wrap gap-2">
-              <li>
-                <FilterPill href={filterHref({ category: undefined })} active={!category}>
-                  All categories
-                </FilterPill>
-              </li>
-              {filterOptions.categories.map((entry) => (
-                <li key={entry.slug}>
-                  <FilterPill
-                    href={filterHref({ category: entry.slug })}
-                    active={entry.slug === category}
-                  >
-                    {entry.name} ({entry._count.posts})
-                  </FilterPill>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ) : null}
-
-        {filterOptions.tags.length > 0 ? (
-          <nav aria-label="Filter posts by tag" className="mb-8">
-            <ul className="flex flex-wrap gap-2">
-              {tag ? (
-                <li>
-                  <FilterPill href={filterHref({ tag: undefined })} active={false}>
-                    Clear tag
-                  </FilterPill>
-                </li>
-              ) : null}
-              {filterOptions.tags.map((entry) => (
-                <li key={entry.slug}>
-                  <FilterPill href={filterHref({ tag: entry.slug })} active={entry.slug === tag}>
-                    #{entry.name}
-                  </FilterPill>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ) : null}
-
-        {rows.length === 0 ? (
-          <PublicEmptyState
-            title={isFiltered ? "No posts match those filters" : "No published posts yet"}
-            description={
-              isFiltered
-                ? [
-                    activeCategory ? `Category: ${activeCategory.name}.` : null,
-                    activeTag ? `Tag: ${activeTag.name}.` : null,
-                    "Try clearing the filters.",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")
-                : "Posts appear here once they are published in the admin CMS."
-            }
-          />
-        ) : (
-          <>
-            <CardGrid>
-              {rows.map((post, index) => (
-                <ContentCard
-                  headingLevel={2}
-                  key={post.slug}
-                  title={post.title}
-                  href={`/blog/${post.slug}`}
-                  description={post.excerpt}
-                  image={post.coverMedia}
-                  priority={index === 0}
-                  tags={post.tags.map((entry) => entry.name)}
-                  meta={
-                    <>
-                      {post.category ? <span>{post.category.name} · </span> : null}
-                      {post.publishedAt ? (
-                        <time dateTime={toIsoDate(post.publishedAt)}>
-                          {formatDate(post.publishedAt)}
-                        </time>
-                      ) : null}
-                    </>
-                  }
-                />
-              ))}
-            </CardGrid>
-
-            <PublicPagination
-              page={page}
-              totalPages={totalPages}
-              basePath="/blog"
-              params={{
-                ...carried,
-                pageSize: pageSize === DEFAULT_PAGE_SIZE ? undefined : String(pageSize),
-              }}
+      {/* 02 — Articles Listing */}
+      <PageBody>
+        <Container className="max-w-[1320px] py-12">
+          {rows.length === 0 ? (
+            <PublicEmptyState
+              title={isFiltered ? "No posts match those filters" : "No published posts yet"}
+              description={
+                isFiltered
+                  ? [
+                      activeCategory ? `Category: ${activeCategory.name}.` : null,
+                      activeTag ? `Tag: ${activeTag.name}.` : null,
+                      "Try clearing the filters.",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")
+                  : "Posts appear here once they are published in the admin CMS."
+              }
             />
-          </>
-        )}
-      </Container>
+          ) : (
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {rows.map((post, index) => (
+                  <BlogCard
+                    key={post.slug}
+                    post={post}
+                    priority={index === 0}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-12">
+                <PublicPagination
+                  page={page}
+                  totalPages={totalPages}
+                  basePath="/blog"
+                  params={{
+                    ...carried,
+                    pageSize: pageSize === DEFAULT_PAGE_SIZE ? undefined : String(pageSize),
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </Container>
       </PageBody>
     </>
   );

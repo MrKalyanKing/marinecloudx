@@ -105,20 +105,22 @@ export function HeroStatsBand() {
 
       <div className="mt-7 border-t border-ink/10 pt-6 sm:mt-8 sm:pt-7">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[20ch] text-[15px] font-medium text-ink">
-            What the engagement actually looks like
+          <p className="max-w-[20ch] text-[15px] font-semibold text-ink">
+            At a Glance
           </p>
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:flex sm:gap-9">
+          <dl className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:flex-nowrap sm:gap-8 lg:gap-10">
             {stats.map((stat, index) => (
-              <div key={stat.label}>
+              <div key={stat.label} className="flex items-baseline gap-2.5">
                 <dt className="sr-only">{stat.label}</dt>
                 <dd
-                  className="text-[26px] leading-none font-semibold"
+                  className="text-[26px] leading-none font-bold tracking-tight sm:text-[32px] whitespace-nowrap"
                   style={{ color: ACCENTS[index % ACCENTS.length] }}
                 >
                   {stat.value}
                 </dd>
-                <p className="mt-1.5 text-[12.5px] text-ink-muted">{stat.label}</p>
+                <p className="text-[13px] font-medium text-ink-muted whitespace-nowrap">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </dl>
