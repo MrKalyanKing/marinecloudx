@@ -1,4 +1,4 @@
-﻿import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 const API_URL = (
@@ -205,6 +205,7 @@ function buildClientReceiptHtml(p: LeadRequestPayload, clientName: string, budge
         <table role="presentation" width="600" style="max-width:600px;width:100%;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.08);" cellspacing="0" cellpadding="0" border="0">
           <tr>
             <td style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 40%,#0f3460 70%,#533483 100%);padding:48px 48px 40px;text-align:center;">
+              <p style="margin:0 0 14px;font-size:13px;font-weight:700;color:#ffffff;letter-spacing:1.5px;text-transform:uppercase;opacity:0.85;">MarineCloudX</p>
               <h1 style="margin:0;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;line-height:1.2;">We&rsquo;ve got your message.</h1>
               <p style="margin:12px 0 0;font-size:15px;color:rgba(255,255,255,0.75);line-height:1.6;">Thank you for reaching out to MarineCloudX. We will review your requirement and get back to you shortly.</p>
             </td>
@@ -220,7 +221,20 @@ function buildClientReceiptHtml(p: LeadRequestPayload, clientName: string, budge
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                     ${p.timeline ? `<tr><td style="${tdLabel}">Timeline</td><td style="${tdValue}">${esc(p.timeline)}</td></tr>` : ""}
                     ${budgetStr ? `<tr><td style="${tdLabel}">Budget</td><td style="${tdValue}">${esc(budgetStr)}</td></tr>` : ""}
-                    ${p.requirement ? `<tr><td style="${tdLabel}">Requirement</td><td style="${tdValue};white-space:pre-wrap;">${esc(p.requirement)}</td></tr>` : ""}
+                    ${
+                      p.requirement
+                        ? `<tr>
+                            <td colspan="2" style="padding:14px 0 6px 0;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.8px;${p.timeline || budgetStr ? "border-top:1px solid #e5e7eb;" : ""}">
+                              Requirement
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="2" style="padding:2px 0 6px 0;font-size:13.5px;line-height:1.65;color:#111827;white-space:pre-wrap;word-break:break-word;">
+                              ${esc(p.requirement)}
+                            </td>
+                          </tr>`
+                        : ""
+                    }
                   </table>
                 </td></tr>
               </table>
