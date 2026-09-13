@@ -12,7 +12,9 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { PublicImage } from "@/features/marketing/components/public-image";
 import { ScrollReveal } from "@/features/marketing/components/scroll-reveal";
+import { BreadcrumbJsonLd } from "@/features/marketing/components/structured-data";
 
 /** The four surfaces the site alternates between. */
 export type Tone = "dark" | "ice" | "aqua" | "paper";
@@ -212,12 +214,7 @@ function buttonClass(variant: ButtonVariant, tone: Tone): string {
   }
 
   if (variant === "secondary") {
-    return cx(
-      base,
-      isDark(tone)
-        ? "text-light ring-1 ring-inset ring-hairline-dark hover:bg-white/5"
-        : "text-ink ring-1 ring-inset ring-hairline-light hover:bg-ink/5",
-    );
+    return cx(base, isDark(tone) ? "chip-glass-dark text-light" : "btn-light-ghost text-ink");
   }
 
   return cx(base, "px-0", isDark(tone) ? "text-brand-soft" : "text-brand");
@@ -260,7 +257,7 @@ export function ActionLink({
 /* Page furniture                                                              */
 /* -------------------------------------------------------------------------- */
 
-/** Dark masthead used by every inner page, so they share the hero's footing. */
+/** Page masthead — black type on white canvas. */
 export function PageIntro({
   title,
   description,
@@ -271,23 +268,58 @@ export function PageIntro({
   eyebrow?: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-navy pt-32 pb-16 text-light sm:pt-40 sm:pb-20">
-      <div aria-hidden="true" className="aurora" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid-lines" />
-      <Container className="relative">
-        {eyebrow ? <TechLabel tone="dark">{eyebrow}</TechLabel> : null}
-        <h1 className="mt-4 text-h1 font-semibold text-balance">{title}</h1>
+    <section className="relative overflow-hidden px-5 pt-32 pb-16 text-ink sm:px-8 sm:pt-40 sm:pb-20">
+      <Container className="relative max-w-[920px]">
+        {eyebrow ? <TechLabel tone="paper">{eyebrow}</TechLabel> : null}
+        <h1 className="mt-5 max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold tracking-[-0.035em] text-balance">
+          {title}
+        </h1>
         {description ? (
-          <p className="mt-5 max-w-2xl text-lead text-light-muted">{description}</p>
+          <p className="mt-5 max-w-[42ch] text-lead text-ink-muted">{description}</p>
         ) : null}
       </Container>
     </section>
   );
 }
 
+/**
+ * Light content surface for inner listing/detail pages.
+ *
+ * The public shell is the continuous dark studio. Listing and form pages still
+ * use ink-on-paper for long CMS content and forms — without this wrapper,
+ * labels and empty states render dark-on-dark.
+ */
+export function PageBody({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    // Translucent rather than solid, so the ambient trails behind the page
+    // read faintly through inner pages too. At 72% over a near-white canvas
+    // the effective background is still ~#fcfcff, so body-text contrast is
+    // unchanged.
+    <div className={cx("relative flex-1 bg-paper/72 text-ink", className)}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Breadcrumb trail, visible and machine-readable from one input.
+ *
+ * The JSON-LD is emitted here rather than in each of the five detail pages on
+ * purpose. Google withdraws breadcrumb rich results when the markup describes a
+ * path different from the one on the page, and the surest way to produce that
+ * mismatch is to maintain the two separately. Both now read the same `trail`,
+ * so they cannot drift.
+ */
 export function Breadcrumbs({ trail }: { trail: { label: string; href?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-8">
+      <BreadcrumbJsonLd trail={trail} />
       <ol className="tech-label flex flex-wrap items-center gap-2 text-ink-muted">
         <li>
           <Link href="/" className="transition-colors hover:text-brand">
@@ -346,6 +378,25 @@ export interface CardImage {
   height?: number | null;
 }
 
+/**
+ * Palette for card accents. The text-safe stops, because these colour a chip
+ * label and a monogram, not just a background wash.
+ */
+const CARD_ACCENTS = ["#5b4ae8", "#d92668", "#1272d6", "#0f9488", "#c2410c", "#7c3aed"];
+
+/**
+ * Small stable hash of the title.
+ *
+ * Deterministic on purpose: a card must keep the same accent between the server
+ * render and the client, and between visits. Anything random would hydrate
+ * mismatched and would also change colour every time the page rebuilt.
+ */
+function hashString(value: string): number {
+  let h = 0;
+  for (let i = 0; i < value.length; i++) h = (h * 31 + value.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
 export function ContentCard({
   title,
   href,
@@ -356,6 +407,7 @@ export function ContentCard({
   image,
   tags,
   headingLevel = 3,
+  priority = false,
 }: {
   title: string;
   href: string;
@@ -372,6 +424,11 @@ export function ContentCard({
    * users navigating by heading experience as a missing level.
    */
   headingLevel?: 2 | 3;
+  /**
+   * Eager-load this card's cover. Set on the first card of a grid, which is the
+   * LCP candidate on a listing page; everything below stays lazy.
+   */
+  priority?: boolean;
   /** Optional cover. Omitted entirely when the record has no image — no placeholder is invented. */
   image?: CardImage | null;
   /** Short factual labels (industry, technology) drawn from real relations. */
@@ -380,32 +437,30 @@ export function ContentCard({
   return (
     <article
       className={cx(
-        "group relative flex flex-col overflow-hidden rounded-2xl p-6",
+        "group relative flex flex-col overflow-hidden rounded-[20px] p-6",
         "transition-[transform,box-shadow] duration-300 hover:-translate-y-1",
         isDark(tone)
-          ? "glass hover:shadow-[0_20px_50px_-24px_rgb(2_12_10/0.8)]"
-          : "glass-light hover:shadow-[0_24px_54px_-24px_rgb(7_35_29/0.28)]",
+          ? "mcx-card"
+          : "mcx-card",
       )}
     >
       {image?.url ? (
         <div
           className={cx(
-            "-mx-6 -mt-6 mb-6 aspect-[16/10] overflow-hidden border-b",
+            "relative -mx-6 -mt-6 mb-6 aspect-[16/10] overflow-hidden border-b",
             hairline(tone),
             isDark(tone) ? "bg-surface-dark" : "bg-ice",
           )}
         >
-          {/* Media lives on an object-storage host that varies per deployment,
-              so next/image would need remotePatterns configured per environment.
-              See docs/media.md. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={image.url}
-            alt={image.altText ?? ""}
-            width={image.width ?? undefined}
-            height={image.height ?? undefined}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          <PublicImage
+            url={image.url}
+            // Falls back to the card's own title rather than to `""`. A cover
+            // image labelled by the thing it is a cover for is accurate; an
+            // empty alt would tell assistive technology to skip a content image.
+            alt={image.altText ?? title}
+            priority={priority}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="transition-transform duration-500 group-hover:scale-[1.03]"
           />
         </div>
       ) : null}
@@ -437,8 +492,8 @@ export function ContentCard({
             <li
               key={tag}
               className={cx(
-                "border px-2 py-0.5 text-[0.7rem] tracking-wide",
-                hairline(tone),
+                "rounded-full px-2.5 py-0.5 text-[0.7rem] tracking-wide",
+                isDark(tone) ? "chip-glass-dark" : "chip-glass",
                 mutedText(tone),
               )}
             >
@@ -493,7 +548,13 @@ export function PublicEmptyState({
   tone?: Tone;
 }) {
   return (
-    <div className={cx("border border-dashed px-6 py-16 text-center", hairline(tone))}>
+    <div
+      className={cx(
+        "rounded-2xl border border-dashed px-6 py-16 text-center",
+        hairline(tone),
+        !isDark(tone) && "bg-white/40 backdrop-blur-sm",
+      )}
+    >
       <p className={cx("text-h3 font-medium", isDark(tone) ? "text-light" : "text-ink")}>{title}</p>
       {description ? (
         <p className={cx("mx-auto mt-3 max-w-md text-sm", mutedText(tone))}>{description}</p>

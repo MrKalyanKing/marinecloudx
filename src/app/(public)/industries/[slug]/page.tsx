@@ -7,4 +7,5 @@
  */
 
 export { generateMetadata } from "@/features/marketing/pages/IndustryDetailPage";
+export { generateStaticParams } from "@/features/marketing/pages/IndustryDetailPage";
 export { default } from "@/features/marketing/pages/IndustryDetailPage";

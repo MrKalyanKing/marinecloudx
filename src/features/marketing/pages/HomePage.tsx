@@ -1,553 +1,199 @@
 import Link from "next/link";
 
+import { CapabilitiesStage } from "@/features/marketing/components/capabilities-stage";
 import { FaqAccordion } from "@/features/marketing/components/faq-accordion";
-import { OrganizationJsonLd } from "@/features/marketing/components/structured-data";
 import { Hero } from "@/features/marketing/components/hero";
+import { Arrow, Container } from "@/features/marketing/components/layout";
+import { FinalCta } from "@/features/marketing/components/final-cta";
+import { FaqJsonLd } from "@/features/marketing/components/structured-data";
+import { ProcessStage } from "@/features/marketing/components/process-stage";
+import { ScrollNarrative } from "@/features/marketing/components/scroll-narrative";
+import { SystemDiagram } from "@/features/marketing/components/system-diagram";
+import { IndustryExperienceStage } from "@/features/marketing/components/industry-experience-stage";
 import {
-  ActionLink,
-  Arrow,
-  Container,
-  ContentCard,
-  PublicEmptyState,
-  Section,
-  SectionHeader,
-  TechLabel,
-} from "@/features/marketing/components/layout";
-import {
-  about,
   brand,
-  coreValues,
-  finalCta,
-  process,
-  solutions,
+  homeCapabilities,
+  homeEvidence,
+  homeFaqs,
+  homePhilosophy,
+  homeProcess,
+  homeProjects,
   trustPillars,
   whyPoints,
 } from "@/lib/config/brand";
-import { formatDate } from "@/shared/utils/format";
-import {
-  getActiveIndustries,
-  getPublishedCaseStudies,
-  getPublishedFaqs,
-  getPublishedProjects,
-  getPublishedServices,
-  getPublishedTestimonials,
-} from "@/features/content/services/content";
 
 /**
- * MarineCloudeX homepage.
- *
- * A server component. The only client JavaScript on the route is the hero
- * entrance timeline, the FAQ accordion and the navbar.
- *
- * Services, industries, projects, case studies, testimonials and FAQs are read
- * from the CMS through the publication-filtered public data layer. The
- * narrative sections that have no CMS model — about, values, why, solutions,
- * process, trust — come from the approved brand config.
- *
- * Nothing on this page asserts a client count, a metric, an award or a
- * certification, because none has been provided.
+ * Homepage narrative order:
+ * Hero & Stats → Philosophy → Method → Industry Experience & Solutions →
+ * Core Capabilities → Selected Work (Proof of Range) → System Architecture →
+ * 6-Stage Delivery Process → Engineering Standards & Trust → FAQ → CTA
  */
-export default async function HomePage() {
-  const [services, industries, projectPage, caseStudies, testimonials, faqs] = await Promise.all([
-    getPublishedServices(),
-    getActiveIndustries(),
-    getPublishedProjects(1, 4),
-    getPublishedCaseStudies(),
-    getPublishedTestimonials(),
-    getPublishedFaqs(),
-  ]);
-
-  const [featuredCase, ...otherCases] = caseStudies;
-
+export default function HomePage() {
   return (
     <>
-      <OrganizationJsonLd />
-      <Hero />
+      <FaqJsonLd faqs={homeFaqs} path="/" />
+      <ScrollNarrative>
+        <Hero />
 
-      {/* 01 — About */}
-      <Section tone="aqua" id="about">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
-            <div>
-              <TechLabel tone="aqua">
-                <span aria-hidden="true">01</span>
-                <span aria-hidden="true" className="opacity-40">/</span>
-                About
-              </TechLabel>
-              <p className="tech-label mt-6 text-brand">{brand.philosophy}</p>
+        {/* 01 — Philosophy */}
+        <section id="about" className="relative px-5 py-[clamp(80px,12vh,150px)] sm:px-8">
+          <Container className="max-w-[1320px]">
+            <div data-reveal-stage className="max-w-[840px]">
+              <p className="tech-label text-brand">01&nbsp;&nbsp;Philosophy</p>
+              <h2 className="mt-6 text-h2 font-normal text-ink">{homePhilosophy.heading}</h2>
+              <p className="mt-6 max-w-[640px] text-lead text-ink-muted">{homePhilosophy.body}</p>
+              <p className="tech-label mt-8 text-brand">{brand.philosophy}</p>
+            </div>
+          </Container>
+        </section>
+
+        {/* 02 — Why */}
+        <section id="why" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
+          <Container className="max-w-[1320px]">
+            <div data-reveal-stage className="mb-[clamp(36px,5vw,64px)] max-w-[760px]">
+              <p className="tech-label text-brand">02&nbsp;&nbsp;Why MarineCloudX</p>
+              <h2 className="mt-6 text-h2 font-normal text-ink">We understand why you need it</h2>
+              <p className="mt-5 text-lead text-ink-muted">
+                Most technology fails because it answered the wrong question. We start earlier — analysing operational workflows, users, and the actual business requirement.
+              </p>
             </div>
 
-            <div>
-              <p className="text-h2 font-semibold text-balance text-ink">{about.lead}</p>
-              {about.body.map((paragraph) => (
-                <p key={paragraph.slice(0, 24)} className="mt-5 max-w-2xl text-lead text-ink-muted">
-                  {paragraph}
-                </p>
-              ))}
-              <div className="mt-8">
-                <ActionLink href="/about" variant="ghost" tone="aqua">
-                  More about MarineCloudeX
-                </ActionLink>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      {/* 02 — Core values */}
-      <Section tone="dark" grid aurora id="values">
-        <Container>
-          <SectionHeader
-            index="02"
-            eyebrow="Core values"
-            tone="dark"
-            title="How we work"
-            description={brand.positioning}
-          />
-
-          <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {coreValues.map((value, index) => (
-              <li key={value.title} className="glass rounded-2xl p-8">
-                <span className="tech-label text-brand-soft">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-5 text-h3 font-semibold text-light">{value.title}</h3>
-                <p className="mt-3 text-light-muted">{value.description}</p>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </Section>
-
-      {/* 03 — Why MarineCloudeX: the reasoning, not a claim */}
-      <Section tone="paper" id="why">
-        <Container>
-          <SectionHeader
-            index="03"
-            eyebrow="Why MarineCloudeX"
-            tone="paper"
-            title="We understand why you need it"
-            description="Most technology fails because it answered the wrong question. We start earlier than the build."
-          />
-
-          <ol className="mt-14 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-            {whyPoints.map((point, index) => (
-              <li key={point.title} className="border-t border-hairline-light pt-5">
-                <span className="tech-label text-brand">/{String(index + 1).padStart(2, "0")}</span>
-                <h3 className="mt-3 text-h3 font-semibold text-ink">{point.title}</h3>
-                <p className="mt-2 text-ink-muted">{point.description}</p>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </Section>
-
-      {/* 04 — Capabilities, from the CMS */}
-      <Section tone="dark" grid aurora id="capabilities">
-        <Container>
-          <SectionHeader
-            index="04"
-            eyebrow="Capabilities"
-            tone="dark"
-            title="What we build"
-            description="Eight capability groups. The detail behind each one lives on its service page."
-            action={
-              services.length > 0 ? (
-                <ActionLink href="/services" variant="secondary" tone="dark">
-                  All services
-                </ActionLink>
-              ) : null
-            }
-          />
-
-          <div className="mt-14">
-            {services.length === 0 ? (
-              <PublicEmptyState
-                tone="dark"
-                title="No published services yet"
-                description="Publish a service in the admin CMS and it will appear here."
-              />
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {services.map((service, index) => (
-                  <ContentCard
-                    key={service.slug}
-                    tone="dark"
-                    index={`/${String(index + 1).padStart(2, "0")}`}
-                    title={service.name}
-                    href={`/services/${service.slug}`}
-                    description={service.shortDescription}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 05 — Solutions: problems, distinct from services */}
-      <Section tone="ice" id="solutions">
-        <Container>
-          <SectionHeader
-            index="05"
-            eyebrow="Solutions"
-            tone="ice"
-            title="Problems we help solve"
-            description="Services are what we build. Solutions are the business problems behind them — usually solved with several capabilities together."
-          />
-
-          <div className="mt-14 grid gap-4 md:grid-cols-2">
-            {solutions.map((solution) => (
-              <article key={solution.title} className="glass-light rounded-2xl p-8">
-                <h3 className="text-h3 font-semibold text-ink">{solution.title}</h3>
-                <p className="mt-2 text-ink-muted">{solution.problem}</p>
-
-                {/* The flow reads as a sequence without relying on colour alone. */}
-                <ol className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1">
-                  {solution.flow.map((step, stepIndex) => (
-                    <li key={step} className="flex items-center gap-2">
-                      <span className="tech-label text-ink">{step}</span>
-                      {stepIndex < solution.flow.length - 1 ? (
-                        <span aria-hidden="true" className="text-brand">→</span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ol>
-
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {solution.technologies.map((technology) => (
-                    <li
-                      key={technology}
-                      className="rounded-full border border-hairline-light px-3 py-1 text-xs text-ink-muted"
-                    >
-                      {technology}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 06 — Industries, from the CMS */}
-      <Section tone="paper" id="industries">
-        <Container>
-          <SectionHeader
-            index="06"
-            eyebrow="Industries"
-            tone="paper"
-            title={brand.industriesLine}
-            action={
-              industries.length > 0 ? (
-                <ActionLink href="/industries" variant="ghost" tone="paper">
-                  All industries
-                </ActionLink>
-              ) : null
-            }
-          />
-
-          <div className="mt-12">
-            {industries.length === 0 ? (
-              <PublicEmptyState title="No active industries yet" />
-            ) : (
-              <ul className="border-t border-hairline-light">
-                {industries.map((industry, index) => (
-                  <li key={industry.slug} className="border-b border-hairline-light">
-                    <Link
-                      href={`/industries/${industry.slug}`}
-                      className="group flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:gap-6"
-                    >
-                      <span className="tech-label w-8 shrink-0 text-brand">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span className="text-h3 font-medium text-ink transition-colors group-hover:text-brand sm:w-80 sm:shrink-0">
-                        {industry.name}
-                      </span>
-                      {industry.description ? (
-                        <span className="flex-1 text-sm text-ink-muted">{industry.description}</span>
-                      ) : null}
-                      <span className="hidden text-brand sm:block">
-                        <Arrow />
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 07 — Process */}
-      <Section tone="dark" grid aurora id="process">
-        <Container>
-          <SectionHeader
-            index="07"
-            eyebrow="Process"
-            tone="dark"
-            title="How a project runs"
-            description="Six stages, so you always know where the work stands."
-          />
-
-          <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {process.map((stage, index) => (
-              <li key={stage.title} className="glass rounded-2xl p-8">
-                <span className="tech-label text-brand-soft">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-5 text-h3 font-semibold text-light">{stage.title}</h3>
-                <p className="mt-3 text-light-muted">{stage.description}</p>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </Section>
-
-      {/* 08 — Selected work */}
-      <Section tone="paper" id="work">
-        <Container>
-          <SectionHeader
-            index="08"
-            eyebrow="Selected work"
-            tone="paper"
-            title="What we build"
-            action={
-              projectPage.rows.length > 0 ? (
-                <ActionLink href="/projects" variant="secondary" tone="paper">
-                  All work
-                </ActionLink>
-              ) : null
-            }
-          />
-
-          <div className="mt-14">
-            {projectPage.rows.length === 0 ? (
-              <PublicEmptyState
-                title="Work is being prepared"
-                description="Projects appear here as they are published. We do not show placeholder work."
-              />
-            ) : (
-              <div className="grid gap-10 md:grid-cols-2">
-                {projectPage.rows.map((project, index) => (
-                  <article key={project.slug} className="group relative">
-                    <div className="relative aspect-16/10 overflow-hidden border border-hairline-light bg-aqua">
-                      <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid-lines-light" />
-                      <span className="tech-label absolute top-4 left-4 text-brand">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      {project.coverMedia?.url ? (
-                        /* CMS media is an arbitrary external URL; next/image would
-                           need remotePatterns configured per deployment. See
-                           docs/media.md. */
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={project.coverMedia.url}
-                          alt={project.coverMedia.altText ?? ""}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        />
-                      ) : null}
-                    </div>
-
-                    <div className="mt-5">
-                      {project.category ? (
-                        <span className="tech-label text-ink-muted">{project.category.name}</span>
-                      ) : null}
-                      <h3 className="mt-2 text-h3 font-semibold text-ink">
-                        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 hover:text-brand">
-                          {project.title}
-                        </Link>
-                      </h3>
-                      {project.shortDescription ? (
-                        <p className="mt-2 max-w-lg text-ink-muted">{project.shortDescription}</p>
-                      ) : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 09 — Case studies */}
-      <Section tone="ice" id="case-studies">
-        <Container>
-          <SectionHeader
-            index="09"
-            eyebrow="Case studies"
-            tone="ice"
-            title="What problem did we solve?"
-            description="How the problem was understood, what was built, and what happened next."
-            action={
-              caseStudies.length > 0 ? (
-                <ActionLink href="/case-studies" variant="secondary" tone="ice">
-                  All case studies
-                </ActionLink>
-              ) : null
-            }
-          />
-
-          <div className="mt-14">
-            {caseStudies.length === 0 ? (
-              <PublicEmptyState
-                title="Case studies are being written"
-                description="Each one covers a real problem and a real solution, so they are published only when the work is complete."
-              />
-            ) : (
-              <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
-                <article className="group relative rounded-2xl glass-light p-8 sm:p-10">
-                  <TechLabel tone="ice">Featured</TechLabel>
-                  <h3 className="mt-6 text-h2 font-semibold text-ink">
-                    <Link href={`/case-studies/${featuredCase.project.slug}`} className="after:absolute after:inset-0">
-                      {featuredCase.project.title}
-                    </Link>
-                  </h3>
-                  {featuredCase.project.shortDescription ? (
-                    <p className="mt-4 max-w-xl text-lead text-ink-muted">
-                      {featuredCase.project.shortDescription}
-                    </p>
-                  ) : null}
-                  <span className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-brand">
-                    Read the case study
-                    <Arrow />
+            <ol data-reveal-stage className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {whyPoints.map((point, index) => (
+                <li key={point.title} className="mcx-card flex flex-col p-6 sm:p-7">
+                  <span className="tech-label text-brand">
+                    /{String(index + 1).padStart(2, "0")}
                   </span>
-                </article>
+                  <h3 className="mt-3 text-h3 font-medium tracking-[-0.02em] text-ink">
+                    {point.title}
+                  </h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">
+                    {point.description}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </Container>
+        </section>
 
-                {otherCases.length > 0 ? (
-                  <ul className="border-t border-hairline-light">
-                    {otherCases.slice(0, 4).map((entry) => (
-                      <li key={entry.project.slug} className="border-b border-hairline-light">
-                        <Link href={`/case-studies/${entry.project.slug}`} className="group flex items-center justify-between gap-4 py-5">
-                          <span className="text-h3 font-medium text-ink transition-colors group-hover:text-brand">
-                            {entry.project.title}
-                          </span>
-                          <span className="text-brand"><Arrow /></span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+        {/* 03 — Industry Experience */}
+        <section id="solutions" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
+          <Container className="max-w-[1320px]">
+            <div data-reveal-stage className="mb-[clamp(30px,4vw,52px)] flex flex-wrap items-end justify-between gap-6">
+              <div className="max-w-[760px]">
+                <p className="tech-label text-brand">03&nbsp;&nbsp;Industry Experience</p>
+                <h2 className="mt-6 text-h2 font-normal text-ink">Industries we understand, engineering that scales</h2>
+                <p className="mt-5 text-lead text-ink-muted">
+                  Our current work spans Education, Interiors, and Dental — three distinct domains where we have engineered practical software solutions. These implementations demonstrate our ability to understand complex workflows, multi-role user journeys, and operational requirements, with underlying engineering designed to scale for large, enterprise-grade technology engagements.
+                </p>
               </div>
-            )}
-          </div>
-        </Container>
-      </Section>
+              <Link
+                href="/industries"
+                className="group inline-flex items-center gap-2 text-sm text-brand"
+              >
+                All industries
+                <Arrow />
+              </Link>
+            </div>
 
-      {/* 10 — Trust, built on how we operate rather than social proof */}
-      <Section tone="dark" grid aurora id="trust">
-        <Container>
-          <SectionHeader
-            index="10"
-            eyebrow="Working with us"
-            tone="dark"
-            title="What you can expect"
-            description="No logos, no awards, no statistics — just how we run the work."
-          />
+            <IndustryExperienceStage
+              items={homeProjects.slice(0, 3)}
+              defaultShow={false}
+              allowToggle={true}
+            />
+          </Container>
+        </section>
 
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {trustPillars.map((pillar) => (
-              <div key={pillar.title} className="glass rounded-2xl p-7">
-                <h3 className="text-h3 font-semibold text-light">{pillar.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-light-muted">{pillar.description}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </Section>
+        {/* 04 — Capabilities */}
+        <CapabilitiesStage items={[...homeCapabilities]} />
 
-      {/* 11 — Testimonials. Rendered only when real records exist. */}
-      {testimonials.length > 0 ? (
-        <Section tone="paper" id="testimonials">
-          <Container>
-            <SectionHeader index="11" eyebrow="Testimonials" tone="paper" title="In their words" />
+        {/* Selected Work — commented out as requested to keep focus on engineering breadth and domain capability rather than small past projects */}
+        {/* <WorkStage projects={homeProjects} /> */}
 
-            <div className="mt-14 grid gap-4 md:grid-cols-2">
-              {testimonials.slice(0, 4).map((testimonial) => (
-                <figure key={testimonial.id} className="glass-light rounded-2xl p-8">
-                  <blockquote className="text-h3 leading-snug font-medium text-balance text-ink">
-                    “{testimonial.content}”
-                  </blockquote>
-                  <figcaption className="mt-6 flex flex-wrap items-baseline gap-2">
-                    <span className="font-medium text-ink">{testimonial.authorName}</span>
-                    <span className="tech-label text-ink-muted">
-                      {[testimonial.authorRole, testimonial.companyName].filter(Boolean).join(" · ")}
-                    </span>
-                  </figcaption>
-                </figure>
+        {/* 05 — Architecture */}
+        <section id="system" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
+          <Container className="max-w-[1320px]">
+            <div data-reveal-stage className="mb-[clamp(40px,6vw,72px)] max-w-[760px]">
+              <p className="tech-label text-brand">05&nbsp;&nbsp;System Architecture</p>
+              <h2 className="mt-6 text-h2 font-normal text-ink">
+                One architecture. Every layer connected.
+              </h2>
+              <p className="mt-4 text-lead text-ink-muted">
+                From user-facing applications and cloud infrastructure to applied AI and system integrations — designed to operate as a coherent system.
+              </p>
+            </div>
+            <div data-reveal-stage>
+              <SystemDiagram />
+            </div>
+          </Container>
+        </section>
+
+        {/* 06 — Process */}
+        <ProcessStage stages={[...homeProcess]} />
+
+        {/* 07 — Trust & Standards */}
+        <section id="trust" className="relative px-5 py-[clamp(72px,12vh,140px)] sm:px-8">
+          <Container className="max-w-[1320px]">
+            <div data-reveal-stage className="mb-[clamp(32px,4vw,56px)] max-w-[760px]">
+              <p className="tech-label text-brand">07&nbsp;&nbsp;Working with us</p>
+              <h2 className="mt-6 text-h2 font-normal text-ink">Engineering discipline you can rely on</h2>
+              <p className="mt-5 text-lead text-ink-muted">
+                Transparent communication, structured delivery milestones, and verified capabilities — how we run every technical engagement.
+              </p>
+            </div>
+
+            <div data-reveal-stage className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {trustPillars.map((pillar) => (
+                <div key={pillar.title} className="mcx-card flex min-h-[160px] flex-col gap-3 p-6 sm:p-7">
+                  <h3 className="text-h3 font-medium tracking-[-0.02em] text-ink">{pillar.title}</h3>
+                  <p className="text-sm leading-relaxed text-ink-muted">{pillar.description}</p>
+                </div>
+              ))}
+            </div>
+
+            <div data-reveal-stage className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {homeEvidence.map((item) => (
+                <div key={item.title} className="mcx-card p-5 sm:p-6">
+                  <p className="tech-label text-[10px] text-brand">{item.label}</p>
+                  <h3 className="mt-3 text-[16px] font-medium tracking-[-0.02em] text-ink">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-ink-muted">
+                    {item.description}
+                  </p>
+                </div>
               ))}
             </div>
           </Container>
-        </Section>
-      ) : null}
+        </section>
 
-      {/* 12 — FAQ */}
-      <Section tone="ice" id="faq">
-        <Container>
-          <SectionHeader
-            index="12"
-            eyebrow="FAQ"
-            tone="ice"
-            title="You don't need to know the technology"
-            description="Tell us the problem. These are the questions we are asked most."
-            action={
-              faqs.length > 0 ? (
-                <ActionLink href="/faq" variant="ghost" tone="ice">
-                  All questions
-                </ActionLink>
-              ) : null
-            }
-          />
-
-          <div className="mt-12">
-            {faqs.length === 0 ? (
-              <PublicEmptyState title="No published questions yet" />
-            ) : (
-              <FaqAccordion
-                items={faqs.slice(0, 8).map((faq) => ({
-                  id: faq.id,
-                  question: faq.question,
-                  answer: faq.answer,
-                }))}
-              />
-            )}
-          </div>
-        </Container>
-      </Section>
-
-      {/* 13 — Final CTA */}
-      <Section tone="dark" size="tall" grid aurora id="start">
-        <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <TechLabel tone="dark">{brand.philosophy}</TechLabel>
-
-            <h2 className="mt-6 text-h1 font-semibold text-balance text-light">
-              {finalCta.heading}
-            </h2>
-
-            <p className="mx-auto mt-5 max-w-xl text-lead text-light-muted">
-              {finalCta.supporting}
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <ActionLink href="/contact" variant="primary" tone="dark">
-                Start a project
-              </ActionLink>
-              <ActionLink href="/services" variant="secondary" tone="dark">
-                Explore services
-              </ActionLink>
+        {/* 08 — FAQ */}
+        <section id="faq" className="relative px-5 pb-[clamp(90px,14vh,170px)] sm:px-8">
+          <Container className="max-w-[920px]">
+            <div data-reveal-stage className="mb-[clamp(26px,3vw,44px)] flex flex-wrap items-end justify-between gap-6">
+              <div className="max-w-[700px]">
+                <p className="tech-label text-brand">08&nbsp;&nbsp;FAQ</p>
+                <h2 className="mt-6 text-h2 font-normal text-ink">
+                  Common Questions
+                </h2>
+                <p className="mt-5 text-lead text-ink-muted">
+                  How we start, define architecture, collaborate with your team, and support systems after deployment.
+                </p>
+              </div>
+              <Link href="/faq" className="group inline-flex items-center gap-2 text-sm text-brand">
+                All questions
+                <Arrow />
+              </Link>
             </div>
+            <div data-reveal-stage className="mcx-card px-5 sm:px-7">
+              <FaqAccordion tone="paper" items={[...homeFaqs]} />
+            </div>
+          </Container>
+        </section>
 
-            <p className="tech-label mt-12 text-brand-soft">{finalCta.line}</p>
-
-            {projectPage.total > 0 ? (
-              <p className="sr-only">
-                Latest work published {formatDate(projectPage.rows[0]?.publishedAt)}
-              </p>
-            ) : null}
-          </div>
-        </Container>
-      </Section>
+        {/* CTA */}
+        <FinalCta />
+      </ScrollNarrative>
     </>
   );
 }

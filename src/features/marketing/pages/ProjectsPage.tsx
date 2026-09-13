@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/config/metadata";
 import Link from "next/link";
 
 import {
   CardGrid,
   Container,
   ContentCard,
+  PageBody,
   PageIntro,
   PublicEmptyState,
   PublicPagination,
@@ -14,11 +17,26 @@ import { getProjectFilterCategories, getPublishedProjects } from "@/features/con
 
 const PAGE_SIZE = 12;
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description: "Selected work delivered by MarineCloudeX.",
-  alternates: { canonical: "/projects" },
-};
+/**
+ * Marked noindex while the listing is empty.
+ *
+ * A page that answers 200 with "nothing published yet" is a soft 404 — thin
+ * content that consumes crawl budget and lowers the quality of the indexed set.
+ * `follow` stays on so the surrounding navigation is still crawled. Publishing
+ * anything flips it back, because the revalidation webhook rebuilds this along
+ * with the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const rows = await getPublishedProjects(1, 1);
+
+  return pageMetadata({
+  title: "Software, AI and IoT Projects We Have Built",
+  description:
+    "Selected engineering work: AI voice copilots, multi-model platforms, IoT monitoring systems and cloud backends. What we built and the stack behind each one.",
+  path: "/projects",
+    indexable: rows.total > 0,
+  });
+}
 
 interface PageProps {
   searchParams: Promise<{ page?: string; category?: string }>;
@@ -44,9 +62,23 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <PageIntro title="Projects" />
+      {/* Compact, elegant header matching services & industries pages */}
+      <section className="relative px-5 pt-28 pb-6 sm:px-8 sm:pt-32 sm:pb-8 text-ink">
+        <Container className="max-w-[1320px]">
+          <span className="tech-label text-brand uppercase tracking-wider text-xs font-semibold">
+            Selected Work
+          </span>
+          <h1 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink max-w-4xl text-balance">
+            Systems in the Field
+          </h1>
+          <p className="mt-3 text-base sm:text-lg text-ink-muted max-w-3xl leading-relaxed">
+            Published platforms and production systems engineered by MarineCloudX — real work delivering business value, not invented case studies.
+          </p>
+        </Container>
+      </section>
 
-      <Container className="py-8">
+      <PageBody>
+        <Container className="py-6 max-w-[1320px]">
         {/* Filtering is a plain set of links, so it works without JavaScript
             and every filtered view has its own shareable URL. */}
         {categories.length > 0 ? (
@@ -57,10 +89,10 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                   href="/projects"
                   aria-current={category ? undefined : "page"}
                   className={cx(
-                    "tech-label inline-flex border px-3 py-1.5 transition-colors",
+                    "tech-label inline-flex rounded-full px-3 py-1.5 transition-colors",
                     category
-                      ? "border-hairline-light text-ink-muted hover:border-brand/50 hover:text-brand"
-                      : "border-brand bg-brand/5 text-brand",
+                      ? "chip-glass text-ink-muted hover:text-brand"
+                      : "border border-brand bg-brand/10 text-brand",
                   )}
                 >
                   All
@@ -72,10 +104,10 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                     href={`/projects?category=${encodeURIComponent(entry.slug)}`}
                     aria-current={entry.slug === category ? "page" : undefined}
                     className={cx(
-                      "tech-label inline-flex border px-3 py-1.5 transition-colors",
+                      "tech-label inline-flex rounded-full px-3 py-1.5 transition-colors",
                       entry.slug === category
-                        ? "border-brand bg-brand/5 text-brand"
-                        : "border-hairline-light text-ink-muted hover:border-brand/50 hover:text-brand",
+                        ? "border border-brand bg-brand/10 text-brand"
+                        : "chip-glass text-ink-muted hover:text-brand",
                     )}
                   >
                     {entry.name} ({entry._count.projects})
@@ -98,7 +130,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
         ) : (
           <>
             <CardGrid>
-              {rows.map((project) => (
+              {rows.map((project, index) => (
                 <ContentCard
                   headingLevel={2}
                   key={project.slug}
@@ -106,6 +138,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                   href={`/projects/${project.slug}`}
                   description={project.shortDescription}
                   image={project.coverMedia}
+                  priority={index === 0}
                   meta={project.category?.name}
                   tags={[
                     ...project.industries.map((industry) => industry.name),
@@ -124,6 +157,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
           </>
         )}
       </Container>
+      </PageBody>
     </>
   );
 }

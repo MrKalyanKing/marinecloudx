@@ -6,6 +6,9 @@ import { getSitemapEntries } from "@/features/content/services/content";
 /** Generated per request so newly published content is listed immediately. */
 export const dynamic = "force-dynamic";
 
+/** Static routes share one timestamp: the moment the sitemap was generated. */
+const generatedAt = () => new Date();
+
 /**
  * Sitemap.
  *
@@ -13,22 +16,49 @@ export const dynamic = "force-dynamic";
  * cannot be listed here even though the sitemap is generated separately. Admin,
  * CMS, CRM and API routes are absent by construction — only public content is
  * enumerated.
+ *
+ * Two corrections from the SEO audit:
+ *
+ * 1. `/contact` was listed while its own metadata canonicalises it to
+ *    `/start-a-project`. Advertising a URL that points somewhere else wastes
+ *    crawl budget and sends contradictory signals, so the canonical target is
+ *    listed instead.
+ * 2. Static routes carried no `lastModified` at all. Only CMS rows had one.
+ *
+ * Unlike the pages, this route degrades rather than failing when the API is
+ * unreachable. A sitemap is a hint: omitting a URL never removes it from the
+ * index, so a static-only sitemap during an outage is harmless, whereas serving
+ * nothing loses the ten static routes as well.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { services, industries, projects, caseStudies, posts } = await getSitemapEntries();
+  const lastModified = generatedAt();
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/services"), changeFrequency: "weekly", priority: 0.9 },
-    { url: absoluteUrl("/industries"), changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/projects"), changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluteUrl("/case-studies"), changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluteUrl("/testimonials"), changeFrequency: "monthly", priority: 0.5 },
-    { url: absoluteUrl("/faq"), changeFrequency: "monthly", priority: 0.5 },
-    { url: absoluteUrl("/blog"), changeFrequency: "daily", priority: 0.8 },
-    { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.6 },
+    { url: absoluteUrl("/"), lastModified, changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/about"), lastModified, changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/services"), lastModified, changeFrequency: "weekly", priority: 0.9 },
+    { url: absoluteUrl("/industries"), lastModified, changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/projects"), lastModified, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluteUrl("/case-studies"), lastModified, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluteUrl("/testimonials"), lastModified, changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/faq"), lastModified, changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/blog"), lastModified, changeFrequency: "daily", priority: 0.8 },
+    {
+      url: absoluteUrl("/start-a-project"),
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
   ];
+
+  let entries;
+  try {
+    entries = await getSitemapEntries();
+  } catch {
+    return staticRoutes;
+  }
+
+  const { services, industries, projects, caseStudies, posts } = entries;
 
   return [
     ...staticRoutes,

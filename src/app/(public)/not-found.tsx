@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Container } from "@/features/marketing/components/layout";
+import { Container, PageBody } from "@/features/marketing/components/layout";
 
 /**
  * Public 404.
@@ -11,18 +11,17 @@ import { Container } from "@/features/marketing/components/layout";
  */
 export default function PublicNotFound() {
   return (
-    <Container className="py-20 text-center">
-      <p className="text-sm font-semibold uppercase tracking-wider text-teal-700">404</p>
-      <h1 className="mt-2 text-2xl font-semibold text-slate-900">Page not found</h1>
-      <p className="mx-auto mt-2 max-w-md text-slate-600">
-        The page you are looking for does not exist or is no longer available.
-      </p>
-      <Link
-        href="/"
-        className="mt-6 inline-flex rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800"
-      >
-        Back to home
-      </Link>
-    </Container>
+    <PageBody>
+      <Container className="py-32 text-center sm:py-40">
+        <p className="tech-label text-brand">404</p>
+        <h1 className="mt-2 text-h2 font-semibold text-ink">Page not found</h1>
+        <p className="mx-auto mt-3 max-w-md text-ink-muted">
+          The page you are looking for does not exist or is no longer available.
+        </p>
+        <Link href="/" className="btn-solid mt-8 inline-flex rounded-full px-5 py-2.5 text-sm font-medium">
+          Back to home
+        </Link>
+      </Container>
+    </PageBody>
   );
 }
