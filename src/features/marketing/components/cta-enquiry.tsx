@@ -36,6 +36,7 @@ import { ContactForm } from "@/features/marketing/components/contact-form";
 import { CtaGlobe } from "@/features/marketing/components/cta-globe";
 import { LiquidBubbles } from "@/features/marketing/components/liquid-bubbles";
 import { cx } from "@/features/marketing/components/layout";
+import { trackCtaClick } from "@/lib/analytics/gtag";
 import { finalCta } from "@/lib/config/brand";
 
 export function CtaEnquiry({
@@ -324,6 +325,7 @@ export function CtaEnquiry({
               // most common way an in-place expander breaks for power users.
               if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
               event.preventDefault();
+              trackCtaClick("start_a_project", "closing_cta_expand");
               setOpen(true);
             }}
             className="cta-band__btn mt-[clamp(30px,4vw,44px)]"

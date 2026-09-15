@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { cx } from "@/features/marketing/components/layout";
+import { trackCtaClick } from "@/lib/analytics/gtag";
 import { publicNavigation, siteConfig } from "@/lib/config/site";
 
 /**
@@ -105,6 +106,7 @@ export function SiteHeader() {
 
         <Link
           href="/start-a-project"
+          onClick={() => trackCtaClick("start_a_project", "header_desktop")}
           className="btn-solid ml-auto hidden items-center gap-2 rounded-full px-4.5 py-2.5 text-[13.5px] font-medium whitespace-nowrap sm:inline-flex lg:ml-0"
         >
           Start a project
@@ -211,7 +213,10 @@ export function SiteHeader() {
             href="/start-a-project"
             tabIndex={open ? 0 : -1}
             className="btn-solid inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              trackCtaClick("start_a_project", "header_mobile_drawer");
+            }}
           >
             Start a project
             <span aria-hidden="true">→</span>

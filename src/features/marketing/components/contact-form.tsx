@@ -17,10 +17,11 @@
  * never reset on error, so nobody has to retype anything.
  */
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { cx } from "@/features/marketing/components/layout";
 import { BUDGET_CURRENCY, budgetOptions, timelineOptions } from "@/lib/config/brand";
+import { trackGenerateLead, trackViewEnquiryForm } from "@/lib/analytics/gtag";
 import { UniversalSelector } from "@/shared/components/universal-selector";
 
 interface FieldErrors {
@@ -85,6 +86,14 @@ export function ContactForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  const hasTrackedView = useRef(false);
+  useEffect(() => {
+    if (!hasTrackedView.current) {
+      hasTrackedView.current = true;
+      trackViewEnquiryForm(variant);
+    }
+  }, [variant]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -151,6 +160,11 @@ export function ContactForm({
       }
 
       setSubmitted(true);
+      // Strictly non-sensitive metadata only — NO customer PII
+      trackGenerateLead({
+        form_type: "website_enquiry",
+        service_id: serviceId || undefined,
+      });
       onSubmitted?.();
     } catch {
       setFormError("We couldn't send that yet. Please try again.");
@@ -158,6 +172,7 @@ export function ContactForm({
       setIsPending(false);
     }
   }
+
 
   if (submitted) {
     return (
