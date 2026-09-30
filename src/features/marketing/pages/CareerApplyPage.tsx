@@ -37,11 +37,11 @@ export default async function CareerApplyPage({ params }: PageProps) {
 
   return (
     <PageBody>
-      <Section size="compact">
+      <Section size="none" className="pt-28 pb-16 sm:pt-36 sm:pb-20">
         <Container className="max-w-3xl">
           <Link
             href={`/careers/${job.slug}`}
-            className="text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
           >
             ← Back to role details
           </Link>

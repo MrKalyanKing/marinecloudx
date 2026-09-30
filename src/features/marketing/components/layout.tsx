@@ -116,13 +116,16 @@ export function Section({
   grid?: boolean;
   /** Mounts the slow aurora colour field behind the band. Dark tones only. */
   aurora?: boolean;
-  size?: "default" | "compact" | "tall";
+  size?: "default" | "compact" | "tall" | "none";
 }) {
-  const padding = {
-    compact: "py-14 sm:py-16",
-    default: "py-20 sm:py-28",
-    tall: "py-24 sm:py-36",
-  }[size];
+  const padding =
+    size === "none"
+      ? ""
+      : {
+          compact: "py-14 sm:py-16",
+          default: "py-20 sm:py-28",
+          tall: "py-24 sm:py-36",
+        }[size];
 
   return (
     <section

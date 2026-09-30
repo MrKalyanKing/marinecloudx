@@ -132,7 +132,7 @@ export default async function CareersPage() {
 
   return (
     <PageBody>
-      <Section>
+      <Section size="none" className="pt-28 pb-20 sm:pt-36 sm:pb-28">
         <Container>
           <SectionHeader
             eyebrow="Careers"

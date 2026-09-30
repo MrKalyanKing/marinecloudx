@@ -117,11 +117,11 @@ export default async function CareerDetailPage({ params }: PageProps) {
 
   return (
     <PageBody>
-      <Section>
+      <Section size="none" className="pt-28 pb-20 sm:pt-36 sm:pb-28">
         <Container className="max-w-3xl">
           <Link
             href="/careers"
-            className="text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
           >
             ← All open roles
           </Link>
