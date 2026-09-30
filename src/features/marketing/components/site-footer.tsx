@@ -34,7 +34,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative z-[1] px-5 pb-6 sm:px-8 sm:pb-8">
+    <footer className="relative z-[1] px-5 pt-12 pb-6 sm:px-8 sm:pt-16 sm:pb-8">
       <Container className="max-w-[1180px] px-0 sm:px-0">
         <div className="glass-light glass-rim rounded-[clamp(18px,2.4vw,26px)] px-6 pt-8 pb-6 sm:px-9 sm:pt-9 sm:pb-7">
           {/* Two columns from the narrowest width up: the link lists are short

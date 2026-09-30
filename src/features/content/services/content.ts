@@ -75,13 +75,26 @@ function unavailableAtBuild<T>(path: string, cause: string): Envelope<T> {
  * `success: false` one — deciding what a business-level error means is the
  * caller's job. Throws only when there is no usable answer at all.
  */
-async function api<T>(path: string): Promise<Envelope<T>> {
+async function api<T>(
+  path: string,
+  options?: { cache?: RequestCache; revalidate?: number | false },
+): Promise<Envelope<T>> {
   let res: Response;
 
   try {
+    const cacheMode = options?.cache;
+    const revalidate = options?.revalidate;
+
     res = await fetch(`${API_URL}${path}`, {
       headers: { accept: "application/json" },
-      next: { tags: [CONTENT_TAG], revalidate: REVALIDATE_SECONDS },
+      ...(cacheMode === "no-store"
+        ? { cache: "no-store" as const }
+        : {
+            next: {
+              tags: [CONTENT_TAG],
+              revalidate: revalidate === false ? undefined : (revalidate ?? REVALIDATE_SECONDS),
+            },
+          }),
     });
   } catch (err) {
     const cause = err instanceof Error ? err.message : "network error";
@@ -120,8 +133,11 @@ async function api<T>(path: string): Promise<Envelope<T>> {
  * minutes of backend downtime into a deindexed catalogue that takes weeks to
  * recover. So an outage now throws, and only a real "not found" returns `null`.
  */
-async function detail<T>(path: string): Promise<T | null> {
-  const body = await api<T>(path);
+async function detail<T>(
+  path: string,
+  options?: { cache?: RequestCache; revalidate?: number | false },
+): Promise<T | null> {
+  const body = await api<T>(path, options);
   if (body.success) return body.data;
   if (body.error?.code === "NOT_FOUND") return null;
   throw new ContentUnavailableError(path, body.error?.code ?? "unknown error");
@@ -141,8 +157,11 @@ async function ok<T>(path: string, fallback: T): Promise<T> {
  * returned as one. An unreachable API is not, and throws, so a listing page
  * cannot answer 200 with "nothing published" while the backend is simply down.
  */
-async function list<T>(path: string): Promise<{ rows: T[]; total: number }> {
-  const body = await api<T[]>(path);
+async function list<T>(
+  path: string,
+  options?: { cache?: RequestCache; revalidate?: number | false },
+): Promise<{ rows: T[]; total: number }> {
+  const body = await api<T[]>(path, options);
   if (body.success && Array.isArray(body.data)) {
     return { rows: body.data, total: body.pagination?.total ?? body.data.length };
   }
@@ -417,5 +436,42 @@ export function getSitemapEntries() {
     projects: [],
     caseStudies: [],
     posts: [],
+  });
+}
+
+/* ------------------------------ careers ----------------------------- */
+
+export interface PublicJobCard {
+  id: string;
+  jobCode?: string;
+  title: string;
+  slug: string;
+  department: string | null;
+  location: string | null;
+  employmentType: string;
+  experience: string | null;
+  description: string;
+  salaryRange: string | null;
+  applicationDeadline: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+}
+
+export interface PublicJobDetail extends PublicJobCard {
+  responsibilities: string | null;
+  requirements: string | null;
+  niceToHave: string | null;
+}
+
+export function getPublishedJobs(page = 1, pageSize = 50) {
+  // Careers must stay fresh — publishing a job must not wait on the CMS cache TTL.
+  return list<PublicJobCard>(`/public/careers/jobs${qs({ page, pageSize })}`, {
+    cache: "no-store",
+  });
+}
+
+export function getPublishedJobBySlug(slug: string) {
+  return detail<PublicJobDetail>(`/public/careers/jobs/${encodeURIComponent(slug)}`, {
+    cache: "no-store",
   });
 }

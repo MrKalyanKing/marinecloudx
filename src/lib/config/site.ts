@@ -154,6 +154,7 @@ export const publicNavigation = [
   { label: "Services", href: "/services" },
   { label: "Industries", href: "/industries" },
   { label: "Work", href: "/projects" },
+  { label: "Careers", href: "/careers" },
   { label: "Insights", href: "/blog" },
 ] as const;
 
@@ -171,6 +172,7 @@ export const footerNavigation = [
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
+      { label: "Careers", href: "/careers" },
       { label: "Testimonials", href: "/testimonials" },
       { label: "FAQ", href: "/faq" },
     ],
