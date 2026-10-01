@@ -25,7 +25,12 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const job = await getPublishedJobBySlug(slug);
+  let job = null;
+  try {
+    job = await getPublishedJobBySlug(slug);
+  } catch {
+    job = null;
+  }
   if (!job) {
     return pageMetadata({
       title: "Role not found",
@@ -105,7 +110,12 @@ function JobSection({ title, body }: { title: string; body: string | null }) {
 
 export default async function CareerDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const job = await getPublishedJobBySlug(slug);
+  let job = null;
+  try {
+    job = await getPublishedJobBySlug(slug);
+  } catch {
+    job = null;
+  }
   if (!job) notFound();
 
   const meta = [

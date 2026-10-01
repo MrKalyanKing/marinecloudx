@@ -463,15 +463,32 @@ export interface PublicJobDetail extends PublicJobCard {
   niceToHave: string | null;
 }
 
-export function getPublishedJobs(page = 1, pageSize = 50) {
+export async function getPublishedJobs(page = 1, pageSize = 50) {
   // Careers must stay fresh — publishing a job must not wait on the CMS cache TTL.
-  return list<PublicJobCard>(`/public/careers/jobs${qs({ page, pageSize })}`, {
-    cache: "no-store",
-  });
+  // If the backend API is unavailable or returns an error, gracefully fall back to
+  // an empty listing so the careers page displays the "No open positions" empty state.
+  try {
+    return await list<PublicJobCard>(`/public/careers/jobs${qs({ page, pageSize })}`, {
+      cache: "no-store",
+    });
+  } catch (error) {
+    console.warn(
+      `[content] /public/careers/jobs unavailable (${error instanceof Error ? error.message : error}); falling back to empty listing`,
+    );
+    return { rows: [], total: 0 };
+  }
 }
 
-export function getPublishedJobBySlug(slug: string) {
-  return detail<PublicJobDetail>(`/public/careers/jobs/${encodeURIComponent(slug)}`, {
-    cache: "no-store",
-  });
+export async function getPublishedJobBySlug(slug: string) {
+  try {
+    return await detail<PublicJobDetail>(`/public/careers/jobs/${encodeURIComponent(slug)}`, {
+      cache: "no-store",
+    });
+  } catch (error) {
+    console.warn(
+      `[content] /public/careers/jobs/${slug} unavailable (${error instanceof Error ? error.message : error}); returning null`,
+    );
+    return null;
+  }
 }
+

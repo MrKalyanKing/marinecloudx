@@ -24,7 +24,14 @@ const EMPLOYMENT_LABEL: Record<string, string> = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { total } = await getPublishedJobs(1, 1);
+  let total = 0;
+  try {
+    const res = await getPublishedJobs(1, 1);
+    total = res?.total ?? 0;
+  } catch {
+    total = 0;
+  }
+
   return pageMetadata({
     title: "Careers at MarineCloudX",
     description:
@@ -128,7 +135,17 @@ function CareersEmptyState() {
 }
 
 export default async function CareersPage() {
-  const { rows, total } = await getPublishedJobs(1, 50);
+  let rows: PublicJobCard[] = [];
+  let total = 0;
+
+  try {
+    const res = await getPublishedJobs(1, 50);
+    rows = res?.rows ?? [];
+    total = res?.total ?? 0;
+  } catch {
+    rows = [];
+    total = 0;
+  }
 
   return (
     <PageBody>
